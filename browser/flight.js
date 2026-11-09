@@ -101,7 +101,8 @@ function createAttractPilot() {
     //    count towards ending the wave. While they are present, finish the
     //    wave's other enemies first, but don't let Baiters accumulate.
     const TACTICS={podMinRange:16,keepHumansAt:3,keepFloor:148,gatherTarget:5,gatherReserve:2,gatherCooldown:150,
-        baiterWaveBonus:140,baiterSwarm:3,baiterCloseCols:24};
+        baiterWaveBonus:140,baiterSwarm:3,baiterCloseCols:24,
+        endgameEnemies:2,endgameBaiter:-260,lastHumanGuardCols:150,lastHumanGuard:260};
     let duelId,duelPhase,duelSince,duelShots,duelSide;
     let keepTicks,gatherBombs,lastGatherBomb,keepFloor=148,humanShotsHeld,hyperspaces;
     let shieldTriggers,shieldUntil,shieldPlan,emergencyBombs,lastEmergencyBomb,lastReverseTick;
@@ -205,6 +206,18 @@ function createAttractPilot() {
             if(p<256||p>=65500)break;
             live.add(p);p=r16(p,'OLINK');
         }
+        // Stage 78: OSCAN parks every object outside a 500-pixel band around
+        // the screen on the inactive list IPTR. Those enemies are still on the
+        // scanner, which a player reads; without them the pilot believed the
+        // last enemies did not exist and patrolled in an arbitrary direction,
+        // often the long way round the planet.
+        const inactive=new Set();
+        let ip=0;try{const ia=at('IPTR');if(Number.isInteger(ia))ip=ram.read16(ia);}catch{}
+        for(let i=0;ip&&i<95&&!inactive.has(ip)&&!live.has(ip);i++){
+            if(ip<256||ip>=65500)break;
+            inactive.add(ip);ip=r16(ip,'OLINK');
+        }
+        for(const q of inactive)live.add(q);
         const shipX=game.worldX,shipY=game.y;
         // An astronaut in AFALL2 is physically attached to the PLAYER. Only
         // that exact original source process proves a passenger is aboard.
@@ -241,7 +254,7 @@ function createAttractPilot() {
             const hint=supplied.get(object);
             const rawWorld=r16(object,'OX16');
             const worldX=rawWorld || hint?.worldX || 0;
-            const video=r16(object,'OBJX') || hint?.video || 0;
+            const video=inactive.has(object)?0:(r16(object,'OBJX') || hint?.video || 0);
             const y=typeof ram.read8==='function'?r8(object,'OY16'):(hint?.y??(video&255));
             const vy=s16(r16(object,'OYV'))/256;
             const vx=s16(r16(object,'OXV'));
@@ -363,6 +376,17 @@ function createAttractPilot() {
         // Never let keeping a human stall the wave: with Baiters arriving and
         // every remaining wave enemy below the keep height, set him down.
         const waveLeft=objs.filter(waveEnemy);
+        // Stage 78: the wave's last enemies (no Landers left in reserve). The
+        // wave ends when they die; a Baiter only prolongs it, so finish the
+        // wave and leave Baiters to the shield and the opportunistic gun.
+        const reserve=Number.isInteger(game.wave?.landerReserve)?game.wave.landerReserve:1;
+        const endgame=reserve===0&&waveLeft.length>0&&waveLeft.length<=TACTICS.endgameEnemies&&
+            baiters.length<TACTICS.baiterSwarm;
+        // Stage 78: one human left. Losing him destroys the planet, so guard
+        // him: Landers near him come first, and with nothing to hunt the ship
+        // waits over him instead of patrolling.
+        const lastHuman=humansLeft===1&&!carrying?
+            (astronauts?.living||[]).find(h=>h.object&&Number.isInteger(h.worldX))||null:null;
         if(keepCarry&&baiterPressure&&waveLeft.length&&waveLeft.every(e=>e.y+e.h/2-4>keepFloor))keepCarry=false;
         // Only an ordinary (non-kept) passenger is flown down for delivery.
         const delivering=carrying&&!keepCarry;
@@ -399,7 +423,22 @@ function createAttractPilot() {
                 else if(e.label==='UFOP1')
                     baiterTerm=swarm||Math.abs(e.d)/64<TACTICS.baiterCloseCols?150:-80;
             }
-            return urgentAbduction+engagement+visible+stick+inFront+special+guard+baiterTerm+
+            if(endgame){
+                if(e.label==='UFOP1')baiterTerm=Math.abs(e.d)/64<TACTICS.baiterCloseCols?0:TACTICS.endgameBaiter;
+                else if(waveEnemy(e)){baiterTerm=Math.max(baiterTerm,TACTICS.baiterWaveBonus);distWeight=Math.min(distWeight,1.1);}
+            }
+            let lastGuard=0;
+            if(lastHuman&&e.lander){
+                // With one human left every Lander is heading for him (GTARG).
+                // Rank Landers by how close they are to HIM, not to the ship:
+                // an abduction is over in ~116 ticks, too fast to cross the
+                // planet once it starts. Lower (descending to grab) is worse.
+                const gap=Math.abs(delta(e.worldX,lastHuman.worldX))/64;
+                lastGuard=TACTICS.lastHumanGuard*(1-gap/512)+
+                    (gap<TACTICS.lastHumanGuardCols?150:0)+(gap<60&&e.y>120?120:0);
+                distWeight=Math.min(distWeight,1.1);
+            }
+            return urgentAbduction+engagement+visible+stick+inFront+special+guard+baiterTerm+lastGuard+
                 (e.lander?75:0)-dist*distWeight-vdist*1.5;
         };
         const ranked=objs.map(e=>({...e,score:priority(e)})).sort((a,b)=>b.score-a.score);
@@ -583,6 +622,13 @@ function createAttractPilot() {
             desiredY=clamp(chosen.aimY+chosen.drift*clamp(travel*.75+flight*.5,0,35)+chosen.h*.5-4,45,231);
             goalX=chosen.d;objective=chosen.carrier?'INTERCEPT ABDUCTOR':'HUNT '+chosen.label;
             if(chosen.carrier)stats.carriersPursued++;
+        }else if(lastHuman){
+            // Stage 78: nothing to hunt, one human left: hold station over him,
+            // mid-height, ready for a Lander arriving from either side.
+            const hd=delta(lastHuman.worldX,shipX);
+            desiredY=110;goalX=Math.abs(hd)>12*64?hd:0;
+            desiredDir=Math.abs(hd)>12*64?(hd<0?-1:1):facing;
+            objective='GUARD LAST HUMAN';
         }else{
             if(ticks>=patrolTick){
                 patrolTick=ticks+175;
@@ -732,6 +778,8 @@ function createAttractPilot() {
             (!close || (goalX*facing>0 && Math.abs(game.vx)<70)) &&
             !(ticks<evadeUntil&&hazards[0]?.t<=2&&hazards[0].x*facing>0);
         if(delivering)throttle=false;
+        // Stage 78: holding station over the last human: coast, don't fly off.
+        if(mode.endsWith('GUARD LAST HUMAN')&&goalX===0)throttle=false;
         // Duel: SEPARATE thrusts away at full power; SHOOT coasts so the ship's
         // momentum keeps carrying it away while the gun faces the Mutant.
         if(duelPhase==='SEPARATE')throttle=!reverse&&desiredDir===facing;

@@ -4,6 +4,14 @@ A source-first JavaScript port of Williams *Defender* (1980, Red Label), transla
 
 > **Notice:** *Defender* (1980) and its original 6809 source code are the property of their rights holders. This project is an unofficial, non-commercial JavaScript translation made from the publicly posted source at [mwenge/defender](https://github.com/mwenge/defender), which states no licence. No licence is granted here for the original game material.
 
+# Stage 78 — AI endgame: the long way round, Baiters, the last human
+
+- **The long way round.** The AI only read the active object list. The original's `OSCAN` parks every object outside a 500-pixel band around the screen on the inactive list, so the AI couldn't see the wave's last enemies and patrolled in an arbitrary direction. It now reads both lists, as a player reads the scanner. Long-way travel in the endgame fell from 14% of the time to 2%.
+- **Baiters.** With the wave's last enemies left, the AI finishes the wave instead of fighting Baiters, while still defending against a close one. Endgame time spent targeting a Baiter fell from 54% to 4%, and endgames are 40% shorter.
+- **The last human.** With one human left, Landers are ranked by how close they are to *him*, and with nothing to hunt the AI waits over him.
+
+Across 32 benchmark games the mean score rose from 74.3k to 77.7k and the planet is destroyed less often (56% of the time, down from 64%). Deaths per 10k ticks rose about 9%, from 1.58 to 1.72, because the AI now flies out to enemies it previously couldn't see; deaths per wave are almost unchanged. See [STAGE78_ENDGAME_AI.md](STAGE78_ENDGAME_AI.md). `npm test`: 657 tests pass.
+
 # Stage 77 — Sound audit, sound-board rebuild, silent demo, menus
 
 The game now requests the right sound at every original trigger. Catching a falling human played the Lander scream; it now plays `ACSND`, as `AKIL1` does.

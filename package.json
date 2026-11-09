@@ -1,7 +1,7 @@
 {
   "name": "defenderport",
   "private": true,
-  "version": "0.77.0",
+  "version": "0.78.0",
   "type": "module",
   "description": "Stage 76: source audit of enemy movement and timing (Bomber TIE fixes, Bomber mines restored, Swarmer explosion), permanent DEMO MODE ACTIVE banner, on top of the Stage 75 engine and attract-AI work.",
   "scripts": {
