@@ -1,0 +1,4 @@
+node_modules/
+# Upstream assembly checkout fetched by `npm run source:fetch`
+source/
+.DS_Store

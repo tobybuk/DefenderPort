@@ -1,0 +1,369 @@
+
+> defender-native-transliteration@0.3.0 test
+> node --test tests/*.test.mjs && node tools/guardrail.mjs
+
+TAP version 13
+# Subtest: PHR6: allocation positions are in original direct RAM order, and list sizes match
+ok 1 - PHR6: allocation positions are in original direct RAM order, and list sizes match
+  ---
+  duration_ms: 1.389674
+  type: 'test'
+  ...
+# Subtest: RAND: direct independent three-seed byte vector
+ok 2 - RAND: direct independent three-seed byte vector
+  ---
+  duration_ms: 0.278912
+  type: 'test'
+  ...
+# Subtest: STINIT: 16 original star records with valid colour, X, and Y ranges
+ok 3 - STINIT: 16 original star records with valid colour, X, and Y ranges
+  ---
+  duration_ms: 0.540829
+  type: 'test'
+  ...
+# Subtest: PLAYER: no controls results in no velocity, and never creates JS game objects
+ok 4 - PLAYER: no controls results in no velocity, and never creates JS game objects
+  ---
+  duration_ms: 1.123141
+  type: 'test'
+  ...
+# Subtest: PLAYER: thrust alters original 24-bit RAM and scrolling, not floating-point coordinates
+ok 5 - PLAYER: thrust alters original 24-bit RAM and scrolling, not floating-point coordinates
+  ---
+  duration_ms: 0.412029
+  type: 'test'
+  ...
+# Subtest: PLAYER: up/down controls move only in source Y boundaries and use signed fixed-point velocity
+ok 6 - PLAYER: up/down controls move only in source Y boundaries and use signed fixed-point velocity
+  ---
+  duration_ms: 1.567748
+  type: 'test'
+  ...
+# Subtest: PLAYER: original STATUS bit 6 inhibits updates
+ok 7 - PLAYER: original STATUS bit 6 inhibits updates
+  ---
+  duration_ms: 0.889255
+  type: 'test'
+  ...
+# Subtest: VELO: world-coordinate arithmetic updates original object RAM, not JS entities
+ok 8 - VELO: world-coordinate arithmetic updates original object RAM, not JS entities
+  ---
+  duration_ms: 0.2367
+  type: 'test'
+  ...
+# Subtest: EXEC: original timer-wait returns a named continuation; untranslated original routines fail explicitly
+ok 9 - EXEC: original timer-wait returns a named continuation; untranslated original routines fail explicitly
+  ---
+  duration_ms: 0.849726
+  type: 'test'
+  ...
+# Subtest: SWP: source queue is consumed, not replaced by custom frame modulo scheduler
+ok 10 - SWP: source queue is consumed, not replaced by custom frame modulo scheduler
+  ---
+  duration_ms: 0.698783
+  type: 'test'
+  ...
+# Subtest: flight fixture is deterministic under identical control input sequences
+ok 11 - flight fixture is deterministic under identical control input sequences
+  ---
+  duration_ms: 4.200705
+  type: 'test'
+  ...
+# Subtest: memory stores exactly one byte and wraps native 16-bit pointers
+ok 12 - memory stores exactly one byte and wraps native 16-bit pointers
+  ---
+  duration_ms: 2.281964
+  type: 'test'
+  ...
+# Subtest: symbols are not guessed
+ok 13 - symbols are not guessed
+  ---
+  duration_ms: 0.544505
+  type: 'test'
+  ...
+# Subtest: byte/word casting keeps signed 6809 semantics
+ok 14 - byte/word casting keeps signed 6809 semantics
+  ---
+  duration_ms: 0.179275
+  type: 'test'
+  ...
+# Subtest: 8-bit carry and zero arithmetic
+ok 15 - 8-bit carry and zero arithmetic
+  ---
+  duration_ms: 0.952919
+  type: 'test'
+  ...
+# Subtest: two-byte arithmetic wraps without JS float coordinates
+ok 16 - two-byte arithmetic wraps without JS float coordinates
+  ---
+  duration_ms: 0.264321
+  type: 'test'
+  ...
+# Subtest: ASR and rotations propagate source flags explicitly
+ok 17 - ASR and rotations propagate source flags explicitly
+  ---
+  duration_ms: 0.241738
+  type: 'test'
+  ...
+# Subtest: 8-bit add/sub arithmetic agrees with mathematical modular result for every operand
+ok 18 - 8-bit add/sub arithmetic agrees with mathematical modular result for every operand
+  ---
+  duration_ms: 8.186784
+  type: 'test'
+  ...
+# Subtest: every claimed source routine has a corresponding named native JavaScript function
+ok 19 - every claimed source routine has a corresponding named native JavaScript function
+  ---
+  duration_ms: 5.213989
+  type: 'test'
+  ...
+# Subtest: no critical known untranslated routine is accidentally described as complete
+ok 20 - no critical known untranslated routine is accidentally described as complete
+  ---
+  duration_ms: 0.359702
+  type: 'test'
+  ...
+# Subtest: PINIT: original normal and super free lists each have correct number of cells
+ok 21 - PINIT: original normal and super free lists each have correct number of cells
+  ---
+  duration_ms: 1.728986
+  type: 'test'
+  ...
+# Subtest: MKPROC: newly created process is inserted AFTER current link, with PTIME=1
+ok 22 - MKPROC: newly created process is inserted AFTER current link, with PTIME=1
+  ---
+  duration_ms: 1.032397
+  type: 'test'
+  ...
+# Subtest: MSPROC: segregated allocation sets PCOD=1
+ok 23 - MSPROC: segregated allocation sets PCOD=1
+  ---
+  duration_ms: 0.18921
+  type: 'test'
+  ...
+# Subtest: DISP: decrement-to-zero dispatch and preserved linked process ordering
+ok 24 - DISP: decrement-to-zero dispatch and preserved linked process ordering
+  ---
+  duration_ms: 0.550714
+  type: 'test'
+  ...
+# Subtest: SLEEP 0 does not turn into an invented immediate callback
+ok 25 - SLEEP 0 does not turn into an invented immediate callback
+  ---
+  duration_ms: 0.231512
+  type: 'test'
+  ...
+# Subtest: SUCIDE removes current cell, resumes next cell without skipping it
+ok 26 - SUCIDE removes current cell, resumes next cell without skipping it
+  ---
+  duration_ms: 0.457647
+  type: 'test'
+  ...
+# Subtest: KILL recycles normal and super cells to their distinct source lists
+ok 27 - KILL recycles normal and super cells to their distinct source lists
+  ---
+  duration_ms: 0.217161
+  type: 'test'
+  ...
+# Subtest: KILLOP uses OBJID pointer, not a guessed object property
+ok 28 - KILLOP uses OBJID pointer, not a guessed object property
+  ---
+  duration_ms: 0.332031
+  type: 'test'
+  ...
+# Subtest: GNCIDE preserves current process and coin processes
+ok 29 - GNCIDE preserves current process and coin processes
+  ---
+  duration_ms: 0.548901
+  type: 'test'
+  ...
+# Subtest: exhausting original process slots traps rather than silently spawning replacement objects
+ok 30 - exhausting original process slots traps rather than silently spawning replacement objects
+  ---
+  duration_ms: 2.239782
+  type: 'test'
+  ...
+# Subtest: KILL non-member is an explicit error
+ok 31 - KILL non-member is an explicit error
+  ---
+  duration_ms: 0.257911
+  type: 'test'
+  ...
+# Subtest: untranslated continuation is rejected; no invented gameplay handler
+ok 32 - untranslated continuation is rejected; no invented gameplay handler
+  ---
+  duration_ms: 0.580518
+  type: 'test'
+  ...
+# Subtest: translated continuation resumes by original label and SLEEP address
+ok 33 - translated continuation resumes by original label and SLEEP address
+  ---
+  duration_ms: 0.365991
+  type: 'test'
+  ...
+# Subtest: OINIT allocates 95 original object records and resets active/inactive/shell lists
+ok 34 - OINIT allocates 95 original object records and resets active/inactive/shell lists
+  ---
+  duration_ms: 0.20994
+  type: 'test'
+  ...
+# Subtest: GETOB initializes source object fields but does not automatically link into OPTR
+ok 35 - GETOB initializes source object fields but does not automatically link into OPTR
+  ---
+  duration_ms: 0.210111
+  type: 'test'
+  ...
+# Subtest: KILLOB unlinks from OPTR by pointer-to-link then recycles object into OFREE
+ok 36 - KILLOB unlinks from OPTR by pointer-to-link then recycles object into OFREE
+  ---
+  duration_ms: 0.220956
+  type: 'test'
+  ...
+# Subtest: KILLOB searches IPTR when object is inactive
+ok 37 - KILLOB searches IPTR when object is inactive
+  ---
+  duration_ms: 0.149941
+  type: 'test'
+  ...
+# Subtest: KILSHL only searches shells; absent member is a hard error
+ok 38 - KILSHL only searches shells; absent member is a hard error
+  ---
+  duration_ms: 0.211943
+  type: 'test'
+  ...
+# Subtest: STOUT implements source BGL/BGLX half-byte delta (not generic parallax)
+ok 39 - STOUT implements source BGL/BGLX half-byte delta (not generic parallax)
+  ---
+  duration_ms: 5.092329
+  type: 'test'
+  ...
+# Subtest: STOUT selects the original high colour nibble when BGL bit $40 is set
+ok 40 - STOUT selects the original high colour nibble when BGL bit $40 is set
+  ---
+  duration_ms: 0.330729
+  type: 'test'
+  ...
+# Subtest: STOUT original overflow bounds use $9C and $C0 (both branches)
+ok 41 - STOUT original overflow bounds use $9C and $C0 (both branches)
+  ---
+  duration_ms: 0.351249
+  type: 'test'
+  ...
+# Subtest: STOUT retains previous star bytes while STATUS bit $20 blocks output
+ok 42 - STOUT retains previous star bytes while STATUS bit $20 blocks output
+  ---
+  duration_ms: 0.253475
+  type: 'test'
+  ...
+# Subtest: STOUT refuses missing video translation, rather than silently skipping writes
+ok 43 - STOUT refuses missing video translation, rather than silently skipping writes
+  ---
+  duration_ms: 0.705113
+  type: 'test'
+  ...
+# Subtest: SBLNK increments exactly one star colour and follows odd-seed early return
+ok 44 - SBLNK increments exactly one star colour and follows odd-seed early return
+  ---
+  duration_ms: 0.289168
+  type: 'test'
+  ...
+# Subtest: SBLNK erases previous video byte, assigns source seed X and terrain-mode Y
+ok 45 - SBLNK erases previous video byte, assigns source seed X and terrain-mode Y
+  ---
+  duration_ms: 0.376987
+  type: 'test'
+  ...
+# Subtest: SBLNK preserves the unusual upstream $A0 RAM write rather than removing it
+ok 46 - SBLNK preserves the unusual upstream $A0 RAM write rather than removing it
+  ---
+  duration_ms: 0.329608
+  type: 'test'
+  ...
+# Subtest: THINIT: 33 source iterations populate original THTAB and adjacent byte
+ok 47 - THINIT: 33 source iterations populate original THTAB and adjacent byte
+  ---
+  duration_ms: 0.698563
+  type: 'test'
+  ...
+# Subtest: THPROC/THPR1/THPR2 preserve source pointer wrapping and original NAP(4) continuation
+ok 48 - THPROC/THPR1/THPR2 preserve source pointer wrapping and original NAP(4) continuation
+  ---
+  duration_ms: 1.368253
+  type: 'test'
+  ...
+# Subtest: THPROC refuses fabricated continuation addresses
+ok 49 - THPROC refuses fabricated continuation addresses
+  ---
+  duration_ms: 0.32459
+  type: 'test'
+  ...
+# Subtest: OSCAN: original 500*32 test moves out-of-range head to IPTR
+ok 50 - OSCAN: original 500*32 test moves out-of-range head to IPTR
+  ---
+  duration_ms: 0.467872
+  type: 'test'
+  ...
+# Subtest: ISCAN: source 8x velocity updates inactive object even if still invisible
+ok 51 - ISCAN: source 8x velocity updates inactive object even if still invisible
+  ---
+  duration_ms: 0.371639
+  type: 'test'
+  ...
+# Subtest: ISCAN: activate a returning object and preserve predecessor link
+ok 52 - ISCAN: activate a returning object and preserve predecessor link
+  ---
+  duration_ms: 0.203841
+  type: 'test'
+  ...
+# Subtest: flight diagnostic executes PLAYER followed by original STOUT
+ok 53 - flight diagnostic executes PLAYER followed by original STOUT
+  ---
+  duration_ms: 2.225921
+  type: 'test'
+  ...
+# Subtest: source checkout pins a full 40-digit commit SHA
+ok 54 - source checkout pins a full 40-digit commit SHA
+  ---
+  duration_ms: 1.252172
+  type: 'test'
+  ...
+# Subtest: assembly expression parser supports original numeric notations
+ok 55 - assembly expression parser supports original numeric notations
+  ---
+  duration_ms: 0.729609
+  type: 'test'
+  ...
+# Subtest: layout parser recognizes source-defined allocation offsets and self-address definitions
+ok 56 - layout parser recognizes source-defined allocation offsets and self-address definitions
+  ---
+  duration_ms: 1.333732
+  type: 'test'
+  ...
+# Subtest: routine inventory reports actual labels separate from references and data
+ok 57 - routine inventory reports actual labels separate from references and data
+  ---
+  duration_ms: 0.598655
+  type: 'test'
+  ...
+# Subtest: assembly parser refuses to silently guess an undefined memory symbol
+ok 58 - assembly parser refuses to silently guess an undefined memory symbol
+  ---
+  duration_ms: 0.522272
+  type: 'test'
+  ...
+# Subtest: possible callable labels are surfaced as incomplete unless translated and tracked
+ok 59 - possible callable labels are surfaced as incomplete unless translated and tracked
+  ---
+  duration_ms: 2.015861
+  type: 'test'
+  ...
+1..59
+# tests 59
+# suites 0
+# pass 59
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 178.826922
+PASS: no prohibited substitution patterns found in original/ translations

@@ -1,0 +1,14 @@
+Stage 35 — 2026-11-07
+Original source baseline: Stage 34 archive.
+
+PASS: npm run build
+PASS: npm test — 424 tests, 0 failures; guardrail check passed
+PASS: Node --check of rebuilt standalone inline script
+PASS: Actual Chromium browser (Playwright set_content) loaded the bundled page
+PASS: Chromium page error list empty
+PASS: Forced Smart Bomb / final-enemy wave transition: BONUS appears only after all eight original flash updates; 1 first survivor award and 9 remaining
+PASS: Browser-level TIEKIL cleanup: 21 nonzero sprite bytes before kill; 0 after
+PASS: Regressions stage35-bomb-transition-cleanup.test.mjs — 3 passing
+PASS: Two 12,000-update stress runs (bombs and mixed input): 0 exceptions, 560 bomb requests total; wave 4 and wave 6 reached
+
+Not proven: exact original-machine CPU-cycle/raster scheduling, whether any other uncommon sprite ownership path can leave pixels. Sound deliberately omitted.

@@ -1,0 +1,1140 @@
+Stage 31 (2026-11-07): 400/400 automated tests passed, Chromium startup/mobile input passed.
+See STAGE31_TEST_RESULTS.txt. Sound deferred.
+
+
+> defender-native-transliteration@0.10.0 test
+> node --test tests/*.test.mjs && node tools/guardrail.mjs
+
+TAP version 13
+# Subtest: PHR6: allocation positions are in original direct RAM order, and list sizes match
+ok 1 - PHR6: allocation positions are in original direct RAM order, and list sizes match
+  ---
+  duration_ms: 1.38733
+  type: 'test'
+  ...
+# Subtest: RAND: direct independent three-seed byte vector
+ok 2 - RAND: direct independent three-seed byte vector
+  ---
+  duration_ms: 0.297209
+  type: 'test'
+  ...
+# Subtest: STINIT: 16 original star records with valid colour, X, and Y ranges
+ok 3 - STINIT: 16 original star records with valid colour, X, and Y ranges
+  ---
+  duration_ms: 0.69348
+  type: 'test'
+  ...
+# Subtest: PLAYER: no controls results in no velocity, and never creates JS game objects
+ok 4 - PLAYER: no controls results in no velocity, and never creates JS game objects
+  ---
+  duration_ms: 7.113594
+  type: 'test'
+  ...
+# Subtest: PLAYER: thrust alters original 24-bit RAM and scrolling, not floating-point coordinates
+ok 5 - PLAYER: thrust alters original 24-bit RAM and scrolling, not floating-point coordinates
+  ---
+  duration_ms: 3.166911
+  type: 'test'
+  ...
+# Subtest: PLAYER: up/down controls move only in source Y boundaries and use signed fixed-point velocity
+ok 6 - PLAYER: up/down controls move only in source Y boundaries and use signed fixed-point velocity
+  ---
+  duration_ms: 5.200766
+  type: 'test'
+  ...
+# Subtest: PLAYER: original STATUS bit 6 inhibits updates
+ok 7 - PLAYER: original STATUS bit 6 inhibits updates
+  ---
+  duration_ms: 2.808901
+  type: 'test'
+  ...
+# Subtest: VELO: world-coordinate arithmetic updates original object RAM, not JS entities
+ok 8 - VELO: world-coordinate arithmetic updates original object RAM, not JS entities
+  ---
+  duration_ms: 0.279924
+  type: 'test'
+  ...
+# Subtest: EXEC: original timer-wait returns a named continuation; untranslated original routines fail explicitly
+ok 9 - EXEC: original timer-wait returns a named continuation; untranslated original routines fail explicitly
+  ---
+  duration_ms: 1.043762
+  type: 'test'
+  ...
+# Subtest: SWP: source queue is consumed, not replaced by custom frame modulo scheduler
+ok 10 - SWP: source queue is consumed, not replaced by custom frame modulo scheduler
+  ---
+  duration_ms: 0.641789
+  type: 'test'
+  ...
+# Subtest: flight fixture is deterministic under identical control input sequences
+ok 11 - flight fixture is deterministic under identical control input sequences
+  ---
+  duration_ms: 13.988895
+  type: 'test'
+  ...
+# Subtest: memory stores exactly one byte and wraps native 16-bit pointers
+ok 12 - memory stores exactly one byte and wraps native 16-bit pointers
+  ---
+  duration_ms: 1.172613
+  type: 'test'
+  ...
+# Subtest: symbols are not guessed
+ok 13 - symbols are not guessed
+  ---
+  duration_ms: 0.459409
+  type: 'test'
+  ...
+# Subtest: byte/word casting keeps signed 6809 semantics
+ok 14 - byte/word casting keeps signed 6809 semantics
+  ---
+  duration_ms: 0.115651
+  type: 'test'
+  ...
+# Subtest: 8-bit carry and zero arithmetic
+ok 15 - 8-bit carry and zero arithmetic
+  ---
+  duration_ms: 0.762547
+  type: 'test'
+  ...
+# Subtest: two-byte arithmetic wraps without JS float coordinates
+ok 16 - two-byte arithmetic wraps without JS float coordinates
+  ---
+  duration_ms: 0.32486
+  type: 'test'
+  ...
+# Subtest: ASR and rotations propagate source flags explicitly
+ok 17 - ASR and rotations propagate source flags explicitly
+  ---
+  duration_ms: 0.18273
+  type: 'test'
+  ...
+# Subtest: 8-bit add/sub arithmetic agrees with mathematical modular result for every operand
+ok 18 - 8-bit add/sub arithmetic agrees with mathematical modular result for every operand
+  ---
+  duration_ms: 9.352883
+  type: 'test'
+  ...
+# Subtest: every claimed source routine has a corresponding named native JavaScript function
+ok 19 - every claimed source routine has a corresponding named native JavaScript function
+  ---
+  duration_ms: 10.486598
+  type: 'test'
+  ...
+# Subtest: no critical known untranslated routine is accidentally described as complete
+ok 20 - no critical known untranslated routine is accidentally described as complete
+  ---
+  duration_ms: 0.329287
+  type: 'test'
+  ...
+# Subtest: PINIT: original normal and super free lists each have correct number of cells
+ok 21 - PINIT: original normal and super free lists each have correct number of cells
+  ---
+  duration_ms: 2.05367
+  type: 'test'
+  ...
+# Subtest: MKPROC: newly created process is inserted AFTER current link, with PTIME=1
+ok 22 - MKPROC: newly created process is inserted AFTER current link, with PTIME=1
+  ---
+  duration_ms: 1.13668
+  type: 'test'
+  ...
+# Subtest: MSPROC: segregated allocation sets PCOD=1
+ok 23 - MSPROC: segregated allocation sets PCOD=1
+  ---
+  duration_ms: 0.228188
+  type: 'test'
+  ...
+# Subtest: DISP: decrement-to-zero dispatch and preserved linked process ordering
+ok 24 - DISP: decrement-to-zero dispatch and preserved linked process ordering
+  ---
+  duration_ms: 0.445758
+  type: 'test'
+  ...
+# Subtest: SLEEP 0 does not turn into an invented immediate callback
+ok 25 - SLEEP 0 does not turn into an invented immediate callback
+  ---
+  duration_ms: 0.235848
+  type: 'test'
+  ...
+# Subtest: SUCIDE removes current cell, resumes next cell without skipping it
+ok 26 - SUCIDE removes current cell, resumes next cell without skipping it
+  ---
+  duration_ms: 0.478427
+  type: 'test'
+  ...
+# Subtest: KILL recycles normal and super cells to their distinct source lists
+ok 27 - KILL recycles normal and super cells to their distinct source lists
+  ---
+  duration_ms: 0.262077
+  type: 'test'
+  ...
+# Subtest: KILLOP uses OBJID pointer, not a guessed object property
+ok 28 - KILLOP uses OBJID pointer, not a guessed object property
+  ---
+  duration_ms: 0.255758
+  type: 'test'
+  ...
+# Subtest: GNCIDE preserves current process and coin processes
+ok 29 - GNCIDE preserves current process and coin processes
+  ---
+  duration_ms: 0.63584
+  type: 'test'
+  ...
+# Subtest: exhausting original process slots traps rather than silently spawning replacement objects
+ok 30 - exhausting original process slots traps rather than silently spawning replacement objects
+  ---
+  duration_ms: 1.158733
+  type: 'test'
+  ...
+# Subtest: KILL non-member is an explicit error
+ok 31 - KILL non-member is an explicit error
+  ---
+  duration_ms: 0.230811
+  type: 'test'
+  ...
+# Subtest: untranslated continuation is rejected; no invented gameplay handler
+ok 32 - untranslated continuation is rejected; no invented gameplay handler
+  ---
+  duration_ms: 0.611965
+  type: 'test'
+  ...
+# Subtest: translated continuation resumes by original label and SLEEP address
+ok 33 - translated continuation resumes by original label and SLEEP address
+  ---
+  duration_ms: 0.415154
+  type: 'test'
+  ...
+# Subtest: OINIT allocates 95 original object records and resets active/inactive/shell lists
+ok 34 - OINIT allocates 95 original object records and resets active/inactive/shell lists
+  ---
+  duration_ms: 0.275227
+  type: 'test'
+  ...
+# Subtest: GETOB initializes source object fields but does not automatically link into OPTR
+ok 35 - GETOB initializes source object fields but does not automatically link into OPTR
+  ---
+  duration_ms: 0.173647
+  type: 'test'
+  ...
+# Subtest: KILLOB unlinks from OPTR by pointer-to-link then recycles object into OFREE
+ok 36 - KILLOB unlinks from OPTR by pointer-to-link then recycles object into OFREE
+  ---
+  duration_ms: 0.137833
+  type: 'test'
+  ...
+# Subtest: KILLOB searches IPTR when object is inactive
+ok 37 - KILLOB searches IPTR when object is inactive
+  ---
+  duration_ms: 0.090394
+  type: 'test'
+  ...
+# Subtest: KILSHL only searches shells; absent member is a hard error
+ok 38 - KILSHL only searches shells; absent member is a hard error
+  ---
+  duration_ms: 0.140128
+  type: 'test'
+  ...
+# Subtest: source-data literals preserve decimal, hex, binary and byte/word ordering
+ok 39 - source-data literals preserve decimal, hex, binary and byte/word ordering
+  ---
+  duration_ms: 2.073344
+  type: 'test'
+  ...
+# Subtest: source-data extraction refuses silent symbolic, unsupported macro and invalid width
+ok 40 - source-data extraction refuses silent symbolic, unsupported macro and invalid width
+  ---
+  duration_ms: 0.56852
+  type: 'test'
+  ...
+# Subtest: MAPCH1/2/3/7 and MAPCHG preserve the original two ordered bank-register writes
+ok 41 - MAPCH1/2/3/7 and MAPCHG preserve the original two ordered bank-register writes
+  ---
+  duration_ms: 2.069789
+  type: 'test'
+  ...
+# Subtest: BGI chooses source bank 7 BEFORE calling original BGINIT
+ok 42 - BGI chooses source bank 7 BEFORE calling original BGINIT
+  ---
+  duration_ms: 1.106665
+  type: 'test'
+  ...
+# Subtest: BGI refuses to invent missing BGINIT but leaves source MAPCR/MAPC writes visible
+ok 43 - BGI refuses to invent missing BGINIT but leaves source MAPCR/MAPC writes visible
+  ---
+  duration_ms: 0.492428
+  type: 'test'
+  ...
+# Subtest: OFSHIT selects bank 2, reads OBJX and OPICT in original record, erases that bitmap
+ok 44 - OFSHIT selects bank 2, reads OBJX and OPICT in original record, erases that bitmap
+  ---
+  duration_ms: 0.862866
+  type: 'test'
+  ...
+# Subtest: OFSHIT missing source picture descriptor is an explicit error, not an invented erasure
+ok 45 - OFSHIT missing source picture descriptor is an explicit error, not an invented erasure
+  ---
+  duration_ms: 0.274886
+  type: 'test'
+  ...
+# Subtest: KILOFF delegates exactly to original KILLOB with the same pointer
+ok 46 - KILOFF delegates exactly to original KILLOB with the same pointer
+  ---
+  duration_ms: 0.356627
+  type: 'test'
+  ...
+# Subtest: KILOFF refuses to replace untranslated object deletion
+ok 47 - KILOFF refuses to replace untranslated object deletion
+  ---
+  duration_ms: 0.254806
+  type: 'test'
+  ...
+# Subtest: IRQ_PAIR runs the actual source IRQ upper and lower halves and increments TIMER once
+ok 48 - IRQ_PAIR runs the actual source IRQ upper and lower halves and increments TIMER once
+  ---
+  duration_ms: 7.859946
+  type: 'test'
+  ...
+# Subtest: IRQ_PAIR takes flight input through original PLAYER, not a diagnostic substitute movement function
+ok 49 - IRQ_PAIR takes flight input through original PLAYER, not a diagnostic substitute movement function
+  ---
+  duration_ms: 7.135635
+  type: 'test'
+  ...
+# Subtest: IRQ_PAIR executes terrain and a source OPROC descriptor without a fake enemy loop
+ok 50 - IRQ_PAIR executes terrain and a source OPROC descriptor without a fake enemy loop
+  ---
+  duration_ms: 3.307488
+  type: 'test'
+  ...
+# Subtest: EXEC overload erase passes the source X object pointer to OFSHIT
+ok 51 - EXEC overload erase passes the source X object pointer to OFSHIT
+  ---
+  duration_ms: 0.612606
+  type: 'test'
+  ...
+# Subtest: Every new source entry has a one-to-one JS function and an explicit unverified source record
+ok 52 - Every new source entry has a one-to-one JS function and an explicit unverified source record
+  ---
+  duration_ms: 1.223308
+  type: 'test'
+  ...
+# Subtest: STOUT implements source BGL/BGLX half-byte delta (not generic parallax)
+ok 53 - STOUT implements source BGL/BGLX half-byte delta (not generic parallax)
+  ---
+  duration_ms: 1.963812
+  type: 'test'
+  ...
+# Subtest: STOUT selects the original high colour nibble when BGL bit $40 is set
+ok 54 - STOUT selects the original high colour nibble when BGL bit $40 is set
+  ---
+  duration_ms: 0.287515
+  type: 'test'
+  ...
+# Subtest: STOUT original overflow bounds use $9C and $C0 (both branches)
+ok 55 - STOUT original overflow bounds use $9C and $C0 (both branches)
+  ---
+  duration_ms: 0.339132
+  type: 'test'
+  ...
+# Subtest: STOUT retains previous star bytes while STATUS bit $20 blocks output
+ok 56 - STOUT retains previous star bytes while STATUS bit $20 blocks output
+  ---
+  duration_ms: 0.24296
+  type: 'test'
+  ...
+# Subtest: STOUT refuses missing video translation, rather than silently skipping writes
+ok 57 - STOUT refuses missing video translation, rather than silently skipping writes
+  ---
+  duration_ms: 0.557724
+  type: 'test'
+  ...
+# Subtest: SBLNK increments exactly one star colour and follows odd-seed early return
+ok 58 - SBLNK increments exactly one star colour and follows odd-seed early return
+  ---
+  duration_ms: 0.29775
+  type: 'test'
+  ...
+# Subtest: SBLNK erases previous video byte, assigns source seed X and terrain-mode Y
+ok 59 - SBLNK erases previous video byte, assigns source seed X and terrain-mode Y
+  ---
+  duration_ms: 0.41325
+  type: 'test'
+  ...
+# Subtest: SBLNK preserves the unusual upstream $A0 RAM write rather than removing it
+ok 60 - SBLNK preserves the unusual upstream $A0 RAM write rather than removing it
+  ---
+  duration_ms: 0.235408
+  type: 'test'
+  ...
+# Subtest: THINIT: 33 source iterations populate original THTAB and adjacent byte
+ok 61 - THINIT: 33 source iterations populate original THTAB and adjacent byte
+  ---
+  duration_ms: 0.634367
+  type: 'test'
+  ...
+# Subtest: THPROC/THPR1/THPR2 preserve source pointer wrapping and original NAP(4) continuation
+ok 62 - THPROC/THPR1/THPR2 preserve source pointer wrapping and original NAP(4) continuation
+  ---
+  duration_ms: 1.333291
+  type: 'test'
+  ...
+# Subtest: THPROC refuses fabricated continuation addresses
+ok 63 - THPROC refuses fabricated continuation addresses
+  ---
+  duration_ms: 0.279933
+  type: 'test'
+  ...
+# Subtest: OSCAN: original 500*32 test moves out-of-range head to IPTR
+ok 64 - OSCAN: original 500*32 test moves out-of-range head to IPTR
+  ---
+  duration_ms: 0.481882
+  type: 'test'
+  ...
+# Subtest: ISCAN: source 8x velocity updates inactive object even if still invisible
+ok 65 - ISCAN: source 8x velocity updates inactive object even if still invisible
+  ---
+  duration_ms: 0.36518
+  type: 'test'
+  ...
+# Subtest: ISCAN: activate a returning object and preserve predecessor link
+ok 66 - ISCAN: activate a returning object and preserve predecessor link
+  ---
+  duration_ms: 0.266184
+  type: 'test'
+  ...
+# Subtest: flight diagnostic executes PLAYER followed by original STOUT
+ok 67 - flight diagnostic executes PLAYER followed by original STOUT
+  ---
+  duration_ms: 11.476531
+  type: 'test'
+  ...
+# Subtest: Original ship pictures are exactly 8 byte columns x 6 rows: physical 16 x 6 pixels
+ok 68 - Original ship pictures are exactly 8 byte columns x 6 rows: physical 16 x 6 pixels
+  ---
+  duration_ms: 1.293331
+  type: 'test'
+  ...
+# Subtest: ON86 writes exact original 48 source bytes to source COLUMN-major graphics addresses
+ok 69 - ON86 writes exact original 48 source bytes to source COLUMN-major graphics addresses
+  ---
+  duration_ms: 0.490655
+  type: 'test'
+  ...
+# Subtest: ON86 original C flag selects alternate source data, and supports reversed direction
+ok 70 - ON86 original C flag selects alternate source data, and supports reversed direction
+  ---
+  duration_ms: 0.281736
+  type: 'test'
+  ...
+# Subtest: OFF86 clears exactly the same 8 x 6 source-byte rectangle
+ok 71 - OFF86 clears exactly the same 8 x 6 source-byte rectangle
+  ---
+  duration_ms: 0.190952
+  type: 'test'
+  ...
+# Subtest: Source pair of horizontal colour nibbles maps to adjacent SCREEN X pixels, not vertical pixels
+ok 72 - Source pair of horizontal colour nibbles maps to adjacent SCREEN X pixels, not vertical pixels
+  ---
+  duration_ms: 9.227357
+  type: 'test'
+  ...
+# Subtest: POUT + phase carry is determined by bit 7 of PLAX16+1, not world X
+ok 73 - POUT + phase carry is determined by bit 7 of PLAX16+1, not world X
+  ---
+  duration_ms: 0.39252
+  type: 'test'
+  ...
+# Subtest: POUT1 uses actual reverse ship data, not a geometrically flipped forward sprite
+ok 74 - POUT1 uses actual reverse ship data, not a geometrically flipped forward sprite
+  ---
+  duration_ms: 0.243911
+  type: 'test'
+  ...
+# Subtest: PRDISP guard STATUS bit $10 prevents changing graphics and direction
+ok 75 - PRDISP guard STATUS bit $10 prevents changing graphics and direction
+  ---
+  duration_ms: 0.208648
+  type: 'test'
+  ...
+# Subtest: PRDISP preserves original scanline gate: no state change outside current player Y
+ok 76 - PRDISP preserves original scanline gate: no state change outside current player Y
+  ---
+  duration_ms: 0.299172
+  type: 'test'
+  ...
+# Subtest: PRDISP original sequence clears old ship, sets PLADIR=NPLAD then draws reversed data
+ok 77 - PRDISP original sequence clears old ship, sets PLADIR=NPLAD then draws reversed data
+  ---
+  duration_ms: 0.603452
+  type: 'test'
+  ...
+# Subtest: THOUT writes source five-byte idle pattern and additional thrust pixels at exact offsets
+ok 78 - THOUT writes source five-byte idle pattern and additional thrust pixels at exact offsets
+  ---
+  duration_ms: 0.304109
+  type: 'test'
+  ...
+# Subtest: THOUT1 uses original reverse-side source offsets and THOFF1 removes them
+ok 79 - THOUT1 uses original reverse-side source offsets and THOFF1 removes them
+  ---
+  duration_ms: 0.214537
+  type: 'test'
+  ...
+# Subtest: ON23, ON34, ON48, ON58, ON64, ON56, ON66 and ON28 retain precise byte column geometry
+ok 80 - ON23, ON34, ON48, ON58, ON64, ON56, ON66 and ON28 retain precise byte column geometry
+  ---
+  duration_ms: 0.485878
+  type: 'test'
+  ...
+# Subtest: General source byte-column routine obeys original odd/even phase choice
+ok 81 - General source byte-column routine obeys original odd/even phase choice
+  ---
+  duration_ms: 0.401744
+  type: 'test'
+  ...
+# Subtest: Flight fixture now writes ship to the SAME VIDEO BUFFER as STOUT, no Canvas gameplay substitute
+ok 82 - Flight fixture now writes ship to the SAME VIDEO BUFFER as STOUT, no Canvas gameplay substitute
+  ---
+  duration_ms: 9.727146
+  type: 'test'
+  ...
+# Subtest: Every new original Stage 4 callable routine has a 1:1 source inventory record
+ok 83 - Every new original Stage 4 callable routine has a 1:1 source inventory record
+  ---
+  duration_ms: 1.506847
+  type: 'test'
+  ...
+# Subtest: PHR6 original SCANH and SCANER equates, not UI-derived dimensions
+ok 84 - PHR6 original SCANH and SCANER equates, not UI-derived dimensions
+  ---
+  duration_ms: 1.351568
+  type: 'test'
+  ...
+# Subtest: BORDER BORDLP copies $5555 across source bottom border, with exact exclusive end
+ok 85 - BORDER BORDLP copies $5555 across source bottom border, with exact exclusive end
+  ---
+  duration_ms: 0.334544
+  type: 'test'
+  ...
+# Subtest: BORDER BORD1, BORD2, BORD3 write original bezel and centre-marker addresses
+ok 86 - BORDER BORD1, BORD2, BORD3 write original bezel and centre-marker addresses
+  ---
+  duration_ms: 0.852811
+  type: 'test'
+  ...
+# Subtest: Every copied sound table follows the original priority/repeat/timer/command groups
+ok 87 - Every copied sound table follows the original priority/repeat/timer/command groups
+  ---
+  duration_ms: 0.303589
+  type: 'test'
+  ...
+# Subtest: SNDOUT produces original two Williams PIA writes: 3F then complement masked to 3F
+ok 88 - SNDOUT produces original two Williams PIA writes: 3F then complement masked to 3F
+  ---
+  duration_ms: 1.307222
+  type: 'test'
+  ...
+# Subtest: SNDLD stores source pointer minus 2, priority and 01:01 timer/rep in PHR6 RAM
+ok 89 - SNDLD stores source pointer minus 2, priority and 01:01 timer/rep in PHR6 RAM
+  ---
+  duration_ms: 0.37231
+  type: 'test'
+  ...
+# Subtest: Sound priority: lower ignored, equality interrupts, and rejected SNDLD still clears THFLG
+ok 90 - Sound priority: lower ignored, equality interrupts, and rejected SNDLD still clears THFLG
+  ---
+  duration_ms: 0.220846
+  type: 'test'
+  ...
+# Subtest: SNDSEQ plays original laser command, holds for exactly source delay, terminates and clears priority
+ok 91 - SNDSEQ plays original laser command, holds for exactly source delay, terminates and clears priority
+  ---
+  duration_ms: 0.335917
+  type: 'test'
+  ...
+# Subtest: SNDSEQ repeated sound consumes original repeat counter before next triple
+ok 92 - SNDSEQ repeated sound consumes original repeat counter before next triple
+  ---
+  duration_ms: 0.395224
+  type: 'test'
+  ...
+# Subtest: SNDSEQ original thrust sound starts and stops from PIA21/STATUS, only when no table is active
+ok 93 - SNDSEQ original thrust sound starts and stops from PIA21/STATUS, only when no table is active
+  ---
+  duration_ms: 0.421783
+  type: 'test'
+  ...
+# Subtest: Real Stage 5 runnable diagnostic contains original BORDER writes and records source sound commands
+ok 94 - Real Stage 5 runnable diagnostic contains original BORDER writes and records source sound commands
+  ---
+  duration_ms: 6.029511
+  type: 'test'
+  ...
+# Subtest: PLINDX and PLDX faithfully select source player data record by CURPLR byte
+ok 95 - PLINDX and PLDX faithfully select source player data record by CURPLR byte
+  ---
+  duration_ms: 0.185834
+  type: 'test'
+  ...
+# Subtest: Stage 6 flight diagnostic keeps Stage 5 ship, stars, BORDER and sound behaviour
+ok 96 - Stage 6 flight diagnostic keeps Stage 5 ship, stars, BORDER and sound behaviour
+  ---
+  duration_ms: 8.516917
+  type: 'test'
+  ...
+# Subtest: Stage 6 can execute real SCORE arithmetic without substituting an on-screen font
+ok 97 - Stage 6 can execute real SCORE arithmetic without substituting an on-screen font
+  ---
+  duration_ms: 3.749281
+  type: 'test'
+  ...
+# Subtest: Stage 6 original low-level ROMF8 graphics routines are exposed to JS diagnostics
+ok 98 - Stage 6 original low-level ROMF8 graphics routines are exposed to JS diagnostics
+  ---
+  duration_ms: 2.624069
+  type: 'test'
+  ...
+# Subtest: ROMF8 CWRIT 2×4 bytes are copied column-major, not Canvas rows
+ok 99 - ROMF8 CWRIT 2×4 bytes are copied column-major, not Canvas rows
+  ---
+  duration_ms: 1.369744
+  type: 'test'
+  ...
+# Subtest: ROMF8 CWRIT odd-height descriptors copy all bytes including final odd byte
+ok 100 - ROMF8 CWRIT odd-height descriptors copy all bytes including final odd byte
+  ---
+  duration_ms: 0.189149
+  type: 'test'
+  ...
+# Subtest: COFF and COFFA source rectangle erasures preserve pixels outside area
+ok 101 - COFF and COFFA source rectangle erasures preserve pixels outside area
+  ---
+  duration_ms: 0.197962
+  type: 'test'
+  ...
+# Subtest: BLKCLR routes to original COFFA with independent width and height
+ok 102 - BLKCLR routes to original COFFA with independent width and height
+  ---
+  duration_ms: 0.186486
+  type: 'test'
+  ...
+# Subtest: SCRCLR exactly clears $0000..$9BFF and retains other video bytes
+ok 103 - SCRCLR exactly clears $0000..$9BFF and retains other video bytes
+  ---
+  duration_ms: 2.806518
+  type: 'test'
+  ...
+# Subtest: Original CWRIT descriptors must be populated with source data; do not guess missing zero length
+ok 104 - Original CWRIT descriptors must be populated with source data; do not guess missing zero length
+  ---
+  duration_ms: 0.481902
+  type: 'test'
+  ...
+# Subtest: 6809 DAA normal, tens carry, and inherited carry after ADCA
+ok 105 - 6809 DAA normal, tens carry, and inherited carry after ADCA
+  ---
+  duration_ms: 2.027166
+  type: 'test'
+  ...
+# Subtest: RCHK compares MSB word and then 3rd byte, not a JS decimal string
+ok 106 - RCHK compares MSB word and then 3rd byte, not a JS decimal string
+  ---
+  duration_ms: 0.497395
+  type: 'test'
+  ...
+# Subtest: SCORE directly updates source 4-byte packed-BCD player score, carry propagation, and flag
+ok 107 - SCORE directly updates source 4-byte packed-BCD player score, carry propagation, and flag
+  ---
+  duration_ms: 0.71771
+  type: 'test'
+  ...
+# Subtest: SCORE keeps player 2 BCD in P2SCR and does not touch player 1
+ok 108 - SCORE keeps player 2 BCD in P2SCR and does not touch player 1
+  ---
+  duration_ms: 0.287846
+  type: 'test'
+  ...
+# Subtest: SCORE rejects decimal-looking non-BCD mantissa, instead of guessing score units
+ok 109 - SCORE rejects decimal-looking non-BCD mantissa, instead of guessing score units
+  ---
+  duration_ms: 0.61598
+  type: 'test'
+  ...
+# Subtest: SCORE replay branch uses source REPLA and 3-byte RCHK, then source side-effect order
+ok 110 - SCORE replay branch uses source REPLA and 3-byte RCHK, then source side-effect order
+  ---
+  duration_ms: 0.345741
+  type: 'test'
+  ...
+# Subtest: SCORE refuses to hide missing original SCRTRN and replay side effects
+ok 111 - SCORE refuses to hide missing original SCRTRN and replay side effects
+  ---
+  duration_ms: 0.344248
+  type: 'test'
+  ...
+# Subtest: SCRTR0 uses high/low nibble phase and suppresses only 4 leading zeros
+ok 112 - SCRTR0 uses high/low nibble phase and suppresses only 4 leading zeros
+  ---
+  duration_ms: 0.485137
+  type: 'test'
+  ...
+# Subtest: SCRTRN selects CURPLR; zeros in final two displayed positions are kept
+ok 113 - SCRTRN selects CURPLR; zeros in final two displayed positions are kept
+  ---
+  duration_ms: 0.483604
+  type: 'test'
+  ...
+# Subtest: Untranslated score glyphs cause a strict boundary, not an invented HTML numeral
+ok 114 - Untranslated score glyphs cause a strict boundary, not an invented HTML numeral
+  ---
+  duration_ms: 0.598214
+  type: 'test'
+  ...
+# Subtest: LDISP and SBDISP use original P1/P2 counts, caps and address increments
+ok 115 - LDISP and SBDISP use original P1/P2 counts, caps and address increments
+  ---
+  duration_ms: 0.697701
+  type: 'test'
+  ...
+# Subtest: TDISP original top clear, BORDER, laser, bomb and score sequence
+ok 116 - TDISP original top clear, BORDER, laser, bomb and score sequence
+  ---
+  duration_ms: 0.266143
+  type: 'test'
+  ...
+# Subtest: TDISP cannot silently paint a substitute screen when BLKCLR is untranslated
+ok 117 - TDISP cannot silently paint a substitute screen when BLKCLR is untranslated
+  ---
+  duration_ms: 0.170492
+  type: 'test'
+  ...
+# Subtest: SSCAN decrements source debounce timers and captures previous/new PIA bytes
+ok 118 - SSCAN decrements source debounce timers and captures previous/new PIA bytes
+  ---
+  duration_ms: 0.44708
+  type: 'test'
+  ...
+# Subtest: SSCAN slam load 60 then same-scan decrement to 59, as original order
+ok 119 - SSCAN slam load 60 then same-scan decrement to 59, as original order
+  ---
+  duration_ms: 0.263319
+  type: 'test'
+  ...
+# Subtest: SWITCH chooses lowest asserted bit and writes original 2-slot SWPROC queue
+ok 120 - SWITCH chooses lowest asserted bit and writes original 2-slot SWPROC queue
+  ---
+  duration_ms: 0.304781
+  type: 'test'
+  ...
+# Subtest: SSCAN game input queues source table entry on edge, not on held input
+ok 121 - SSCAN game input queues source table entry on edge, not on held input
+  ---
+  duration_ms: 0.260354
+  type: 'test'
+  ...
+# Subtest: CSCAN original 1ms coin confirmation double-reads and rejects a bounce
+ok 122 - CSCAN original 1ms coin confirmation double-reads and rejects a bounce
+  ---
+  duration_ms: 0.206355
+  type: 'test'
+  ...
+# Subtest: CSCAN queues a stable coin entry only with real source switch data
+ok 123 - CSCAN queues a stable coin entry only with real source switch data
+  ---
+  duration_ms: 0.23698
+  type: 'test'
+  ...
+# Subtest: Original switch tables are mandatory; no guessed switch action may run
+ok 124 - Original switch tables are mandatory; no guessed switch action may run
+  ---
+  duration_ms: 0.194277
+  type: 'test'
+  ...
+# Subtest: IRQ normal upper scanline follows source sequence SNDSEQ,PLAYER,STOUT,OPROC,PRDISP,SHELL
+ok 125 - IRQ normal upper scanline follows source sequence SNDSEQ,PLAYER,STOUT,OPROC,PRDISP,SHELL
+  ---
+  duration_ms: 2.566123
+  type: 'test'
+  ...
+# Subtest: IRQ upper scanline clamps write boundary to 0xA8 and runs only once per phase
+ok 126 - IRQ upper scanline clamps write boundary to 0xA8 and runs only once per phase
+  ---
+  duration_ms: 0.280474
+  type: 'test'
+  ...
+# Subtest: IRQ normal lower path performs CSCAN,BGOUT,PRDISP,OPROC,VELO in this precise order
+ok 127 - IRQ normal lower path performs CSCAN,BGOUT,PRDISP,OPROC,VELO in this precise order
+  ---
+  duration_ms: 0.265903
+  type: 'test'
+  ...
+# Subtest: IRQ status bit 1 disables BGOUT but still runs other lower-phase routines
+ok 128 - IRQ status bit 1 disables BGOUT but still runs other lower-phase routines
+  ---
+  duration_ms: 0.152435
+  type: 'test'
+  ...
+# Subtest: IRQ copies all sixteen PCRAM bytes to CRAM only when VERTCT <=8
+ok 129 - IRQ copies all sixteen PCRAM bytes to CRAM only when VERTCT <=8
+  ---
+  duration_ms: 0.342747
+  type: 'test'
+  ...
+# Subtest: IRQ lower first invocation without upper phase is ignored, restores MAPC
+ok 130 - IRQ lower first invocation without upper phase is ignored, restores MAPC
+  ---
+  duration_ms: 0.142521
+  type: 'test'
+  ...
+# Subtest: IRQ missing OPROC throws an explicit untranslated routine error
+ok 131 - IRQ missing OPROC throws an explicit untranslated routine error
+  ---
+  duration_ms: 0.590383
+  type: 'test'
+  ...
+# Subtest: IRQB inverted upper phase calls CSCAN, BGOUT, PRDISP, OPROC only
+ok 132 - IRQB inverted upper phase calls CSCAN, BGOUT, PRDISP, OPROC only
+  ---
+  duration_ms: 0.325782
+  type: 'test'
+  ...
+# Subtest: IRQB lower phase orders SNDSEQ,PLAYER,STOUT,PRDISP,OPROC,SHELL,VELO
+ok 133 - IRQB lower phase orders SNDSEQ,PLAYER,STOUT,PRDISP,OPROC,SHELL,VELO
+  ---
+  duration_ms: 0.476524
+  type: 'test'
+  ...
+# Subtest: IRQB palette copy threshold <=4, mirrored to original 16 colour entries
+ok 134 - IRQB palette copy threshold <=4, mirrored to original 16 colour entries
+  ---
+  duration_ms: 0.560048
+  type: 'test'
+  ...
+# Subtest: CRINIT transfers exactly original 16 source CRTAB bytes, refuses missing table
+ok 135 - CRINIT transfers exactly original 16 source CRTAB bytes, refuses missing table
+  ---
+  duration_ms: 0.443065
+  type: 'test'
+  ...
+# Subtest: INIT20 reproduces exact source init order and does not invoke arbitrary browser setup
+ok 136 - INIT20 reproduces exact source init order and does not invoke arbitrary browser setup
+  ---
+  duration_ms: 0.283148
+  type: 'test'
+  ...
+# Subtest: INIT20 refuses an untranslated subsystem even with colour data loaded
+ok 137 - INIT20 refuses an untranslated subsystem even with colour data loaded
+  ---
+  duration_ms: 0.172685
+  type: 'test'
+  ...
+# Subtest: P1SW stores the actual IRQ JMP vector, PIA config and watchdog, restores MAPCR
+ok 138 - P1SW stores the actual IRQ JMP vector, PIA config and watchdog, restores MAPCR
+  ---
+  duration_ms: 0.240024
+  type: 'test'
+  ...
+# Subtest: P2SW selects inverted IRQ only when original cocktail bit is set
+ok 139 - P2SW selects inverted IRQ only when original cocktail bit is set
+  ---
+  duration_ms: 0.217993
+  type: 'test'
+  ...
+# Subtest: SINIT missing original external code explicitly fails, does not launch a fictional game
+ok 140 - SINIT missing original external code explicitly fails, does not launch a fictional game
+  ---
+  duration_ms: 0.267135
+  type: 'test'
+  ...
+# Subtest: Full SINIT control-flow fixture preserves source call sequence and initialization stores
+ok 141 - Full SINIT control-flow fixture preserves source call sequence and initialization stores
+  ---
+  duration_ms: 1.79328
+  type: 'test'
+  ...
+# Subtest: SINIT rejects invalid CMOS credit BCD rather than inventing credits
+ok 142 - SINIT rejects invalid CMOS credit BCD rather than inventing credits
+  ---
+  duration_ms: 1.027829
+  type: 'test'
+  ...
+# Subtest: MTERR scanner terrain source data must be 384 exact original bytes
+ok 143 - MTERR scanner terrain source data must be 384 exact original bytes
+  ---
+  duration_ms: 1.250929
+  type: 'test'
+  ...
+# Subtest: MT1 uses (BGL-$6D40) high-byte LSRA twice then 3 bytes per column
+ok 144 - MT1 uses (BGL-$6D40) high-byte LSRA twice then 3 bytes per column
+  ---
+  duration_ms: 0.385149
+  type: 'test'
+  ...
+# Subtest: MT1 erases previously remembered terrain addresses rather than drawing an HTML line
+ok 145 - MT1 erases previously remembered terrain addresses rather than drawing an HTML line
+  ---
+  duration_ms: 0.242789
+  type: 'test'
+  ...
+# Subtest: SCNR2 positions blip with bytewise X shift, bytewise Y shift and source centre
+ok 146 - SCNR2 positions blip with bytewise X shift, bytewise Y shift and source centre
+  ---
+  duration_ms: 0.190922
+  type: 'test'
+  ...
+# Subtest: SCNR10 reads original object OX16/OY16/OBJCOL from its RAM record
+ok 147 - SCNR10 reads original object OX16/OY16/OBJCOL from its RAM record
+  ---
+  duration_ms: 0.169631
+  type: 'test'
+  ...
+# Subtest: SCNR draws original object and player blips, stores pointers in SETAB / SETEND
+ok 148 - SCNR draws original object and player blips, stores pointers in SETAB / SETEND
+  ---
+  duration_ms: 0.301456
+  type: 'test'
+  ...
+# Subtest: SCNR old object blip is erased before repainting at updated position
+ok 149 - SCNR old object blip is erased before repainting at updated position
+  ---
+  duration_ms: 0.310378
+  type: 'test'
+  ...
+# Subtest: MTX scanner bezel uses four source 16-bit writes at original addresses
+ok 150 - MTX scanner bezel uses four source 16-bit writes at original addresses
+  ---
+  duration_ms: 0.14883
+  type: 'test'
+  ...
+# Subtest: MTERR parser reads only literal source FCB records and demands exactly 384 bytes
+ok 151 - MTERR parser reads only literal source FCB records and demands exactly 384 bytes
+  ---
+  duration_ms: 0.840081
+  type: 'test'
+  ...
+# Subtest: OPROC draws in source 150*64 world viewport using 4x shifted X and exact Y byte
+ok 152 - OPROC draws in source 150*64 world viewport using 4x shifted X and exact Y byte
+  ---
+  duration_ms: 1.866368
+  type: 'test'
+  ...
+# Subtest: OPROC erases old bitmap first; old and new addresses use different coordinates
+ok 153 - OPROC erases old bitmap first; old and new addresses use different coordinates
+  ---
+  duration_ms: 0.277099
+  type: 'test'
+  ...
+# Subtest: OPROC skips entire object when old image lies outside raster clip, preserving OBJX
+ok 154 - OPROC skips entire object when old image lies outside raster clip, preserving OBJX
+  ---
+  duration_ms: 0.221647
+  type: 'test'
+  ...
+# Subtest: OPROC uses fractional phase carry from ASLB, not integer screen X
+ok 155 - OPROC uses fractional phase carry from ASLB, not integer screen X
+  ---
+  duration_ms: 0.179656
+  type: 'test'
+  ...
+# Subtest: OPROC rejects offscreen right, over-wide sprite and disabled STATUS without calling callbacks
+ok 156 - OPROC rejects offscreen right, over-wide sprite and disabled STATUS without calling callbacks
+  ---
+  duration_ms: 0.2913
+  type: 'test'
+  ...
+# Subtest: OPROC traverses source linked objects and rejects unresolved picture descriptors
+ok 157 - OPROC traverses source linked objects and rejects unresolved picture descriptors
+  ---
+  duration_ms: 0.487721
+  type: 'test'
+  ...
+# Subtest: FISS translates two successive source LSRA carry bits into original table bytes
+ok 158 - FISS translates two successive source LSRA carry bits into original table bytes
+  ---
+  duration_ms: 0.489934
+  type: 'test'
+  ...
+# Subtest: FBINIT translates source BMI/LSRA/BCS choices into 32 original table bytes
+ok 159 - FBINIT translates source BMI/LSRA/BCS choices into 32 original table bytes
+  ---
+  duration_ms: 0.272813
+  type: 'test'
+  ...
+# Subtest: FISS and FBINIT require translated RAND, not Math.random
+ok 160 - FISS and FBINIT require translated RAND, not Math.random
+  ---
+  duration_ms: 0.720155
+  type: 'test'
+  ...
+# Subtest: SHELL updates original 16-bit positions and dispatches through OBJCOL pointer
+ok 161 - SHELL updates original 16-bit positions and dispatches through OBJCOL pointer
+  ---
+  duration_ms: 0.716468
+  type: 'test'
+  ...
+# Subtest: SHELL original scrolling SHTEMP and lower Y bound kill shell
+ok 162 - SHELL original scrolling SHTEMP and lower Y bound kill shell
+  ---
+  duration_ms: 0.285972
+  type: 'test'
+  ...
+# Subtest: BMBOUT copies two source fireball columns with upper/lower video nibbles untouched
+ok 163 - BMBOUT copies two source fireball columns with upper/lower video nibbles untouched
+  ---
+  duration_ms: 0.278391
+  type: 'test'
+  ...
+# Subtest: FBOUT uses exact odd/even 6809 nibble masks and writes into new video address
+ok 164 - FBOUT uses exact odd/even 6809 nibble masks and writes into new video address
+  ---
+  duration_ms: 0.556132
+  type: 'test'
+  ...
+# Subtest: SHSCAN removes dead or expiring shells, links original OFREE, decrements BMBCNT
+ok 165 - SHSCAN removes dead or expiring shells, links original OFREE, decrements BMBCNT
+  ---
+  duration_ms: 0.385239
+  type: 'test'
+  ...
+# Subtest: SHSCAN refuses to fake untranslated OFSHIT after a shell expires
+ok 166 - SHSCAN refuses to fake untranslated OFSHIT after a shell expires
+  ---
+  duration_ms: 0.33837
+  type: 'test'
+  ...
+# Subtest: GETSHL exactly allocates from original free object list and links SPTR with source record fields
+ok 167 - GETSHL exactly allocates from original free object list and links SPTR with source record fields
+  ---
+  duration_ms: 0.393451
+  type: 'test'
+  ...
+# Subtest: GETSHL rejects offscreen, low Y, shell count cap and missing inline descriptor without consuming OFREE
+ok 168 - GETSHL rejects offscreen, low Y, shell count cap and missing inline descriptor without consuming OFREE
+  ---
+  duration_ms: 0.319192
+  type: 'test'
+  ...
+# Subtest: data verifier compares actual FCB byte streams rather than just table lengths
+ok 169 - data verifier compares actual FCB byte streams rather than just table lengths
+  ---
+  duration_ms: 3.437831
+  type: 'test'
+  ...
+# Subtest: data verifier rejects altered scanner terrain bytes
+ok 170 - data verifier rejects altered scanner terrain bytes
+  ---
+  duration_ms: 0.451527
+  type: 'test'
+  ...
+# Subtest: exact pinned BLK71 TDATA and MTERR source data have expected lengths and landmark bytes
+ok 171 - exact pinned BLK71 TDATA and MTERR source data have expected lengths and landmark bytes
+  ---
+  duration_ms: 1.569881
+  type: 'test'
+  ...
+# Subtest: BLK71 source memory bank is separate from PHR6 shared game RAM
+ok 172 - BLK71 source memory bank is separate from PHR6 shared game RAM
+  ---
+  duration_ms: 1.813771
+  type: 'test'
+  ...
+# Subtest: BGALT altitude table matches an independently decoded 2048-bit terrain walk
+ok 173 - BGALT altitude table matches an independently decoded 2048-bit terrain walk
+  ---
+  duration_ms: 2.646351
+  type: 'test'
+  ...
+# Subtest: RFONR1 cycles current byte through carry and wraps to next source byte
+ok 174 - RFONR1 cycles current byte through carry and wraps to next source byte
+  ---
+  duration_ms: 1.012626
+  type: 'test'
+  ...
+# Subtest: LFONL1 and LFONR1 reverse through bit carry and rewind at pointer boundaries
+ok 175 - LFONL1 and LFONR1 reverse through bit carry and rewind at pointer boundaries
+  ---
+  duration_ms: 0.218452
+  type: 'test'
+  ...
+# Subtest: BGINIT creates paired source flavour rings and clears all 152 STBL pointers
+ok 176 - BGINIT creates paired source flavour rings and clears all 152 STBL pointers
+  ---
+  duration_ms: 0.935122
+  type: 'test'
+  ...
+# Subtest: BGOUT copies 152 original source table triples into video via STBL
+ok 177 - BGOUT copies 152 original source table triples into video via STBL
+  ---
+  duration_ms: 1.171652
+  type: 'test'
+  ...
+# Subtest: BGOUT updates forward and backward source table pointers on scroll changes
+ok 178 - BGOUT updates forward and backward source table pointers on scroll changes
+  ---
+  duration_ms: 0.722578
+  type: 'test'
+  ...
+# Subtest: BGERAS erases only STBL-linked word addresses
+ok 179 - BGERAS erases only STBL-linked word addresses
+  ---
+  duration_ms: 0.526207
+  type: 'test'
+  ...
+# Subtest: source-referenced original terrain outputs are deterministic for a fixed BGL
+ok 180 - source-referenced original terrain outputs are deterministic for a fixed BGL
+  ---
+  duration_ms: 19.425289
+  type: 'test'
+  ...
+# Subtest: rejects missing/synthetic terrain data without pretending that it is source
+ok 181 - rejects missing/synthetic terrain data without pretending that it is source
+  ---
+  duration_ms: 0.665184
+  type: 'test'
+  ...
+# Subtest: source checkout pins a full 40-digit commit SHA
+ok 182 - source checkout pins a full 40-digit commit SHA
+  ---
+  duration_ms: 0.858569
+  type: 'test'
+  ...
+# Subtest: assembly expression parser supports original numeric notations
+ok 183 - assembly expression parser supports original numeric notations
+  ---
+  duration_ms: 0.4934
+  type: 'test'
+  ...
+# Subtest: layout parser recognizes source-defined allocation offsets and self-address definitions
+ok 184 - layout parser recognizes source-defined allocation offsets and self-address definitions
+  ---
+  duration_ms: 0.917526
+  type: 'test'
+  ...
+# Subtest: routine inventory reports actual labels separate from references and data
+ok 185 - routine inventory reports actual labels separate from references and data
+  ---
+  duration_ms: 0.390057
+  type: 'test'
+  ...
+# Subtest: assembly parser refuses to silently guess an undefined memory symbol
+ok 186 - assembly parser refuses to silently guess an undefined memory symbol
+  ---
+  duration_ms: 0.60889
+  type: 'test'
+  ...
+# Subtest: possible callable labels are surfaced as incomplete unless translated and tracked
+ok 187 - possible callable labels are surfaced as incomplete unless translated and tracked
+  ---
+  duration_ms: 0.858269
+  type: 'test'
+  ...
+1..187
+# tests 187
+# suites 0
+# pass 187
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 548.655378
+PASS: no prohibited substitution patterns found in original/ translations

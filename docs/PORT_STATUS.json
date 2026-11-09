@@ -1,0 +1,1601 @@
+{
+  "status_model": "TRANSLATED-UNVERIFIED means mapped from original source but not independently compared with MAME/original state traces. A runnable diagnostic is NOT a playable Defender arcade game.",
+  "entries": [
+    {
+      "label": "PINIT",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "PINIT",
+      "asm_end_exclusive": "CRINIT"
+    },
+    {
+      "label": "MKPROC",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "MKPROC",
+      "asm_end_exclusive": "GNCIDE"
+    },
+    {
+      "label": "MSPROC",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "MSPROC",
+      "asm_end_exclusive": "MKPROC"
+    },
+    {
+      "label": "MKP1",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "MKP1",
+      "asm_end_exclusive": "GNCIDE",
+      "notes": "Original branch label/shared tail, not independently callable from external game code"
+    },
+    {
+      "label": "KILL",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "KILL",
+      "asm_end_exclusive": "MSPROC"
+    },
+    {
+      "label": "KILLOP",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "KILLOP",
+      "asm_end_exclusive": "KILL",
+      "notes": "Fall-through into KILL in assembly"
+    },
+    {
+      "label": "GNCIDE",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "GNCIDE",
+      "asm_end_exclusive": "OBINIT"
+    },
+    {
+      "label": "DISP",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "DISP",
+      "asm_end_exclusive": "COLCHK"
+    },
+    {
+      "label": "DISP1",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "DISP1",
+      "asm_end_exclusive": "DISP2",
+      "notes": "Internal scheduler branch label"
+    },
+    {
+      "label": "DISP2",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "DISP2",
+      "asm_end_exclusive": "COLCHK",
+      "notes": "Internal scheduler branch label"
+    },
+    {
+      "label": "SLEEP",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "SLEEP",
+      "asm_end_exclusive": "SUCIDE"
+    },
+    {
+      "label": "SUCIDE",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "SUCIDE",
+      "asm_end_exclusive": "KILLOP"
+    },
+    {
+      "label": "OINIT",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "OINIT",
+      "asm_end_exclusive": "ATTR"
+    },
+    {
+      "label": "GETOB",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "GETOB",
+      "asm_end_exclusive": "KILLOB"
+    },
+    {
+      "label": "KILLOB",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "KILLOB",
+      "asm_end_exclusive": "KILSHL"
+    },
+    {
+      "label": "KILO2",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "KILO2",
+      "asm_end_exclusive": "KILOLP"
+    },
+    {
+      "label": "KILSHL",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "KILSHL",
+      "asm_end_exclusive": "ON28"
+    },
+    {
+      "label": "PLAYER",
+      "module": "defa7.src",
+      "js": "original/defa7-player.js",
+      "status": "translated-unverified",
+      "notes": "Some source entry/branches require integration or original-reference differential validation."
+    },
+    {
+      "label": "VELO",
+      "module": "defa7.src",
+      "js": "original/defa7-player.js",
+      "status": "translated-unverified",
+      "notes": "Some source entry/branches require integration or original-reference differential validation."
+    },
+    {
+      "label": "RAND",
+      "module": "defa7.src",
+      "js": "original/defa7-random.js",
+      "status": "translated-unverified",
+      "notes": "Some source entry/branches require integration or original-reference differential validation."
+    },
+    {
+      "label": "STINIT",
+      "module": "defa7.src",
+      "js": "original/defa7-random.js",
+      "status": "translated-unverified",
+      "notes": "Some source entry/branches require integration or original-reference differential validation."
+    },
+    {
+      "label": "EXEC",
+      "module": "defa7.src",
+      "js": "original/defa7-exec.js",
+      "status": "translated-unverified",
+      "notes": "Some source entry/branches require integration or original-reference differential validation."
+    },
+    {
+      "label": "SWP",
+      "module": "defa7.src",
+      "js": "original/defa7-exec.js",
+      "status": "translated-unverified",
+      "notes": "Some source entry/branches require integration or original-reference differential validation."
+    },
+    {
+      "label": "REV",
+      "module": "defa7.src",
+      "js": "original/defa7-rev.js",
+      "status": "translated-unverified",
+      "notes": "Some source entry/branches require integration or original-reference differential validation."
+    },
+    {
+      "label": "REV1",
+      "module": "defa7.src",
+      "js": "original/defa7-rev.js",
+      "status": "translated-unverified",
+      "notes": "Some source entry/branches require integration or original-reference differential validation."
+    },
+    {
+      "label": "REV2",
+      "module": "defa7.src",
+      "js": "original/defa7-rev.js",
+      "status": "translated-unverified",
+      "notes": "Some source entry/branches require integration or original-reference differential validation."
+    },
+    {
+      "label": "REVX1",
+      "module": "defa7.src",
+      "js": "original/defa7-rev.js",
+      "status": "translated-unverified",
+      "notes": "Some source entry/branches require integration or original-reference differential validation."
+    },
+    {
+      "label": "STOUT",
+      "module": "defa7.src",
+      "js": "original/defa7-stars.js",
+      "status": "translated-unverified",
+      "asm_start": "STOUT",
+      "asm_end_exclusive": "SBLNK",
+      "notes": "Complete source-directed SMAP movement, star erasure and masked video writes; output framebuffer not yet MAME-comparable"
+    },
+    {
+      "label": "SBLNK",
+      "module": "defa7.src",
+      "js": "original/defa7-stars.js",
+      "status": "translated-unverified",
+      "asm_start": "SBLNK",
+      "asm_end_exclusive": "THINIT",
+      "notes": "Blink, relocation and the original rare RAM write are translated; screen-bank equivalence not independently checked"
+    },
+    {
+      "label": "THINIT",
+      "module": "defa7.src",
+      "js": "original/defa7-thrust.js",
+      "status": "translated-unverified",
+      "asm_start": "THINIT",
+      "asm_end_exclusive": "THOUT",
+      "notes": "Original RAND-driven 33-byte source loop, including overlapping writes"
+    },
+    {
+      "label": "THPROC",
+      "module": "defa7.src",
+      "js": "original/defa7-thrust.js",
+      "status": "translated-unverified",
+      "asm_start": "THPROC",
+      "asm_end_exclusive": "SCPROC",
+      "notes": "Source THX/FBX cycles and NAP(4) continuation; requires original resolved continuation address to run"
+    },
+    {
+      "label": "OSCAN",
+      "module": "defa7.src",
+      "js": "original/defa7-scanning.js",
+      "status": "translated-unverified",
+      "asm_start": "OSCAN",
+      "asm_end_exclusive": "ISCAN",
+      "notes": "Original active-to-inactive linked-list transfer and unsigned comparisons"
+    },
+    {
+      "label": "ISCAN",
+      "module": "defa7.src",
+      "js": "original/defa7-scanning.js",
+      "status": "translated-unverified",
+      "asm_start": "ISCAN",
+      "asm_end_exclusive": "EOF",
+      "notes": "Original inactive object eightfold velocity integration and active transfer"
+    },
+    {
+      "label": "ON28",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "ON28",
+      "asm_end_exclusive": "OFF28",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "OFF28",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "OFF28",
+      "asm_end_exclusive": "OFF58",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "OFF58",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "OFF58",
+      "asm_end_exclusive": "ON48",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "ON48",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "ON48",
+      "asm_end_exclusive": "OFF48",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "OFF48",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "OFF48",
+      "asm_end_exclusive": "ON58",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "ON58",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "ON58",
+      "asm_end_exclusive": "ON34",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "ON34",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "ON34",
+      "asm_end_exclusive": "OFF34",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "OFF34",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "OFF34",
+      "asm_end_exclusive": "ON23",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "ON23",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "ON23",
+      "asm_end_exclusive": "OFF23",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "OFF23",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "OFF23",
+      "asm_end_exclusive": "ON64",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "ON64",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "ON64",
+      "asm_end_exclusive": "OFF64",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "OFF64",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "OFF64",
+      "asm_end_exclusive": "ON86",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "ON86",
+      "module": "defa7.src",
+      "js": "original/defa7-player-video.js",
+      "status": "translated-unverified",
+      "asm_start": "ON86",
+      "asm_end_exclusive": "OFF86",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "OFF86",
+      "module": "defa7.src",
+      "js": "original/defa7-player-video.js",
+      "status": "translated-unverified",
+      "asm_start": "OFF86",
+      "asm_end_exclusive": "ON56",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "ON56",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "ON56",
+      "asm_end_exclusive": "OFF56",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "OFF56",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "OFF56",
+      "asm_end_exclusive": "ON66",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "ON66",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "ON66",
+      "asm_end_exclusive": "OFF66",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "OFF66",
+      "module": "defa7.src",
+      "js": "original/defa7-object-video.js",
+      "status": "translated-unverified",
+      "asm_start": "OFF66",
+      "asm_end_exclusive": "SCORE",
+      "notes": "Exact original column-major video byte-copy/erase geometry; no MAME pixel trace yet"
+    },
+    {
+      "label": "THOUT",
+      "module": "defa7.src",
+      "js": "original/defa7-player-video.js",
+      "status": "translated-unverified",
+      "asm_start": "THOUT",
+      "asm_end_exclusive": "THOUT1",
+      "notes": "Original player display/erase/thrust code; diagnostic currently invokes PRDISP once per test update rather than real IRQ"
+    },
+    {
+      "label": "THOUT1",
+      "module": "defa7.src",
+      "js": "original/defa7-player-video.js",
+      "status": "translated-unverified",
+      "asm_start": "THOUT1",
+      "asm_end_exclusive": "THOFF1",
+      "notes": "Original player display/erase/thrust code; diagnostic currently invokes PRDISP once per test update rather than real IRQ"
+    },
+    {
+      "label": "THOFF1",
+      "module": "defa7.src",
+      "js": "original/defa7-player-video.js",
+      "status": "translated-unverified",
+      "asm_start": "THOFF1",
+      "asm_end_exclusive": "THOFF",
+      "notes": "Original player display/erase/thrust code; diagnostic currently invokes PRDISP once per test update rather than real IRQ"
+    },
+    {
+      "label": "THOFF",
+      "module": "defa7.src",
+      "js": "original/defa7-player-video.js",
+      "status": "translated-unverified",
+      "asm_start": "THOFF",
+      "asm_end_exclusive": "PRDISP",
+      "notes": "Original player display/erase/thrust code; diagnostic currently invokes PRDISP once per test update rather than real IRQ"
+    },
+    {
+      "label": "PRDISP",
+      "module": "defa7.src",
+      "js": "original/defa7-player-video.js",
+      "status": "translated-unverified",
+      "asm_start": "PRDISP",
+      "asm_end_exclusive": "POUT",
+      "notes": "Original player display/erase/thrust code; diagnostic currently invokes PRDISP once per test update rather than real IRQ"
+    },
+    {
+      "label": "POUT",
+      "module": "defa7.src",
+      "js": "original/defa7-player-video.js",
+      "status": "translated-unverified",
+      "asm_start": "POUT",
+      "asm_end_exclusive": "POFF",
+      "notes": "Original player display/erase/thrust code; diagnostic currently invokes PRDISP once per test update rather than real IRQ"
+    },
+    {
+      "label": "POUT1",
+      "module": "defa7.src",
+      "js": "original/defa7-player-video.js",
+      "status": "translated-unverified",
+      "asm_start": "POUT1",
+      "asm_end_exclusive": "POFF",
+      "notes": "Original player display/erase/thrust code; diagnostic currently invokes PRDISP once per test update rather than real IRQ"
+    },
+    {
+      "label": "POFF",
+      "module": "defa7.src",
+      "js": "original/defa7-player-video.js",
+      "status": "translated-unverified",
+      "asm_start": "POFF",
+      "asm_end_exclusive": "PLAYER",
+      "notes": "Original player display/erase/thrust code; diagnostic currently invokes PRDISP once per test update rather than real IRQ"
+    },
+    {
+      "label": "POFF1",
+      "module": "defa7.src",
+      "js": "original/defa7-player-video.js",
+      "status": "translated-unverified",
+      "asm_start": "POFF1",
+      "asm_end_exclusive": "PLAYER",
+      "notes": "Original player display/erase/thrust code; diagnostic currently invokes PRDISP once per test update rather than real IRQ"
+    },
+    {
+      "label": "BORDER",
+      "module": "defa7.src",
+      "js": "original/defa7-top-display.js",
+      "status": "translated-unverified",
+      "asm_start": "BORDER",
+      "asm_end_exclusive": "PLINDX",
+      "notes": "Exact BORDER/BORDLP/BORD1/BORD2/BORD3 framebuffer writes; TDISP/LDISP/SBDISP are not yet translated."
+    },
+    {
+      "label": "SNDOUT",
+      "module": "defa7.src",
+      "js": "original/defa7-sound.js",
+      "status": "translated-unverified",
+      "asm_start": "SNDOUT",
+      "asm_end_exclusive": "SNDLD",
+      "notes": "Two exact PIA command writes; DAC sound board firmware is not translated."
+    },
+    {
+      "label": "SNDLD",
+      "module": "defa7.src",
+      "js": "original/defa7-sound.js",
+      "status": "translated-unverified",
+      "asm_start": "SNDLD",
+      "asm_end_exclusive": "SNDSEQ",
+      "notes": "Sound priority, pointer-minus-two and timer/repeat state in original RAM; sound table ROM addresses injected by caller."
+    },
+    {
+      "label": "SNDSEQ",
+      "module": "defa7.src",
+      "js": "original/defa7-sound.js",
+      "status": "translated-unverified",
+      "asm_start": "SNDSEQ",
+      "asm_end_exclusive": "SSCAN",
+      "notes": "Original SNDS00/SNDS01/SNDS0/SNDS1 control-flow including thrust on/off and song repeat timing."
+    },
+    {
+      "label": "PLINDX",
+      "module": "defa7.src",
+      "js": "original/defa7-player-index.js",
+      "status": "translated-unverified",
+      "asm_start": "PLINDX",
+      "asm_end_exclusive": "PLDX",
+      "notes": "Source preserves CURPLR byte test, DECA and branch to source-defined P1SCR / P2SCR RAM record."
+    },
+    {
+      "label": "PLDX",
+      "module": "defa7.src",
+      "js": "original/defa7-player-index.js",
+      "status": "translated-unverified",
+      "asm_start": "PLDX",
+      "asm_end_exclusive": "RAND",
+      "notes": "Source preserves CURPLR byte test, DECA and branch to source-defined P1SCR / P2SCR RAM record."
+    },
+    {
+      "label": "SCORE",
+      "module": "defa7.src",
+      "js": "original/defa7-score.js",
+      "status": "translated-unverified",
+      "asm_start": "SCORE",
+      "asm_end_exclusive": "RCHK",
+      "notes": "Packed-BCD source score, exponent shift and carry. Original reward side effects remain explicit dependencies."
+    },
+    {
+      "label": "RCHK",
+      "module": "defa7.src",
+      "js": "original/defa7-score.js",
+      "status": "translated-unverified",
+      "asm_start": "RCHK",
+      "asm_end_exclusive": "SCRTRN",
+      "notes": "Unsigned original score-to-threshold comparison."
+    },
+    {
+      "label": "SCRTRN",
+      "module": "defa7.src",
+      "js": "original/defa7-score-display.js",
+      "status": "translated-unverified",
+      "asm_start": "SCRTRN",
+      "asm_end_exclusive": "SCRTR0",
+      "notes": "Current-player score display entry."
+    },
+    {
+      "label": "SCRTR0",
+      "module": "defa7.src",
+      "js": "original/defa7-score-display.js",
+      "status": "translated-unverified",
+      "asm_start": "SCRTR0",
+      "asm_end_exclusive": "HSRES",
+      "notes": "Source nibble phase, leading-zero blanking and MAPCR restoration. Glyphs unresolved."
+    },
+    {
+      "label": "LDISP",
+      "module": "defa7.src",
+      "js": "original/defa7-hud.js",
+      "status": "translated-unverified",
+      "asm_start": "LDISP",
+      "asm_end_exclusive": "LDSP",
+      "notes": "Original laser-reserve display orchestration."
+    },
+    {
+      "label": "LDSP",
+      "module": "defa7.src",
+      "js": "original/defa7-hud.js",
+      "status": "translated-unverified",
+      "asm_start": "LDSP",
+      "asm_end_exclusive": "TDISP",
+      "notes": "Original 5-icon cap, source mini-ship picture and 6-column increments."
+    },
+    {
+      "label": "TDISP",
+      "module": "defa7.src",
+      "js": "original/defa7-hud.js",
+      "status": "translated-unverified",
+      "asm_start": "TDISP",
+      "asm_end_exclusive": "SBDISP",
+      "notes": "Top-display order preserved; source pictures still missing."
+    },
+    {
+      "label": "SBDISP",
+      "module": "defa7.src",
+      "js": "original/defa7-hud.js",
+      "status": "translated-unverified",
+      "asm_start": "SBDISP",
+      "asm_end_exclusive": "SBDSP",
+      "notes": "Original smart-bomb-reserve dispatch."
+    },
+    {
+      "label": "SBDSP",
+      "module": "defa7.src",
+      "js": "original/defa7-hud.js",
+      "status": "translated-unverified",
+      "asm_start": "SBDSP",
+      "asm_end_exclusive": "BORDER",
+      "notes": "Original 3-icon cap and 4-scanline increments."
+    },
+    {
+      "label": "SSCAN",
+      "module": "defa7.src",
+      "js": "original/defa7-switches.js",
+      "status": "translated-unverified",
+      "asm_start": "SSCAN",
+      "asm_end_exclusive": "SWITCH",
+      "notes": "Slam/coin countdown, PIA sample and game-switch edge handling."
+    },
+    {
+      "label": "SWITCH",
+      "module": "defa7.src",
+      "js": "original/defa7-switches.js",
+      "status": "translated-unverified",
+      "asm_start": "SWITCH",
+      "asm_end_exclusive": "CSCAN",
+      "notes": "Source bit priority and two SWPROC slots. SWTAB data required."
+    },
+    {
+      "label": "CSCAN",
+      "module": "defa7.src",
+      "js": "original/defa7-switches.js",
+      "status": "translated-unverified",
+      "asm_start": "CSCAN",
+      "asm_end_exclusive": "LDISP",
+      "notes": "Coin debounce and double-reading; original event table needed."
+    },
+    {
+      "label": "CWRIT",
+      "module": "romf8.src",
+      "js": "original/romf8-graphics.js",
+      "status": "translated-unverified",
+      "asm_start": "CWRIT",
+      "asm_end_exclusive": "COFF",
+      "notes": "Source 4-byte picture descriptor and pixel-byte copies."
+    },
+    {
+      "label": "COFF",
+      "module": "romf8.src",
+      "js": "original/romf8-graphics.js",
+      "status": "translated-unverified",
+      "asm_start": "COFF",
+      "asm_end_exclusive": "BLKCLR",
+      "notes": "Source descriptor width/height and block erase."
+    },
+    {
+      "label": "COFFA",
+      "module": "romf8.src",
+      "js": "original/romf8-graphics.js",
+      "status": "translated-unverified",
+      "asm_start": "COFFA",
+      "asm_end_exclusive": "BLKCLR",
+      "notes": "Shared erase tail for BLKCLR and COFF."
+    },
+    {
+      "label": "BLKCLR",
+      "module": "romf8.src",
+      "js": "original/romf8-graphics.js",
+      "status": "translated-unverified",
+      "asm_start": "BLKCLR",
+      "asm_end_exclusive": "SCRCLR",
+      "notes": "Source width/height block-clear branch."
+    },
+    {
+      "label": "SCRCLR",
+      "module": "romf8.src",
+      "js": "original/romf8-graphics.js",
+      "status": "translated-unverified",
+      "asm_start": "SCRCLR",
+      "asm_end_exclusive": "INIT",
+      "notes": "Source clear from video $0000 through $9BFF."
+    },
+    {
+      "label": "IRQ",
+      "module": "defa7.src",
+      "js": "original/defa7-irq.js",
+      "status": "translated-unverified",
+      "asm_start": "IRQ",
+      "asm_end_exclusive": "IRQB",
+      "notes": "Requires original downstream OPROC/SHELL/BGOUT to run; native JS control flow and palette copy tested."
+    },
+    {
+      "label": "IRQB",
+      "module": "defa7.src",
+      "js": "original/defa7-irq.js",
+      "status": "translated-unverified",
+      "asm_start": "IRQB",
+      "asm_end_exclusive": "STINIT",
+      "notes": "Inverted raster order and screen boundaries; dependencies explicit."
+    },
+    {
+      "label": "IRQX",
+      "module": "defa7.src",
+      "js": "original/defa7-irq.js",
+      "status": "translated-unverified",
+      "asm_start": "IRQX",
+      "asm_end_exclusive": "IRQB",
+      "notes": "PIA control and map restore; CPU stack/status restoration is a host boundary."
+    },
+    {
+      "label": "CRINIT",
+      "module": "defa7.src",
+      "js": "original/defa7-init.js",
+      "status": "translated-unverified",
+      "asm_start": "CRINIT",
+      "asm_end_exclusive": "OINIT",
+      "notes": "Requires original 16 CRTAB colour bytes supplied, never invents palette."
+    },
+    {
+      "label": "INIT20",
+      "module": "defa7.src",
+      "js": "original/defa7-init.js",
+      "status": "translated-unverified",
+      "asm_start": "INIT20",
+      "asm_end_exclusive": "PINIT",
+      "notes": "Preserves FISS, STINIT, OINIT, FBINIT, THINIT source call order; some callees missing."
+    },
+    {
+      "label": "SINIT",
+      "module": "defa7.src",
+      "js": "original/defa7-init.js",
+      "status": "translated-unverified",
+      "asm_start": "SINIT",
+      "asm_end_exclusive": "INIT20",
+      "notes": "Not end-to-end runnable: numerous mandatory startup dependencies are untranslated."
+    },
+    {
+      "label": "P1SW",
+      "module": "defa7.src",
+      "js": "original/defa7-init.js",
+      "status": "translated-unverified",
+      "asm_start": "P1SW",
+      "asm_end_exclusive": "P2SW",
+      "notes": "Requires authentic IRQ vector, preserves MAPCR."
+    },
+    {
+      "label": "P2SW",
+      "module": "defa7.src",
+      "js": "original/defa7-init.js",
+      "status": "translated-unverified",
+      "asm_start": "P2SW",
+      "asm_end_exclusive": "PLSTRT",
+      "notes": "Original cocktail orientation branching; screen hardware hooks required."
+    },
+    {
+      "label": "PSW1",
+      "module": "defa7.src",
+      "js": "original/defa7-init.js",
+      "status": "translated-unverified",
+      "asm_start": "PSW1",
+      "asm_end_exclusive": "PLSTRT",
+      "notes": "Common screen direction/write path; real IRQ vector required."
+    },
+    {
+      "label": "SCNR",
+      "module": "amode1.src",
+      "js": "original/amode1-scanner.js",
+      "status": "translated-unverified",
+      "asm_start": "SCNR",
+      "asm_end_exclusive": "MTERR",
+      "notes": "Scanner object/player blips; original terrain table must be extracted by user from pinned source."
+    },
+    {
+      "label": "SCNR2",
+      "module": "amode1.src",
+      "js": "original/amode1-scanner.js",
+      "status": "translated-unverified",
+      "asm_start": "SCNR2",
+      "asm_end_exclusive": "SCNR3",
+      "notes": "Bytewise shift/position, not generic raster scaling."
+    },
+    {
+      "label": "SCNR10",
+      "module": "amode1.src",
+      "js": "original/amode1-scanner.js",
+      "status": "translated-unverified",
+      "asm_start": "SCNR10",
+      "asm_end_exclusive": "SCNR2",
+      "notes": "Original object coordinates, source colour bytes."
+    },
+    {
+      "label": "SCNR3",
+      "module": "amode1.src",
+      "js": "original/amode1-scanner.js",
+      "status": "translated-unverified",
+      "asm_start": "SCNR3",
+      "asm_end_exclusive": "MTERR",
+      "notes": "Shared object-list step; linked list storage preserved."
+    },
+    {
+      "label": "MT1",
+      "module": "amode1.src",
+      "js": "original/amode1-scanner.js",
+      "status": "translated-unverified",
+      "asm_start": "MT1",
+      "asm_end_exclusive": "MTX",
+      "notes": "Needs 384 real MTERR bytes for terrain; source indexing and erase table translated."
+    },
+    {
+      "label": "MTX",
+      "module": "amode1.src",
+      "js": "original/amode1-scanner.js",
+      "status": "translated-unverified",
+      "asm_start": "MTX",
+      "asm_end_exclusive": "MTERR",
+      "notes": "Source scanner bezel 16-bit writes."
+    },
+    {
+      "label": "OPROC",
+      "module": "defa7.src",
+      "js": "original/defa7-object-process.js",
+      "status": "translated-unverified",
+      "asm_start": "OPROC",
+      "asm_end_exclusive": "GETSHL",
+      "notes": "Original two-phase raster object erase/draw; picture descriptor pointer resolution remains a required source-data dependency."
+    },
+    {
+      "label": "GETSHL",
+      "module": "defa7.src",
+      "js": "original/defa7-shells.js",
+      "status": "translated-unverified",
+      "asm_start": "GETSHL",
+      "asm_end_exclusive": "SHELL",
+      "notes": "Original shell allocation/onscreen checks; original inlined three-word descriptor supplied as structured JS arguments."
+    },
+    {
+      "label": "SHELL",
+      "module": "defa7.src",
+      "js": "original/defa7-shells.js",
+      "status": "translated-unverified",
+      "asm_start": "SHELL",
+      "asm_end_exclusive": "BMBOUT",
+      "notes": "Original shell position integration and scroll-delta; OBJCOL output dispatch via explicit address resolver."
+    },
+    {
+      "label": "SHBD",
+      "module": "defa7.src",
+      "js": "original/defa7-shells.js",
+      "status": "translated-unverified",
+      "asm_start": "SHBD",
+      "asm_end_exclusive": "FBOUT",
+      "notes": "Internal branch of SHELL; original image erase and alive-flag update."
+    },
+    {
+      "label": "BMBOUT",
+      "module": "defa7.src",
+      "js": "original/defa7-shells.js",
+      "status": "translated-unverified",
+      "asm_start": "BMBOUT",
+      "asm_end_exclusive": "FBOUT",
+      "notes": "Source 2x3 bitmap output from BAX; source data and nibble phase preserved."
+    },
+    {
+      "label": "FBOUT",
+      "module": "defa7.src",
+      "js": "original/defa7-shells.js",
+      "status": "translated-unverified",
+      "asm_start": "FBOUT",
+      "asm_end_exclusive": "BKIL",
+      "notes": "Source fireball nibble-mask and odd/even output from FBX."
+    },
+    {
+      "label": "SHSCAN",
+      "module": "defa7.src",
+      "js": "original/defa7-shells.js",
+      "status": "translated-unverified",
+      "asm_start": "SHSCAN",
+      "asm_end_exclusive": "LFIRE",
+      "notes": "Original shell-list traversal/expiry; OFSHIT dependency is untranslated and deliberately throws."
+    },
+    {
+      "label": "FISS",
+      "module": "defa7.src",
+      "js": "original/defa7-fire-tables.js",
+      "status": "translated-unverified",
+      "asm_start": "FISS",
+      "asm_end_exclusive": "COLIDE",
+      "notes": "Original RAND-based 32-byte FISTAB with bit0->bit0 and bit1->bit4."
+    },
+    {
+      "label": "FBINIT",
+      "module": "defa7.src",
+      "js": "original/defa7-fire-tables.js",
+      "status": "translated-unverified",
+      "asm_start": "FBINIT",
+      "asm_end_exclusive": "SHSCAN",
+      "notes": "Original RAND-based 32-byte FBTAB and BMI/LSRA carry branches."
+    },
+    {
+      "label": "BGINIT",
+      "module": "blk71.src",
+      "js": "original/blk71-terrain.js",
+      "status": "translated-unverified",
+      "asm_start": "BGINIT",
+      "asm_end_exclusive": "BGOUT",
+      "notes": "Source integer arithmetic, bank separation, bit-stream operations and/or terrain table writes; source-relative TDATA pointer translation documented."
+    },
+    {
+      "label": "BGOUT",
+      "module": "blk71.src",
+      "js": "original/blk71-terrain.js",
+      "status": "translated-unverified",
+      "asm_start": "BGOUT",
+      "asm_end_exclusive": "ADDL01",
+      "notes": "Renderer uses the original documented STX [,Y] erase rather than the patched COMF byte in assembly; differential video check still required."
+    },
+    {
+      "label": "BGALT",
+      "module": "blk71.src",
+      "js": "original/blk71-terrain.js",
+      "status": "translated-unverified",
+      "asm_start": "BGALT",
+      "asm_end_exclusive": "BGERAS",
+      "notes": "Source integer arithmetic, bank separation, bit-stream operations and/or terrain table writes; source-relative TDATA pointer translation documented."
+    },
+    {
+      "label": "BGERAS",
+      "module": "blk71.src",
+      "js": "original/blk71-terrain.js",
+      "status": "translated-unverified",
+      "asm_start": "BGERAS",
+      "asm_end_exclusive": "RFONL1",
+      "notes": "Source integer arithmetic, bank separation, bit-stream operations and/or terrain table writes; source-relative TDATA pointer translation documented."
+    },
+    {
+      "label": "ADDL01",
+      "module": "blk71.src",
+      "js": "original/blk71-terrain.js",
+      "status": "translated-unverified",
+      "asm_start": "ADDL01",
+      "asm_end_exclusive": "ADDR01",
+      "notes": "Source integer arithmetic, bank separation, bit-stream operations and/or terrain table writes; source-relative TDATA pointer translation documented."
+    },
+    {
+      "label": "ADDR01",
+      "module": "blk71.src",
+      "js": "original/blk71-terrain.js",
+      "status": "translated-unverified",
+      "asm_start": "ADDR01",
+      "asm_end_exclusive": "BGALT",
+      "notes": "Source integer arithmetic, bank separation, bit-stream operations and/or terrain table writes; source-relative TDATA pointer translation documented."
+    },
+    {
+      "label": "RFONL1",
+      "module": "blk71.src",
+      "js": "original/blk71-terrain.js",
+      "status": "translated-unverified",
+      "asm_start": "RFONL1",
+      "asm_end_exclusive": "RFONR1",
+      "notes": "Source integer arithmetic, bank separation, bit-stream operations and/or terrain table writes; source-relative TDATA pointer translation documented."
+    },
+    {
+      "label": "RFONR1",
+      "module": "blk71.src",
+      "js": "original/blk71-terrain.js",
+      "status": "translated-unverified",
+      "asm_start": "RFONR1",
+      "asm_end_exclusive": "LFONL1",
+      "notes": "Source integer arithmetic, bank separation, bit-stream operations and/or terrain table writes; source-relative TDATA pointer translation documented."
+    },
+    {
+      "label": "LFONL1",
+      "module": "blk71.src",
+      "js": "original/blk71-terrain.js",
+      "status": "translated-unverified",
+      "asm_start": "LFONL1",
+      "asm_end_exclusive": "LFONR1",
+      "notes": "Source integer arithmetic, bank separation, bit-stream operations and/or terrain table writes; source-relative TDATA pointer translation documented."
+    },
+    {
+      "label": "LFONR1",
+      "module": "blk71.src",
+      "js": "original/blk71-terrain.js",
+      "status": "translated-unverified",
+      "asm_start": "LFONR1",
+      "asm_end_exclusive": "TDATA",
+      "notes": "Source integer arithmetic, bank separation, bit-stream operations and/or terrain table writes; source-relative TDATA pointer translation documented."
+    },
+    {
+      "label": "MAPCHG",
+      "module": "defb6.src",
+      "js": "original/defb6-banking-object.js",
+      "status": "translated-unverified",
+      "asm_start": "MAPCHG",
+      "asm_end_exclusive": "MESS",
+      "notes": "Stage 10: same-named original entry; source-addressed RAM and original call ordering. All original picture-descriptor addresses are not yet mapped."
+    },
+    {
+      "label": "MAPCH1",
+      "module": "defb6.src",
+      "js": "original/defb6-banking-object.js",
+      "status": "translated-unverified",
+      "asm_start": "MAPCH1",
+      "asm_end_exclusive": "MAPCHG",
+      "notes": "Stage 10: same-named original entry; source-addressed RAM and original call ordering. All original picture-descriptor addresses are not yet mapped."
+    },
+    {
+      "label": "MAPCH2",
+      "module": "defb6.src",
+      "js": "original/defb6-banking-object.js",
+      "status": "translated-unverified",
+      "asm_start": "MAPCH2",
+      "asm_end_exclusive": "MAPCH3",
+      "notes": "Stage 10: same-named original entry; source-addressed RAM and original call ordering. All original picture-descriptor addresses are not yet mapped."
+    },
+    {
+      "label": "MAPCH3",
+      "module": "defb6.src",
+      "js": "original/defb6-banking-object.js",
+      "status": "translated-unverified",
+      "asm_start": "MAPCH3",
+      "asm_end_exclusive": "MAPCH1",
+      "notes": "Stage 10: same-named original entry; source-addressed RAM and original call ordering. All original picture-descriptor addresses are not yet mapped."
+    },
+    {
+      "label": "MAPCH7",
+      "module": "defb6.src",
+      "js": "original/defb6-banking-object.js",
+      "status": "translated-unverified",
+      "asm_start": "MAPCH7",
+      "asm_end_exclusive": "MAPCH2",
+      "notes": "Stage 10: same-named original entry; source-addressed RAM and original call ordering. All original picture-descriptor addresses are not yet mapped."
+    },
+    {
+      "label": "BGI",
+      "module": "defb6.src",
+      "js": "original/defb6-banking-object.js",
+      "status": "translated-unverified",
+      "asm_start": "BGI",
+      "asm_end_exclusive": "MAPCH7",
+      "notes": "Stage 10: same-named original entry; source-addressed RAM and original call ordering. All original picture-descriptor addresses are not yet mapped."
+    },
+    {
+      "label": "OFSHIT",
+      "module": "defb6.src",
+      "js": "original/defb6-banking-object.js",
+      "status": "translated-unverified",
+      "asm_start": "OFSHIT",
+      "asm_end_exclusive": "KILP01",
+      "notes": "Stage 10: same-named original entry; source-addressed RAM and original call ordering. All original picture-descriptor addresses are not yet mapped."
+    },
+    {
+      "label": "KILOFF",
+      "module": "defb6.src",
+      "js": "original/defb6-banking-object.js",
+      "status": "translated-unverified",
+      "asm_start": "KILOFF",
+      "asm_end_exclusive": "OFSHIT",
+      "notes": "Stage 10: same-named original entry; source-addressed RAM and original call ordering. All original picture-descriptor addresses are not yet mapped."
+    },
+    {
+      "label": "GEXEC",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-exec.js",
+      "status": "translated-unverified",
+      "asm_start": "GEXEC",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "GEX0",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-exec.js",
+      "status": "translated-unverified",
+      "asm_start": "GEX0",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "GEX00",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-exec.js",
+      "status": "translated-unverified",
+      "asm_start": "GEX00",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "GEX002",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-exec.js",
+      "status": "translated-unverified",
+      "asm_start": "GEX002",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "GEX11",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-exec.js",
+      "status": "translated-unverified",
+      "asm_start": "GEX11",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "GEX2",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-exec.js",
+      "status": "translated-unverified",
+      "asm_start": "GEX2",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "GEX3",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-exec.js",
+      "status": "translated-unverified",
+      "asm_start": "GEX3",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "GEX6",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-exec.js",
+      "status": "translated-unverified",
+      "asm_start": "GEX6",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "WVCHK",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-exec.js",
+      "status": "translated-unverified",
+      "asm_start": "WVCHK",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "RMAX",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-exec.js",
+      "status": "translated-unverified",
+      "asm_start": "RMAX",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "BCDHEX",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-exec.js",
+      "status": "translated-unverified",
+      "asm_start": "BCDHEX",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "HEXBCD",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-exec.js",
+      "status": "translated-unverified",
+      "asm_start": "HEXBCD",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "GETWV",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-params.js",
+      "status": "translated-unverified",
+      "asm_start": "GETWV",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "WDELT",
+      "module": "defa7.src",
+      "js": "original/defa7-wave-params.js",
+      "status": "translated-unverified",
+      "asm_start": "WDELT",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "COLR",
+      "module": "defa7.src",
+      "js": "original/defa7-process-tasks.js",
+      "status": "translated-unverified",
+      "asm_start": "COLR",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "COLRLP",
+      "module": "defa7.src",
+      "js": "original/defa7-process-tasks.js",
+      "status": "translated-unverified",
+      "asm_start": "COLRLP",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "SCPROC",
+      "module": "defa7.src",
+      "js": "original/defa7-process-tasks.js",
+      "status": "translated-unverified",
+      "asm_start": "SCPROC",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "SCP1",
+      "module": "defa7.src",
+      "js": "original/defa7-process-tasks.js",
+      "status": "translated-unverified",
+      "asm_start": "SCP1",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "SCP2",
+      "module": "defa7.src",
+      "js": "original/defa7-process-tasks.js",
+      "status": "translated-unverified",
+      "asm_start": "SCP2",
+      "notes": "Stage 11; see docs/STAGE11_SOURCE_AUDIT.md; original 6809 executable differential verification pending"
+    },
+    {
+      "label": "OBINIT",
+      "module": "defa7.src",
+      "js": "original/defa7.js",
+      "status": "translated-unverified",
+      "asm_start": "OBINIT",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "UFOST",
+      "module": "defb6.src",
+      "js": "original/defb6-ufo.js",
+      "status": "translated-unverified",
+      "asm_start": "UFOST",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "UFOLP",
+      "module": "defb6.src",
+      "js": "original/defb6-ufo.js",
+      "status": "translated-unverified",
+      "asm_start": "UFOLP",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "UFONV",
+      "module": "defb6.src",
+      "js": "original/defb6-ufo.js",
+      "status": "translated-unverified",
+      "asm_start": "UFONV",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "UFONV0",
+      "module": "defb6.src",
+      "js": "original/defb6-ufo.js",
+      "status": "translated-unverified",
+      "asm_start": "UFONV0",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "PRBST",
+      "module": "defb6.src",
+      "js": "original/defb6-probe.js",
+      "status": "translated-unverified",
+      "asm_start": "PRBST",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "RANDV",
+      "module": "defb6.src",
+      "js": "original/defb6-swarm.js",
+      "status": "translated-unverified",
+      "asm_start": "RANDV",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "MMSW",
+      "module": "defb6.src",
+      "js": "original/defb6-swarm.js",
+      "status": "translated-unverified",
+      "asm_start": "MMSW",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "MSWM",
+      "module": "defb6.src",
+      "js": "original/defb6-swarm.js",
+      "status": "translated-unverified",
+      "asm_start": "MSWM",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "MSWLP",
+      "module": "defb6.src",
+      "js": "original/defb6-swarm.js",
+      "status": "translated-unverified",
+      "asm_start": "MSWLP",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "SWBMB",
+      "module": "defb6.src",
+      "js": "original/defb6-swarm.js",
+      "status": "translated-unverified",
+      "asm_start": "SWBMB",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "GTARG",
+      "module": "defb6.src",
+      "js": "original/defb6-target.js",
+      "status": "translated-unverified",
+      "asm_start": "GTARG",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "SHOOT",
+      "module": "defb6.src",
+      "js": "original/defb6-shoot.js",
+      "status": "translated-unverified",
+      "asm_start": "SHOOT",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "LSHOT",
+      "module": "defb6.src",
+      "js": "original/defb6-shoot.js",
+      "status": "translated-unverified",
+      "asm_start": "LSHOT",
+      "notes": "Stage 12. Partial source-level assembly translation; see STAGE12_SOURCE_AUDIT.md; independent original-machine differential validation pending."
+    },
+    {
+      "label": "LANDST",
+      "module": "defb6.src",
+      "js": "original/defb6-lander.js",
+      "status": "translated-unverified",
+      "asm_start": "LANDST",
+      "asm_end_exclusive": "LANDS0",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "LANDS0",
+      "module": "defb6.src",
+      "js": "original/defb6-lander.js",
+      "status": "translated-unverified",
+      "asm_start": "LANDS0",
+      "asm_end_exclusive": "LANDG0",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "LANDSA",
+      "module": "defb6.src",
+      "js": "original/defb6-lander.js",
+      "status": "translated-unverified",
+      "asm_start": "LANDSA",
+      "asm_end_exclusive": "LANDG0",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "LANDG0",
+      "module": "defb6.src",
+      "js": "original/defb6-lander.js",
+      "status": "translated-unverified",
+      "asm_start": "LANDG0",
+      "asm_end_exclusive": "LANDG",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "LANDG",
+      "module": "defb6.src",
+      "js": "original/defb6-lander.js",
+      "status": "translated-unverified",
+      "asm_start": "LANDG",
+      "asm_end_exclusive": "LANDF",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "LANDF",
+      "module": "defb6.src",
+      "js": "original/defb6-lander.js",
+      "status": "translated-unverified",
+      "asm_start": "LANDF",
+      "asm_end_exclusive": "LANDFX",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "LANDFX",
+      "module": "defb6.src",
+      "js": "original/defb6-lander.js",
+      "status": "translated-unverified",
+      "asm_start": "LANDFX",
+      "asm_end_exclusive": "LNDFXA",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "LNDFXA",
+      "module": "defb6.src",
+      "js": "original/defb6-lander.js",
+      "status": "translated-unverified",
+      "asm_start": "LNDFXA",
+      "asm_end_exclusive": "SCZ00",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "SCZ00",
+      "module": "defb6.src",
+      "js": "original/defb6-lander.js",
+      "status": "translated-unverified",
+      "asm_start": "SCZ00",
+      "asm_end_exclusive": "SCZ0",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "SCZ0",
+      "module": "defb6.src",
+      "js": "original/defb6-lander.js",
+      "status": "translated-unverified",
+      "asm_start": "SCZ0",
+      "asm_end_exclusive": "LKIL1",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "LKIL1",
+      "module": "defb6.src",
+      "js": "original/defb6-lander.js",
+      "status": "translated-unverified",
+      "asm_start": "LKIL1",
+      "asm_end_exclusive": "LKILL",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "LKILL",
+      "module": "defb6.src",
+      "js": "original/defb6-lander.js",
+      "status": "translated-unverified",
+      "asm_start": "LKILL",
+      "asm_end_exclusive": "AFALL",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "GETALT",
+      "module": "defb6.src",
+      "js": "original/defb6-astronaut.js",
+      "status": "translated-unverified",
+      "asm_start": "GETALT",
+      "asm_end_exclusive": "ASTKIL",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "ASTRO",
+      "module": "defb6.src",
+      "js": "original/defb6-astronaut.js",
+      "status": "translated-unverified",
+      "asm_start": "ASTRO",
+      "asm_end_exclusive": "GETALT",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "ASTCLR",
+      "module": "defb6.src",
+      "js": "original/defb6-astronaut.js",
+      "status": "translated-unverified",
+      "asm_start": "ASTCLR",
+      "asm_end_exclusive": "TERBLO",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "ASTKIL",
+      "module": "defb6.src",
+      "js": "original/defb6-astronaut.js",
+      "status": "translated-unverified",
+      "asm_start": "ASTKIL",
+      "asm_end_exclusive": "AKIL1",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "ASTK1",
+      "module": "defb6.src",
+      "js": "original/defb6-astronaut.js",
+      "status": "translated-unverified",
+      "asm_start": "ASTK1",
+      "asm_end_exclusive": "AKIL1",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "AFALL",
+      "module": "defb6.src",
+      "js": "original/defb6-astronaut.js",
+      "status": "translated-unverified",
+      "asm_start": "AFALL",
+      "asm_end_exclusive": "AFALL2",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "AFALL2",
+      "module": "defb6.src",
+      "js": "original/defb6-astronaut.js",
+      "status": "translated-unverified",
+      "asm_start": "AFALL2",
+      "asm_end_exclusive": "ALAND",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "ALAND",
+      "module": "defb6.src",
+      "js": "original/defb6-astronaut.js",
+      "status": "translated-unverified",
+      "asm_start": "ALAND",
+      "asm_end_exclusive": "TIEST",
+      "notes": "Stage13 source-flow translation; external program / exact timing / original-machine comparison incomplete"
+    },
+    {
+      "label": "EXST",
+      "module": "samexap7.src",
+      "js": "original/samexap7-explosion-start.js",
+      "status": "translated-unverified",
+      "asm_start": "EXST",
+      "asm_end_exclusive": "EXPU",
+      "notes": "Stage 23 slot allocation and centre selection; cabinet differential trace not available"
+    },
+    {
+      "label": "EXPU",
+      "module": "samexap7.src",
+      "js": "original/samexap7-explosion-update.js",
+      "status": "translated-unverified",
+      "asm_start": "EXPU",
+      "asm_end_exclusive": "EERASE",
+      "notes": "Stage 24 explosion slots and size growth +$00AA. Appearance RSIZE<0 requires untranslated APST; diagnostic cadence not hardware-verified"
+    },
+    {
+      "label": "EWRITE",
+      "module": "samexap7.src",
+      "js": "original/samexap7-explosion-update.js",
+      "status": "translated-unverified",
+      "asm_start": "EWRITE",
+      "asm_end_exclusive": "STARTS",
+      "notes": "Stage 24 original FDB pair copying and erase-table bookkeeping; no MAME reference trace yet"
+    },
+    {
+      "label": "EERASE",
+      "module": "samexap7.src",
+      "js": "original/samexap7-explosion-start.js",
+      "status": "translated-unverified",
+      "asm_start": "EERASE",
+      "asm_end_exclusive": "EWRITE",
+      "notes": "Stage 23 original reverse erase table clearing"
+    }
+  ],
+  "explicitly_untranslated": [
+    "EXEC0",
+    "COLCHK",
+    "PLSTRT",
+    "XUVCT",
+    "OBJDEL",
+    "OBJWRT",
+    "APVCT"
+  ],
+  "not_playable": true,
+  "no_instruction_emulator": true,
+  "no_reused_prototype_gameplay": true,
+  "runnable_diagnostic": true,
+  "source_comparison_verified": false,
+  "checkpoint": "Stage 24: long-press mobile selection suppressed; independent original CPU-flag movement oracle for SCZ0 over 3500 states; source EXPU/EWRITE explosion expansion renders FDB byte pairs into video memory, and EERASE retires them. Original-game vs MAME state trace, APST, terrain destruction, laser/collisions and sound remain incomplete.",
+  "source_data_tables": [
+    {
+      "label": "WVTAB",
+      "module": "blk71.src",
+      "js": "original/blk71-wave-data.js",
+      "status": "source-extracted-unverified",
+      "notes": "23 rows x 8 bytes; see Stage 11 audit"
+    }
+  ]
+}

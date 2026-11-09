@@ -1,0 +1,1 @@
+Original assembly modules will be transliterated here under their original filenames (with .js extension). No existing prototype game logic is imported. Entry labels for which JavaScript code has not been translated are NEVER auto-filled with placeholder gameplay.

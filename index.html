@@ -1,0 +1,369 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Defender — Source-First Stage 76 · Source Movement Audit</title><style>:root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#080e16;color:#d8e3ef}
+*{box-sizing:border-box}body{margin:0;padding:28px 16px}.wrap{max-width:1000px;margin:auto}
+h1{font-size:25px;margin:0 0 8px;letter-spacing:-.7px}p{line-height:1.65;color:#b5c4d4}
+.top{border-bottom:1px solid #304355;padding-bottom:18px;margin-bottom:22px}
+.eyebrow{letter-spacing:2px;color:#a2d4ff;font-size:11px}.stage{border:1px solid #34495f;background:#0e1826;border-radius:10px;padding:16px}
+canvas{display:block;width:100%;max-width:876px;aspect-ratio:292/240;image-rendering:pixelated;background:#000;border:1px solid #243245;margin:auto}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:15px}
+button{background:#1a3248;border:1px solid #45627c;color:#edf6ff;padding:9px 15px;border-radius:6px;font:inherit;cursor:pointer;touch-action:none;
+ /* Long-press is an arcade hold, never text selection or an edit menu. */
+ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+ -webkit-tap-highlight-color:transparent;overscroll-behavior:contain;}
+button:hover{background:#264e70}button:focus-visible{outline:2px solid #92d3ff}
+.status{color:#82c4f1;font-size:12px}pre{white-space:pre-wrap;line-height:1.9;font-size:13px;color:#b9d5e6}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.panel{border:1px solid #304355;border-radius:10px;padding:18px;background:#101c2b}
+small{color:#96aabc}ul{line-height:1.8;color:#b5c4d4}code{color:#b1e7ff}@media(max-width:700px){.grid{grid-template-columns:1fr}pre{font-size:11px}}
+
+.human-readout{margin:0 auto 10px;max-width:876px;text-align:center;font-weight:700;font-size:13px;color:#c5e9ff}
+
+/* Prevent iOS/Android selection handles even if the press starts on button text.
+   Leave normal text selection available in explanations and diagnostics. */
+.controls,.controls button{ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none; }
+.controls button{touch-action:none;}
+
+/* Stage 36: make START visible above the attract canvas on narrow mobile screens. */
+.attract-actions{display:flex;gap:12px;align-items:center;justify-content:center;margin:0 auto 12px;flex-wrap:wrap;text-align:center;color:#96aabc;font-size:12px}
+#startGameTop{background:#236448;border-color:#47ae83;font-weight:700;padding:11px 22px}
+#startGameTop:hover{background:#2c865f}
+
+/* Stage 37: the original Williams attract screen is the content.
+   Keep the tools available when the user starts playing, but avoid a
+   dense diagnostic header and game controls obscuring the demonstration. */
+body.attract-mode .human-readout{display:none}
+body.attract-mode .stage .controls button:not(#startGame):not(#watchDemo):not(#hallTest){display:none}
+body.attract-mode #frames{display:none}
+body.attract-mode .attract-actions span{display:none}
+body.attract-mode .stage .attract-actions{margin-bottom:12px}
+body.attract-mode .top p{display:none}
+@media(max-width:700px){body.attract-mode{padding:12px 8px}body.attract-mode .stage{padding:8px}body.attract-mode .top{margin-bottom:8px;padding-bottom:8px}}
+
+/* Stage 48 audio controls, outside the diagnostic-only gameplay widgets. */
+#audioToggle{background:#173a50;border-color:#2c809b;font-weight:700}
+.sound-level{display:flex;align-items:center;gap:6px;font-size:12px;color:#b6dff2}
+.sound-level input{width:82px;accent-color:#70bfef}
+#audioLabel{font-size:10px;color:#79bdd6}
+
+/* Stage 52: cabinet joystick/fire controls while entering high-score initials. */
+.hall-controls[hidden]{display:none!important}
+.hall-controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+.hall-controls button{padding:14px 18px;font-weight:bold;background:#173f5c}
+body.attract-mode .hall-controls{display:flex}
+body.attract-mode .hall-controls button{display:block}
+
+/* Stage 53: keyboard configuration is browser input routing only. */
+.key-binding-summary{font-size:11px;color:#b2d9f2;text-align:center;line-height:1.6;margin:0 auto 10px;max-width:876px}
+body.attract-mode .key-binding-summary{display:none}
+.key-settings-backdrop[hidden]{display:none!important}
+.key-settings-backdrop{position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.8);padding:20px;display:flex;align-items:center;justify-content:center;overflow:auto}
+.key-settings-panel{background:#101e2f;color:#d8e3ef;width:min(96vw,560px);max-height:90vh;overflow:auto;border:1px solid #6c9aca;border-radius:12px;padding:24px;box-shadow:0 12px 55px #0009}
+.key-settings-panel h2{margin:0 0 12px}
+.key-settings-panel p{font-size:13px;line-height:1.5}
+.key-binding-grid{display:grid;gap:8px}
+.key-binding-row{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #304355;padding:6px 0}
+.key-binding-button{min-width:155px;text-align:center;background:#1b3c54;font-weight:bold}
+#keyBindingMessage{min-height:42px;color:#a8d8ff}
+#closeKeySettings{background:#216245}
+@media(max-width:480px){.key-settings-panel{padding:14px}.key-binding-button{min-width:130px}}
+
+/* Stage 55: arcade display first; menus replace the development dashboard. */
+body {padding:8px 10px 18px;background:#020508}
+.wrap {max-width:900px}
+.top.compact-top {padding:3px 2px 9px;margin:0 auto 10px;display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.compact-top h1 {font-size:18px;letter-spacing:2px;margin:0}
+.compact-top .eyebrow {font-size:10px;letter-spacing:1px}
+.stage {background:#04070b;border:1px solid #283544;padding:9px;border-radius:7px}
+#flight {width:100%;max-width:876px;border:1px solid #161e29;aspect-ratio:292/240}
+.cabinet-toolbar{display:flex;align-items:center;gap:9px;margin:0 auto 10px;flex-wrap:wrap;max-width:876px}
+.cabinet-toolbar button{padding:10px 15px;font-size:12px;font-weight:700}
+.coin-button{background:#9a4b19;border-color:#dd9458;color:#fff2d8}
+.coin-button:hover{background:#b15d24}
+.start-button{background:#206047;border-color:#4dba8d;color:#edfffb}
+.start-button:disabled{background:#14261f;color:#82978e;cursor:not-allowed;border-color:#273b32}
+#creditReadout{font-size:12px;color:#e7ecb8;white-space:nowrap;font-weight:700}
+.cabinet-menu{position:relative;margin-left:auto;z-index:60}
+.cabinet-menu>summary,.advanced-tools>summary,.advanced-notes>summary{cursor:pointer;color:#a4c6d9;font-size:12px;padding:9px 12px;border:1px solid #344a5a;border-radius:6px;list-style:none}
+.cabinet-menu[open]>.cabinet-options{position:absolute;right:0;top:calc(100% + 7px);width:min(420px,92vw);max-height:78vh;overflow:auto;background:#0d1a2a;border:1px solid #4a6277;border-radius:9px;box-shadow:0 12px 30px #000e;padding:15px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.cabinet-options>button{font-weight:500}
+.operator-settings{width:100%;border-top:1px solid #456; padding:10px 0}
+.operator-settings>summary{cursor:pointer;color:#d7ecf7;font-size:12px}
+.operator-settings p{font-size:11px;line-height:1.5}
+.operator-grid{display:grid;grid-template-columns:1fr 90px;align-items:center;gap:8px;margin:10px 0}
+.operator-grid label{font-size:11px;color:#c6dbe9}
+.operator-grid input{width:100%;background:#081421;border:1px solid #3a5e74;color:#ecf4fd;padding:7px;font:inherit}
+.cabinet-audits{font-size:11px;color:#b1cfe1;line-height:1.7;white-space:pre-line;margin-bottom:8px}
+.advanced-tools,.advanced-notes{margin-top:9px;max-width:900px}
+.advanced-tools:not([open])>.controls,.advanced-notes:not([open])>.panel{display:none}
+body .stage .controls button,body.attract-mode .stage .controls button{display:inline-block}
+body .human-readout,body .key-binding-summary{display:none}
+body .hall-controls[hidden]{display:none}
+@media(max-width:520px){body{padding:4px 3px}.top.compact-top{padding:3px 6px}.top .eyebrow{font-size:8px}.top h1{font-size:16px}.stage{padding:3px}.cabinet-toolbar{padding:4px;gap:5px}.cabinet-toolbar button{padding:9px 9px;font-size:11px}#creditReadout{font-size:10px}.cabinet-menu>summary{padding:8px 5px}}
+
+#startGameTop:disabled { background:#14261f; color:#82978e; border-color:#273b32; }
+
+/* Stage 58 — on-screen cabinet switches; browser adapter, never game logic. */
+.arcade-shell {width:100%; min-width:0; background:#000;}
+.arcade-viewport {
+    position:relative; width:100%; max-width:876px; aspect-ratio:292 / 240;
+    margin:0 auto; overflow:hidden; background:#000;
+}
+.game-view {position:absolute; inset:0; display:grid; place-items:center; min-width:0; min-height:0;}
+.arcade-viewport #flight {
+    width:100%; height:100%; max-width:none; aspect-ratio:auto;
+    object-fit:contain; border:0; image-rendering:pixelated;
+}
+.fullscreen-button {white-space:nowrap; font-size:12px; padding:8px 10px!important; background:#122739;}
+/* Stage 59: floating hybrid left thumb + independent right-hand actions. */
+.touch-overlay {display:none;position:absolute;inset:0;z-index:5;pointer-events:none;
+    user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none;}
+body.touch-enabled .touch-overlay {display:block;}
+.touch-left,.touch-right {position:absolute;top:3%;bottom:3%;display:flex;flex-direction:column;
+    justify-content:space-between;pointer-events:none;gap:10px;min-height:0;}
+.touch-left {left:1.2%;width:clamp(105px,26%,215px);}
+.touch-right {right:1.2%;width:clamp(93px,18%,180px);}
+.touch-button,.touch-joystick {
+    pointer-events:auto;touch-action:none!important;-webkit-user-select:none;user-select:none;
+    -webkit-touch-callout:none;overscroll-behavior:contain;-webkit-tap-highlight-color:transparent;
+    color:#f7f6de;font-size:clamp(10px,1.7vw,16px);font-weight:800;text-align:center;
+    letter-spacing:.04em;border-radius:17px;background:rgba(3,13,15,.65);
+    box-shadow:inset 0 0 0 1px #41617570;border:1px solid #50626c8f;
+}
+.touch-button {width:100%;min-height:clamp(44px,16%,75px);padding:6px;display:grid;place-items:center;}
+.touch-button:active,.touch-button.is-held {filter:brightness(1.5);box-shadow:inset 0 0 0 2px #baf7ff;}
+.touch-fire {color:#ffd5d2;background:rgba(105,28,36,.77);border-color:#bd525fa0;}
+.touch-thrust {color:#c8f8ba;background:rgba(31,93,46,.70);border-color:#72c88a90;}
+.touch-hyper {color:#ebd48e;border-color:#a48e5590;}
+.touch-bomb {color:#ffbbc1;border-color:#aa616b90;}
+.touch-floating-pad {height:100%;min-height:0;position:relative;overflow:hidden;
+    background:rgba(4,21,29,.38);border:1px solid #49738880;
+    border-radius:26px;display:block;touch-action:none!important;}
+.touch-floating-pad.is-active {background:rgba(6,31,43,.52);border-color:#9ce8f0;}
+.touch-hint {position:absolute;top:9px;left:0;right:0;color:#a0dce6;
+    font-size:clamp(9px,1vw,12px);pointer-events:none;z-index:2;}
+.touch-hint-bottom {top:auto;bottom:10px;}
+.touch-axis-guide {position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);
+    font-size:clamp(11px,1.6vw,17px);color:#8ab9c1b0;pointer-events:none;white-space:nowrap;}
+.floating-ring {position:absolute;top:50%;left:50%;width:min(104px,76%);
+    aspect-ratio:1;border:2px solid #7fd2e3c9;border-radius:50%;
+    background:#28566d36;transform:translate(-50%,-50%);pointer-events:none;
+    box-shadow:0 0 18px #4496b333;opacity:.2;transition:opacity 80ms;}
+.touch-floating-pad.is-active .floating-ring {opacity:1;}
+.ring-cross {position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    color:#97c9d480;font-size:37px;font-weight:300;}
+.floating-knob {position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    height:37%;width:37%;background:#39899fe8;border:2px solid #b0f4ff;
+    border-radius:50%;box-shadow:0 0 10px #62c6db99;}
+
+/* Fullscreen is the cabinet shell, not just canvas: coin, menu, and touch buttons remain usable. */
+.arcade-shell:fullscreen,.arcade-shell.is-faux-fullscreen {
+    position:fixed!important; inset:0!important; width:100vw!important; height:100vh!important;
+    height:100dvh!important; max-width:none!important; padding:0!important; border:0!important;
+    margin:0!important; z-index:9999!important; display:flex; flex-direction:column;
+    background:#000; overflow:hidden;
+}
+.arcade-shell:fullscreen .cabinet-toolbar,.arcade-shell.is-faux-fullscreen .cabinet-toolbar {
+    width:100%; max-width:none; flex:0 0 auto; margin:0; padding:4px 10px;
+    min-height:44px; justify-content:center; background:#060c13;
+}
+.arcade-shell:fullscreen .arcade-viewport,.arcade-shell.is-faux-fullscreen .arcade-viewport {
+    flex:1 1 auto; width:100%; height:100%; max-width:none; min-height:0; aspect-ratio:auto;
+}
+.arcade-shell:fullscreen .game-view,.arcade-shell.is-faux-fullscreen .game-view {inset:0;}
+.arcade-shell:fullscreen .hall-controls,.arcade-shell.is-faux-fullscreen .hall-controls {
+    position:absolute;bottom:10px;left:12%;right:12%;z-index:15;background:#000c; padding:8px;
+}
+.arcade-shell:fullscreen .touch-left,.arcade-shell.is-faux-fullscreen .touch-left {
+    width:clamp(82px,12vw,145px);left:2%;top:5%;bottom:5%;}
+.arcade-shell:fullscreen .touch-right,.arcade-shell.is-faux-fullscreen .touch-right {
+    width:clamp(82px,12vw,145px);right:2%;top:5%;bottom:5%;}
+body.arcade-fullscreen {overflow:hidden!important;padding:0!important;}
+
+/* Portrait devices use a dedicated touch-control strip below the uncropped game.
+   The original 292x240 framebuffer is always shown with its native ratio. */
+@media (orientation:portrait) {
+    body.touch-enabled .arcade-viewport {display:flex;flex-direction:column;aspect-ratio:auto;overflow:visible;}
+    body.touch-enabled .arcade-viewport .game-view {position:relative;inset:auto;width:100%;aspect-ratio:292/240;flex:0 0 auto;}
+    body.touch-enabled .arcade-viewport #flight {width:100%;height:100%;}
+    body.touch-enabled .touch-overlay {position:relative;inset:auto;height:210px;flex:0 0 210px;background:#020709;}
+    body.touch-enabled .touch-left,body.touch-enabled .touch-right {top:6px;bottom:6px;}
+    body.touch-enabled .touch-left {width:30%;left:3%;}
+    body.touch-enabled .touch-right {width:42%;right:3%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:1fr 1fr;align-items:stretch;}
+    body.touch-enabled .touch-joystick {height:67%;min-height:110px;}
+    body.touch-enabled .touch-button {min-height:0;font-size:11px;}
+    body.touch-enabled .touch-right .touch-button {font-size:11px;}
+    .arcade-shell:fullscreen .arcade-viewport,.arcade-shell.is-faux-fullscreen .arcade-viewport {
+        justify-content:flex-start; overflow:hidden!important;}
+    .arcade-shell:fullscreen .game-view,.arcade-shell.is-faux-fullscreen .game-view {
+        height:auto; max-height:calc(100dvh - 280px);width:min(100%,calc((100dvh - 280px)*292/240));margin:auto auto 0;}
+    .arcade-shell:fullscreen .touch-overlay,.arcade-shell.is-faux-fullscreen .touch-overlay {flex:1 0 190px;min-height:190px;max-height:230px;}
+}
+@media (max-width:480px) { .fullscreen-button {font-size:10px!important;padding:7px!important;} }
+/* Absolute canvas avoids replaced-element intrinsic aspect min-size overriding
+   the fullscreen viewport's available HEIGHT in a CSS grid layout. */
+.arcade-viewport .game-view {display:block;}
+.arcade-viewport #flight {position:absolute;inset:0;width:100%;height:100%;max-height:100%;object-fit:contain;}
+@media (orientation:portrait) {
+    .arcade-shell:fullscreen .game-view,.arcade-shell.is-faux-fullscreen .game-view {margin:0 auto;}
+}
+/* Fullscreen's landscape gutter widths must not override portrait touch targets. */
+@media (orientation:portrait) {
+  body.touch-enabled .arcade-shell:fullscreen .touch-left,
+  body.touch-enabled .arcade-shell.is-faux-fullscreen .touch-left {width:30%;left:3%;}
+  body.touch-enabled .arcade-shell:fullscreen .touch-right,
+  body.touch-enabled .arcade-shell.is-faux-fullscreen .touch-right {width:42%;right:3%;}
+}
+
+/* Stage 59 portrait: left thumb gets an entire wide pad rather than a short
+   vertical slider. Right-hand actions occupy their own simultaneous targets. */
+@media (orientation:portrait) {
+ body.touch-enabled .touch-overlay {height:clamp(218px,34vh,275px);flex-basis:clamp(218px,34vh,275px);}
+ body.touch-enabled .touch-left {width:43%;left:2%;top:6px;bottom:6px;}
+ body.touch-enabled .touch-right {width:50%;right:2%;top:6px;bottom:6px;
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-rows:repeat(2,minmax(0,1fr));gap:7px;}
+ body.touch-enabled .touch-floating-pad {height:100%;min-height:0;}
+ body.touch-enabled .touch-button {min-height:0;}
+ body.touch-enabled .arcade-shell:fullscreen .touch-left,
+ body.touch-enabled .arcade-shell.is-faux-fullscreen .touch-left {width:43%;left:2%;}
+ body.touch-enabled .arcade-shell:fullscreen .touch-right,
+ body.touch-enabled .arcade-shell.is-faux-fullscreen .touch-right {width:50%;right:2%;}
+ body.touch-enabled .arcade-shell:fullscreen .touch-overlay,
+ body.touch-enabled .arcade-shell.is-faux-fullscreen .touch-overlay {
+    flex:0 0 clamp(205px,32vh,265px);min-height:205px;max-height:265px;}
+}
+
+/* On a landscape phone, the previous 292:240 *container* used the entire
+   viewport WIDTH to determine its height. The lower half of the touch pad
+   then fell below the phone screen. Fit the cabinet's controls in HEIGHT;
+   the actual source canvas continues to letterbox at 292:240 via contain. */
+@media (orientation:landscape) and (max-height:650px) {
+ body.touch-enabled:not(.arcade-fullscreen) .arcade-viewport {
+    aspect-ratio:auto;
+    height:max(195px,calc(100dvh - 125px));
+    max-width:none;
+ }
+ body.touch-enabled:not(.arcade-fullscreen) .touch-left,
+ body.touch-enabled:not(.arcade-fullscreen) .touch-right {top:2%;bottom:2%;}
+}
+
+
+/* Stage 60: absolute target-altitude strip. The two indicators make it
+   obvious where the ship IS (gold) and where it WILL STOP (cyan). They live
+   in the browser overlay and are never painted into original video RAM. */
+.altitude-target,.altitude-ship {
+    position:absolute;left:2px;right:2px;height:0;z-index:3;
+    pointer-events:none;overflow:visible;box-sizing:border-box;
+}
+.altitude-target {border-top:2px solid #8beeff;filter:drop-shadow(0 0 3px #00daf5);}
+.altitude-ship {border-top:2px dashed #ffd96b;filter:drop-shadow(0 0 2px #ffba18);}
+.altitude-target span,.altitude-ship span {
+    position:absolute;right:2px;top:-15px;font:bold 9px monospace;
+    letter-spacing:.05em;padding:1px 2px;border-radius:2px;
+    background:#001622d9;color:#9becff;
+}
+.altitude-ship span {right:auto;left:2px;color:#ffe39b;background:#241b00d9;}
+.touch-floating-pad:not(.is-active) .altitude-target,
+.touch-floating-pad:not(.is-active) .altitude-ship {display:none;}
+</style></head><body><div class="wrap">
+<div class="top compact-top"><div class="eyebrow">WILLIAMS DEFENDER · RED LABEL · NATIVE JAVASCRIPT</div><h1>Defender</h1></div>
+<section class="stage"><div id="arcadeShell" class="arcade-shell"><div class="cabinet-toolbar" role="toolbar" aria-label="Arcade cabinet">
+    <button id="powerOnCabinet" class="start-button" title="Power on with original startup sound">POWER ON</button>
+    <button id="coinInsert" class="coin-button" title="Insert one coin into the left chute">INSERT COIN</button>
+    <button id="startGameTop" class="start-button" title="Original one-player START switch; requires credit">START 1 PLAYER</button>
+    <button id="watchAI" type="button" title="Skip the enemy showcase and watch the AI play a normal game">WATCH AI PLAY</button>
+    <span id="creditReadout" role="status" aria-live="polite">CREDITS 0</span>
+    <button id="fullscreenToggle" class="fullscreen-button" type="button" aria-label="Enter fullscreen">⛶ FULLSCREEN</button>
+    <details class="cabinet-menu" id="cabinetMenu"><summary>☰ MENU</summary>
+        <div class="cabinet-options">
+            <button id="configureKeys">KEYBOARD CONTROLS</button>
+            <button id="toggleTouchControls" type="button" aria-pressed="false">SHOW TOUCH CONTROLS</button>
+            <button id="audioToggle">ENABLE SOUND</button>
+            <label for="audioVolume" class="sound-level">VOLUME <input id="audioVolume" type="range" min="0" max="100" value="45" aria-label="Sound volume" /></label>
+            <small id="audioLabel">SOUND OFF</small>
+            <button id="rebootCabinet">POWER CYCLE / SELF TEST</button>
+            <button id="serviceTests">SERVICE REFERENCES (NOT ROM TESTS)</button>
+            <button id="nextServiceTest" hidden>NEXT SERVICE TEST</button>
+            <button id="exitServiceTests" hidden>EXIT SERVICE TESTS</button>
+            <details class="operator-settings" id="operatorSettings"><summary>OPERATOR SETTINGS &amp; BOOKKEEPING (CMOS)</summary>
+                <p>Original Williams operator functions, not DIP switches. Factory: one coin per credit, Free Play off.</p>
+                <div id="operatorSettingsGrid" class="operator-grid"></div>
+                <div id="cabinetAudits" class="cabinet-audits"></div>
+                <button id="factoryOperator">RESTORE FACTORY ADJUSTMENTS</button>
+                <button id="clearAudits">CLEAR AUDITS</button>
+                <button id="clearCredits">CLEAR CREDITS</button>
+                <p class="operator-disclaimer">Coinage 10–16 is represented by a browser coin-ledger adapter; exact original ROM pricing tables and service diagnostic ROM remain untranslated.</p>
+            </details>
+        </div>
+    </details>
+</div>
+<div id="keyBindingSummary" class="key-binding-summary" aria-live="polite"></div><div id="waveReadout" class="human-readout" aria-live="off">Source wave loading…</div><div id="humanReadout" class="human-readout" aria-live="off">Astronaut population loading…</div><div id="arcadeViewport" class="arcade-viewport" aria-label="Defender game and optional touch controls">
+    <div class="game-view"><canvas id="flight" width="292" height="240" aria-label="Original Williams Defender attract demonstration and playable arcade game"></canvas></div>
+    <div id="touchOverlay" class="touch-overlay" aria-label="Arcade touchscreen controls">
+        <div class="touch-left">
+            <div id="touchJoystick" class="touch-joystick touch-floating-pad" role="group" aria-label="Position controller: touch height chooses ship altitude; drag horizontally to face and thrust; slide without lifting">
+                <span class="touch-hint">ALTITUDE · TOUCH HEIGHT</span>
+                <span class="touch-axis-guide">←&nbsp;THRUST&nbsp;→</span>
+                <span id="altitudeTarget" class="altitude-target" hidden><span>TARGET</span></span>
+                <span id="altitudeShip" class="altitude-ship" hidden><span>SHIP</span></span>
+                <span id="floatingRing" class="floating-ring"><span class="ring-cross">+</span><span id="floatingKnob" class="floating-knob"></span></span>
+                <span class="touch-hint touch-hint-bottom">L / R = AUTO THRUST</span>
+            </div>
+        </div>
+        <div class="touch-right">
+            <button type="button" class="touch-button touch-fire" data-touch-action="fire">FIRE</button>
+            <button type="button" class="touch-button touch-thrust" data-touch-action="thrust">THRUST</button>
+            <button type="button" class="touch-button touch-hyper" data-touch-action="hyperspace">HS</button>
+            <button type="button" class="touch-button touch-bomb" data-touch-action="smartBomb">SMART<br/>BOMB</button>
+        </div>
+    </div>
+</div>
+<div class="hall-controls" id="hallControls" hidden aria-label="Hall of Fame initials controls">
+    <button id="hallUp">UP ▲</button>
+    <button id="hallDown">DOWN ▼</button>
+    <button id="hallFire">FIRE · NEXT INITIAL</button>
+</div>
+</div><!-- arcadeShell: fullscreen target -->
+<details class="advanced-tools"><summary>Developer tools and test controls</summary>
+<div class="controls"><button id="startGame" title="Start a new game (Enter)">START GAME</button><button id="watchDemo" title="Return to the original source attract-mode sequence">WATCH DEMO</button><button data-key="Space">Hold THRUST</button><button data-key="ArrowUp">Hold UP</button><button data-key="ArrowDown">Hold DOWN</button><button data-key="KeyR" id="reverseButton">REVERSE (HOLD)</button><button data-key="KeyS" id="smartBombButton">SMART BOMB</button><button data-key="KeyF" id="laserSound" title="Fires original Defender LASR/LASL laser; original SNDSEQ sound board audio">HOLD FIRE</button><button data-key="KeyH" id="hyperspaceButton" title="Original Defender HYPER/HYP02/HYP2 teleport, with source failure chance">HYPERSPACE</button><button id="scannerTest" title="Runs original AMODE1 SCNR and miniature-terrain output using the real BLK71 MTERR table.">Test original SCNR + terrain</button><button id="terrainTest" title="Runs BLK71 BGOUT and source terrain flavour-table output">Test original BGOUT terrain</button><button id="objectTest" title="Runs source OPROC against a diagnostic object with original PLAPIC bitmap; descriptor pointer is explicitly diagnostic.">Test OPROC drawing</button><button id="eraseTest" title="Runs original DEFB6 OFSHIT to erase the current diagnostic object via its OBJDEL descriptor">Test OFSHIT erase</button><button id="fireballTest" title="Runs original FBINIT then SHELL/FBOUT against a diagnostic shell record. No invented waveform or sprites.">Test FBOUT fireball</button><button id="hallTest" title="Development-only test: open the original HALLOF entry with a qualifying score">Test Hall of Fame entry</button><button id="scoreTest" title="Executes original SCORE arithmetic with a test reward (10 points); does not represent actual Defender game events">Test SCORE +10</button><button id="pause">Pause</button><button id="step">Single step</button><button id="reset">Reset</button><small id="frames"></small></div></details></section>
+<details class="advanced-notes"><summary>Project notes &amp; source diagnostics</summary>
+<section class="panel" style="margin-top:18px"><h2>Development notes · Stage 56</h2><p><strong>Stage 56 – ROMF8/ROMC0 source-first power-on:</strong> The original RAM3/RAM7 test pattern is written into the source-format video framebuffer using RESET1 colours. The diagnostic success screen uses ROMC0.RORAOK text and positions, then ROMF8.GAMEOV. POWER ON unlocks Web Audio and issues the QUASAR sound command. The ROM checksum, physical RAM fault mapping, real hardware service diagnostics, interrupt-cycle timing, and PIA/LED operations remain untranslated; see <code>docs/STAGE56_ROM_BOOT_SOURCE_AUDIT.md</code>. <strong>Stage 54 – Enter/Return can be bound to Fire:</strong> Keyboard Controls accepts Enter or Numpad Enter for FIRE only. During gameplay it becomes the same logical KeyF cabinet input as any other configured Fire key. On the attract screen Enter still starts a game, and in the Hall of Fame it confirms initials. The original game/sound routines and key defaults are unchanged.</p><p><strong>Stage 53 – high-score entry and corrected THRUST:</strong> Approved filtered-noise fix now runs through the game's original VSNDRM1 FNOISE sound-board path, including ADCA/SBCA high-byte overflow and borrow flags. After the original GAME OVER, the source waits 40 ticks, then HALLOF checks the player's packed-BCD score against the eighth score, presents original HOF initials/underline effects and permits UP/DOWN/FIRE selection. Qualifying scores are inserted into today's and all-time lists and the correct original organ cue is played; all-time records are saved using browser-local storage as a CMOS adapter. On each fresh page load, today's records use the original ROM factory table (ROMC8.RHSTDS). Use the <em>Test Hall of Fame entry</em> diagnostic button to check the screen without finishing a game. Full MESS0 cursor control interpretation and hardware CMOS remain unverified. See <code>docs/STAGE52_HIGH_SCORE_AND_THRUST_AUDIT.md</code>.</p><p><strong>Stage 51 IRQ/TIMER timing:</strong> The physical video clock now increments the original eight-bit <code>TIMER</code> independently of the executive. When a source graphics pass overruns one or more video periods, <code>EXEC0</code> consumes the accumulated timer ticks in <em>one</em> process-dispatch pass, rather than replaying a fictional queue of passes. Browser paint rate no longer throttles the nominal video IRQ to one tick per rendered frame. The original <code>$30</code>, <code>$2E</code> and <code>$28</code> sleeps remain unchanged. The graphics cycle ledger is still partial, and the first complete title redraw remains at video frame 338 in the deterministic source harness; this is not yet a cabinet-verified animation speed. See <code>docs/STAGE51_DEEP_TIMING_AUDIT.md</code>.</p><p><strong>Stage 43 source corrections:</strong> In the original attract demonstration, <code>LEDRET</code> starts <code>CBOMB</code>; the translated colour process now runs and cycles MUTANT palette slot C during both source <code>APVCT</code> appearances. The original <code>BLK71.BGOUT</code> writer now restores terrain after SAMEX explosions erase video bytes. The WILLIAMS title uses its own <code>LOGO0/LGOTAB</code> source-traced nibble positions for presentation restoration during DEFENDER appearance; no new artwork was created. Browser task interleaving is not yet cycle-exact. See <code>docs/STAGE43_LOGO_MUTANT_TERRAIN_AUDIT.md</code> and the regression tests.</p><p><strong>Original video pipeline, resistor-weighted colours, source-cycle Bomber/mine colours and visibly twinkling stars.</strong> Enemy waves, movement, collisions, astronaut captures and rescues, lasers, Reverse, player deaths, explosions, and wave transitions use named assembly-derived routines. <strong>Original inter-wave bonus messages now appear inside video RAM and award each surviving astronaut 100 points times the completed wave number (capped at ×5), one every four update ticks, before the 128-tick next-wave pause.</strong> The first wave starts with five of fifteen Landers and no Baiters or Swarmers. Original-score <code>NUMBR0–NUMBR9</code> glyphs, spare-ship and Smart Bomb icons are drawn by <code>CWRIT</code> into the game framebuffer. The Williams 16-entry colour RAM is updated through the original IRQ path, with the original Williams resistor-weighted 3:3:2 DAC conversion; the <code>COLR</code> process now cycles the laser colour. The original HYPER/HYP02/HYP2 hyperspace process is available (H key or button), and holding FIRE triggers repeat requests through LFIRE with an explicit browser-only repeat interval. The browser nominal frame cadence uses the board's 1 MHz / 16,640-count video period (approximately 60.096 Hz).</p>
+<p><strong>Stage 42 scanner fixes:</strong> The existing source <code>DEFA7.BORDER</code> now creates the blue radar enclosure; <code>SCINIT</code> and <code>LEDRET</code> restore the original $DB then $D9 STATUS sequence so <code>SCNR.MT1</code> draws the real BLK71 miniature terrain. Original scanner marker $1030 is no longer overwritten by demo-ship movement, and source <code>CREDS</code> renders cabinet credits only if present. See the source audit for remaining unverified scheduling boundaries.</p><p><strong>Stage 42 attract mode:</strong> The machine now boots into an animated, source-derived Williams/Defender presentation and a scripted rescue/enemy demonstration from the original <code>AMODE1.SRC</code>. The Williams line art uses <code>LGOTAB/LOGO0</code> bytes and the source <code>COLR/TIECOL</code> palette processes. The <code>ELECV/PRES1</code> original presentation lettering uses the exact $3258/$3E6C MESS0 cursor instructions and is refreshed after title expansion, protecting intact ELECTRONICS INC. and PRESENTS text. Source <code>AMODE3/AMOD11</code> shot sequences now call <code>XSVCT/EXST/EXPU/EWRITE</code>, creating the original Lander and six enemy explosions. Source <code>APST/EXPU</code> also restores each enemy materialisation before its sprite appears; <code>TEXTP</code> follows the original captions and point values in <code>TEXTAB</code> order. The animated DEFENDER title now uses 15 original <code>DEFENS/APST/EXPU/DEF50</code> appearance objects before restoring the full <code>DEFDAT/DEFNNN</code> bitmap, and the demo uses original object bitmaps and timed <code>LEDRET/AMODE1–8/AMOD12</code> stages. Press <strong>ENTER</strong> or tap <strong>START GAME</strong> to play; <strong>WATCH DEMO</strong> returns to attract mode. The original ROMC8.DEFALT high scores initialise both columns. Source-derived high-score initials entry now updates the tables after qualifying games; all-time records are retained using browser-local storage. Cabinet coins and physical CMOS are not yet implemented. Sound-board DAC integration is now available in Stage 48.</p>
+<p><strong>Stage 35 bug fixes:</strong> A Smart Bomb that eliminates the final enemies now completes its original palette-flash phase <em>before</em> the wave-completed and astronaut-bonus display is drawn. The source wave executive still uses its normal 15-tick wakeups, and the inter-wave bonus text/score cadence is unchanged. A dying Bomber is now erased from the source framebuffer before its object record is unlinked, fixing a stale-sprite artifact after Smart Bomb use. The original sprite bitmaps, collision vectors, object lists and score routines are preserved. Unlimited Smart Bombs remain enabled for testing, and sound remains deferred.</p>
+<p><strong>Stage 34 display work retained:</strong> Original <code>THPROC</code>, <code>TIECOL</code> and <code>CBOMB</code> continue to run as source processes. Bomber palette phases now have RGB *sprite-pixel* regression coverage, and the browser uses the original board resistor weights rather than ideal 3:3:2 linear scaling. The translated star <code>SBLNK</code> colour branch is sampled every game update, where the source seed permits it, instead of at one-quarter speed: visible star brightness transitions are now checked in the final framebuffer. A further critical fix corrects <code>presentFrame → framePixels</code>: Stages 29–33 inadvertently discarded the hardware colour palette, displaying a fixed diagnostic colour table despite source colour cycling. The original assembly does not establish the normal-game <code>SBLNK</code> call cadence, so the host sampling rate remains provisional, not cabinet-verified. <strong>Deliberate development option:</strong> unlimited Smart Bomb ammunition is enabled for now; the original three-charge counter and icons remain in the source. <strong>Sound is now connected</strong> through DEFA7.SNDOUT. This is not yet a fully verified arcade-equivalent implementation: the initial hardware/raster inputs, complete <code>EXEC/SINIT</code> timing and analogue CRT gamma are still approximated or not implemented. The independent source workbenches below remain diagnostic fixtures, not the active game wave.</p></section>
+<section class="panel" style="margin-top:18px" id="enemyLocatorPanel">
+<h2>Stage 35 — enemy location diagnostic</h2>
+<p>The markers below show the actual world-coordinate RAM fields of the Stage 12/13 enemy fixtures (UFO, swarmer and lander) and astronaut. The fixtures are separate from the flight framebuffer. <strong>These markers are not Defender sprites, and this is not the missing APVCT sprite renderer.</strong> This view makes enemy state inspectable without fabricating pictures or modifying the original object routines.</p>
+<canvas id="enemyLocator" width="292" height="240" aria-label="Diagnostic locations of original enemy object records"></canvas>
+<p><small>U = UFO, S = Swarmer, L = Lander, A = Astronaut. Horizontal positions are displayed relative to the source player's PLABX as a diagnostic viewport; marker letters are debugging annotations, not game graphics.</small></p>
+</section>
+<section class="panel process-workbench" style="margin-top:18px">
+<h2>Original cooperative-process workbench — Stage 35</h2>
+<p><strong>Independent diagnostic.</strong> Runs the translated <code>GEXEC</code>, <code>COLR</code> and <code>THPROC</code> processes via original <code>DISP</code>/<code>SLEEP</code> linked-list scheduling. <code>REV</code> can be spawned as an original process. This test uses synthetic continuation <em>addresses</em> solely for host function dispatch, and sets the real <code>STATUS</code> dead-player branch to avoid unported enemies. It does <em>not</em> claim the complete arcade <code>EXEC</code> or game startup.</p>
+<div class="controls"><button id="processStep">One scheduler tick</button><button id="process120">Run 120 ticks</button><button id="process600">Run 600 ticks</button><button id="processReverse">Spawn REV process</button><button id="processReset">Reset processes</button></div>
+<pre id="processState" aria-live="polite"></pre>
+</section>
+<section class="panel process-workbench" style="margin-top:18px">
+<h2>Original enemy-process workbench — Stage 35</h2>
+<p><strong>Separate source-process diagnostic, not playable enemies.</strong> Translated <code>UFOLP</code>, <code>UFONV</code>, <code>MSWM</code> and <code>MSWLP</code> execute via the original <code>DISP</code>/<code>SLEEP</code> process lists. Starting object records, seed bytes and diagnostic continuation identifiers are explicit test fixtures. It uses the translated <code>SHOOT</code>, <code>GETSHL</code> and sound-command sequencer; it does <em>not</em> run the missing <code>APVCT</code> appearance routine, projectile collision handling or IRQ/VELO world-position updates.</p>
+<div class="controls"><button id="enemyStep">One enemy process tick</button><button id="enemy120">Run 120 ticks</button><button id="enemyReset">Reset enemy records</button></div>
+<pre id="enemyState" aria-live="polite"></pre>
+</section>
+<section class="panel" id="landerWorkbench">
+<h2>Stage 35 — original lander &amp; astronaut process workbench</h2>
+<p><strong>Diagnostic, not a game level.</strong> Initial object and process RAM records are explicitly seeded. The source-named <code>LANDS0</code>, <code>LANDG</code>, <code>LANDF</code>, <code>LNDFXA</code>, <code>ASTRO</code> routines execute through original <code>DISP</code>/<code>SLEEP</code>, while original <code>VELO</code> advances positions. Terrain altitude is read from the original BLK71 terrain bitstream; source <code>GETALT</code> computes the 6-bit index. The workbench uses one dispatch and one velocity update per button tick: <em>its cadence is a test fixture, not verified cabinet timing.</em> Missing original appearance, collision and damage routines are not replaced.</p>
+<div class="controls"><button id="landerStep">One lander tick</button><button id="lander60">Run 60 ticks</button><button id="lander120">Run 120 ticks</button><button id="landerReset">Reset lander records</button></div>
+<pre id="landerState" aria-live="polite"></pre>
+</section>
+<div class="grid"><section class="panel"><h2>Actual memory registers</h2><pre id="memory"></pre><div class="status" id="status"></div></section>
+<section class="panel"><h2>Scope and controls</h2><p>Keyboard defaults: <code>A</code> up, <code>Z</code> down, <code>RIGHT SHIFT</code> thrust, <code>SPACE</code> reverse, <code>TAB</code> Smart Bomb, <code>H</code> Hyperspace, <code>ENTER</code> fire. Use KEYBOARD CONTROLS to reassign these, including <strong>Enter</strong> as Fire. The ship and thrust are written into video memory by native translations of the original <code>POUT</code>, <code>ON86</code> and <code>THOUT</code> routines. The fixed-point movement uses <code>PLAYER</code>. Press <code>T</code> to test source terrain redraw, or <code>B</code> to test source <code>SCNR</code> object/player blip placement with original miniature terrain from <code>BLK71.SRC</code>. Press <code>V</code> to test original FBOUT, or <code>E</code> to call original <code>OFSHIT</code> on the diagnostic object. Press <code>G</code> (or Test SCORE +10) to apply original packed-BCD score arithmetic in the diagnostic; the original source score-digit glyphs are now rendered to framebuffer memory. Hold your configured <code>FIRE</code> key (Enter by default; F optional) or HOLD FIRE to repeatedly fire the source LASR/LASL laser, checking source picture-byte collisions and awarding original score values. The original VSNDRM1 sound board DAC output is integrated.</p><p><strong>Still absent or not verified:</strong> cycle-exact original sound-board interrupt pre-emption (not yet verified), hardware-driven startup, and exact 6809 instruction/raster timing. Source <code>TDISP/SCRTRN</code> and original numeral/ship/bomb graphics now use <code>ROMF8 CWRIT/COFF/BLKCLR</code>; colour-RAM data is interpreted using the board's 3:3:2 DAC with no analogue CRT transfer curve. <code>PRDISP</code> now runs from the translated two-phase <code>IRQ</code>; only the raster input samples are diagnostic. No substitute gameplay has been added.</p></section></div>
+</div>
+</details>
+<div id="keySettings" class="key-settings-backdrop" role="dialog" aria-modal="true" aria-label="Keyboard controls" hidden>
+  <section class="key-settings-panel">
+    <h2>Keyboard controls</h2>
+    <p>Choose a control to assign a new key. Right and Left Shift are separate keys. Assignments are saved in this browser where storage is available. <strong>Enter</strong> (or Numpad Enter) can be assigned to <strong>Fire</strong>. On the title screen Enter still starts the game, and during initials entry it confirms a letter. <strong>Escape</strong> cancels key selection.</p>
+    <div id="keyBindingRows" class="key-binding-grid"></div>
+    <p id="keyBindingMessage" role="status" aria-live="polite"></p>
+    <div class="controls"><button id="resetKeySettings">RESTORE DEFAULTS</button><button id="closeKeySettings">DONE</button></div>
+  </section>
+</div>
+<script type="module" src="browser/flight.js"></script></body></html>

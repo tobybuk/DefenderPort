@@ -1,0 +1,24 @@
+{
+  "name": "defender-native-transliteration",
+  "private": true,
+  "version": "0.76.0",
+  "type": "module",
+  "description": "Stage 76: source audit of enemy movement and timing (Bomber TIE fixes, Bomber mines restored, Swarmer explosion), permanent DEMO MODE ACTIVE banner, on top of the Stage 75 engine and attract-AI work.",
+  "scripts": {
+    "build": "node tools/build-standalone.mjs",
+    "timing:trace": "node tools/trace-stage51.mjs",
+    "test": "node --test tests/*.test.mjs && node tools/guardrail.mjs",
+    "source:fetch": "node tools/fetch-source.mjs",
+    "source:inventory": "node tools/inventory.mjs",
+    "source:symbols": "node tools/symbols.mjs",
+    "source:annotate": "node tools/annotate.mjs",
+    "source:audit": "node tools/audit.mjs",
+    "source:prepare": "npm run source:fetch && npm run source:symbols && npm run source:inventory && npm run source:audit",
+    "demo": "node demo/run-flight.mjs",
+    "mutant:arena": "node tools/stage73-mutant-arena.mjs",
+    "ai:benchmark": "node tools/stage74-benchmark.mjs",
+    "source:data-check": "node tools/check-sound-data.mjs",
+    "source:extract-mterr": "node tools/extract-mterr.mjs",
+    "source:verify-terrain": "node tools/verify-blk71.mjs"
+  }
+}

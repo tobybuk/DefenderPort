@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/mwenge/defender",
+  "commit": "e74006344b16d19245510b5e55780f90d7606bb8",
+  "edition": "Red Label",
+  "core_files": ["phr6.src","defa7.src","defb6.src","amode1.src","blk71.src","samexap7.src","mess0.src","romf8.src","romc0.src","romc8.src"],
+  "game_sources_path": "source/defender/src",
+  "licence": "No licence stated in upstream repository; users must consider rights before distributing translated copyrighted material"
+}

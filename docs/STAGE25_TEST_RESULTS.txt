@@ -1,0 +1,63 @@
+Stage 25 full source and standalone test results
+2026-11-07T09:58:03+00:00
+
+est: source-referenced original terrain outputs are deterministic for a fixed BGL
+ok 335 - source-referenced original terrain outputs are deterministic for a fixed BGL
+  ---
+  duration_ms: 24.057029
+  type: 'test'
+  ...
+# Subtest: rejects missing/synthetic terrain data without pretending that it is source
+ok 336 - rejects missing/synthetic terrain data without pretending that it is source
+  ---
+  duration_ms: 0.929693
+  type: 'test'
+  ...
+# Subtest: source checkout pins a full 40-digit commit SHA
+ok 337 - source checkout pins a full 40-digit commit SHA
+  ---
+  duration_ms: 1.524008
+  type: 'test'
+  ...
+# Subtest: assembly expression parser supports original numeric notations
+ok 338 - assembly expression parser supports original numeric notations
+  ---
+  duration_ms: 0.804501
+  type: 'test'
+  ...
+# Subtest: layout parser recognizes source-defined allocation offsets and self-address definitions
+ok 339 - layout parser recognizes source-defined allocation offsets and self-address definitions
+  ---
+  duration_ms: 1.891619
+  type: 'test'
+  ...
+# Subtest: routine inventory reports actual labels separate from references and data
+ok 340 - routine inventory reports actual labels separate from references and data
+  ---
+  duration_ms: 0.683255
+  type: 'test'
+  ...
+# Subtest: assembly parser refuses to silently guess an undefined memory symbol
+ok 341 - assembly parser refuses to silently guess an undefined memory symbol
+  ---
+  duration_ms: 0.6869
+  type: 'test'
+  ...
+# Subtest: possible callable labels are surfaced as incomplete unless translated and tracked
+ok 342 - possible callable labels are surfaced as incomplete unless translated and tracked
+  ---
+  duration_ms: 1.234605
+  type: 'test'
+  ...
+1..342
+# tests 342
+# suites 0
+# pass 342
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3785.530177
+PASS: no prohibited substitution patterns found in original/ translations
+
+Browser screenshot: headless Chromium timed out; simulated-DOM standalone boot tests PASSED.

@@ -1,0 +1,53 @@
+{
+  "source": "mwenge/defender e74006344b16d19245510b5e55780f90d7606bb8",
+  "model": "native JS 6809 source-cycle estimates, not a full ROM CPU/IRQ trace",
+  "physicalFrames": 520,
+  "displayHz": 60.09615384615385,
+  "executivePasses": 498,
+  "extraIrqTicksOverExec": 22,
+  "multiTimerReads": 21,
+  "checkpoints": {
+    "0": {
+      "displayFrame": 274,
+      "milliseconds": 4559.36,
+      "executivePasses": 274
+    },
+    "15": {
+      "displayFrame": 291,
+      "milliseconds": 4842.24,
+      "executivePasses": 289
+    },
+    "30": {
+      "displayFrame": 312,
+      "milliseconds": 5191.68,
+      "executivePasses": 304
+    },
+    "45": {
+      "displayFrame": 337,
+      "milliseconds": 5607.68,
+      "executivePasses": 319
+    },
+    "46": {
+      "displayFrame": 338,
+      "milliseconds": 5624.32,
+      "executivePasses": 320
+    },
+    "48": {
+      "displayFrame": 343,
+      "milliseconds": 5707.52,
+      "executivePasses": 322
+    },
+    "86": {
+      "displayFrame": 382,
+      "milliseconds": 6356.48,
+      "executivePasses": 360
+    }
+  },
+  "knownUnknowns": [
+    "full IRQ routine CPU cycles",
+    "LOGO0 and MESS0 instruction cycles",
+    "6809 interrupt preemption inside long EXEC",
+    "per-write video timestamps",
+    "complete source-process scheduling across entire game"
+  ]
+}

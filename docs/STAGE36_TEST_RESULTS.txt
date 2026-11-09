@@ -1,0 +1,7 @@
+Stage 36 original-attract-mode integration — 7 November 2026
+Build: npm run build — standalone play.html built successfully (inline JS/CSS)
+Tests: npm test — 431 passed, 0 failed; source guardrail checks passed.
+Attract runtime: source harness ran >=4,000 ticks without errors; reached presentation, Hall of Fame, rescue and all six enemy introductions, then looped.
+Real Chromium: loaded standalone play.html through browser.set_content; source Williams and DEFENDER pixels rendered on canvas; START GAME/ENTER -> wave 1, five Landers and zero Baiters; WATCH DEMO -> presentation; no JS page exceptions.
+Touch/mobile Chromium: start button tap opens wave 1; no JS page exceptions.
+Scope: no sound. High-score CMOS and full coin accounting not translated. Some attract movement/timing and captions use source data with an incomplete timing/overlap model; this is not a cycle-exact hardware comparison.

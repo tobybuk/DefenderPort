@@ -1,0 +1,265 @@
+:root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#080e16;color:#d8e3ef}
+*{box-sizing:border-box}body{margin:0;padding:28px 16px}.wrap{max-width:1000px;margin:auto}
+h1{font-size:25px;margin:0 0 8px;letter-spacing:-.7px}p{line-height:1.65;color:#b5c4d4}
+.top{border-bottom:1px solid #304355;padding-bottom:18px;margin-bottom:22px}
+.eyebrow{letter-spacing:2px;color:#a2d4ff;font-size:11px}.stage{border:1px solid #34495f;background:#0e1826;border-radius:10px;padding:16px}
+canvas{display:block;width:100%;max-width:876px;aspect-ratio:292/240;image-rendering:pixelated;background:#000;border:1px solid #243245;margin:auto}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:15px}
+button{background:#1a3248;border:1px solid #45627c;color:#edf6ff;padding:9px 15px;border-radius:6px;font:inherit;cursor:pointer;touch-action:none;
+ /* Long-press is an arcade hold, never text selection or an edit menu. */
+ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+ -webkit-tap-highlight-color:transparent;overscroll-behavior:contain;}
+button:hover{background:#264e70}button:focus-visible{outline:2px solid #92d3ff}
+.status{color:#82c4f1;font-size:12px}pre{white-space:pre-wrap;line-height:1.9;font-size:13px;color:#b9d5e6}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.panel{border:1px solid #304355;border-radius:10px;padding:18px;background:#101c2b}
+small{color:#96aabc}ul{line-height:1.8;color:#b5c4d4}code{color:#b1e7ff}@media(max-width:700px){.grid{grid-template-columns:1fr}pre{font-size:11px}}
+
+.human-readout{margin:0 auto 10px;max-width:876px;text-align:center;font-weight:700;font-size:13px;color:#c5e9ff}
+
+/* Prevent iOS/Android selection handles even if the press starts on button text.
+   Leave normal text selection available in explanations and diagnostics. */
+.controls,.controls button{ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none; }
+.controls button{touch-action:none;}
+
+/* Stage 36: make START visible above the attract canvas on narrow mobile screens. */
+.attract-actions{display:flex;gap:12px;align-items:center;justify-content:center;margin:0 auto 12px;flex-wrap:wrap;text-align:center;color:#96aabc;font-size:12px}
+#startGameTop{background:#236448;border-color:#47ae83;font-weight:700;padding:11px 22px}
+#startGameTop:hover{background:#2c865f}
+
+/* Stage 37: the original Williams attract screen is the content.
+   Keep the tools available when the user starts playing, but avoid a
+   dense diagnostic header and game controls obscuring the demonstration. */
+body.attract-mode .human-readout{display:none}
+body.attract-mode .stage .controls button:not(#startGame):not(#watchDemo):not(#hallTest){display:none}
+body.attract-mode #frames{display:none}
+body.attract-mode .attract-actions span{display:none}
+body.attract-mode .stage .attract-actions{margin-bottom:12px}
+body.attract-mode .top p{display:none}
+@media(max-width:700px){body.attract-mode{padding:12px 8px}body.attract-mode .stage{padding:8px}body.attract-mode .top{margin-bottom:8px;padding-bottom:8px}}
+
+/* Stage 48 audio controls, outside the diagnostic-only gameplay widgets. */
+#audioToggle{background:#173a50;border-color:#2c809b;font-weight:700}
+.sound-level{display:flex;align-items:center;gap:6px;font-size:12px;color:#b6dff2}
+.sound-level input{width:82px;accent-color:#70bfef}
+#audioLabel{font-size:10px;color:#79bdd6}
+
+/* Stage 52: cabinet joystick/fire controls while entering high-score initials. */
+.hall-controls[hidden]{display:none!important}
+.hall-controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+.hall-controls button{padding:14px 18px;font-weight:bold;background:#173f5c}
+body.attract-mode .hall-controls{display:flex}
+body.attract-mode .hall-controls button{display:block}
+
+/* Stage 53: keyboard configuration is browser input routing only. */
+.key-binding-summary{font-size:11px;color:#b2d9f2;text-align:center;line-height:1.6;margin:0 auto 10px;max-width:876px}
+body.attract-mode .key-binding-summary{display:none}
+.key-settings-backdrop[hidden]{display:none!important}
+.key-settings-backdrop{position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.8);padding:20px;display:flex;align-items:center;justify-content:center;overflow:auto}
+.key-settings-panel{background:#101e2f;color:#d8e3ef;width:min(96vw,560px);max-height:90vh;overflow:auto;border:1px solid #6c9aca;border-radius:12px;padding:24px;box-shadow:0 12px 55px #0009}
+.key-settings-panel h2{margin:0 0 12px}
+.key-settings-panel p{font-size:13px;line-height:1.5}
+.key-binding-grid{display:grid;gap:8px}
+.key-binding-row{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #304355;padding:6px 0}
+.key-binding-button{min-width:155px;text-align:center;background:#1b3c54;font-weight:bold}
+#keyBindingMessage{min-height:42px;color:#a8d8ff}
+#closeKeySettings{background:#216245}
+@media(max-width:480px){.key-settings-panel{padding:14px}.key-binding-button{min-width:130px}}
+
+/* Stage 55: arcade display first; menus replace the development dashboard. */
+body {padding:8px 10px 18px;background:#020508}
+.wrap {max-width:900px}
+.top.compact-top {padding:3px 2px 9px;margin:0 auto 10px;display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.compact-top h1 {font-size:18px;letter-spacing:2px;margin:0}
+.compact-top .eyebrow {font-size:10px;letter-spacing:1px}
+.stage {background:#04070b;border:1px solid #283544;padding:9px;border-radius:7px}
+#flight {width:100%;max-width:876px;border:1px solid #161e29;aspect-ratio:292/240}
+.cabinet-toolbar{display:flex;align-items:center;gap:9px;margin:0 auto 10px;flex-wrap:wrap;max-width:876px}
+.cabinet-toolbar button{padding:10px 15px;font-size:12px;font-weight:700}
+.coin-button{background:#9a4b19;border-color:#dd9458;color:#fff2d8}
+.coin-button:hover{background:#b15d24}
+.start-button{background:#206047;border-color:#4dba8d;color:#edfffb}
+.start-button:disabled{background:#14261f;color:#82978e;cursor:not-allowed;border-color:#273b32}
+#creditReadout{font-size:12px;color:#e7ecb8;white-space:nowrap;font-weight:700}
+.cabinet-menu{position:relative;margin-left:auto;z-index:60}
+.cabinet-menu>summary,.advanced-tools>summary,.advanced-notes>summary{cursor:pointer;color:#a4c6d9;font-size:12px;padding:9px 12px;border:1px solid #344a5a;border-radius:6px;list-style:none}
+.cabinet-menu[open]>.cabinet-options{position:absolute;right:0;top:calc(100% + 7px);width:min(420px,92vw);max-height:78vh;overflow:auto;background:#0d1a2a;border:1px solid #4a6277;border-radius:9px;box-shadow:0 12px 30px #000e;padding:15px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.cabinet-options>button{font-weight:500}
+.operator-settings{width:100%;border-top:1px solid #456; padding:10px 0}
+.operator-settings>summary{cursor:pointer;color:#d7ecf7;font-size:12px}
+.operator-settings p{font-size:11px;line-height:1.5}
+.operator-grid{display:grid;grid-template-columns:1fr 90px;align-items:center;gap:8px;margin:10px 0}
+.operator-grid label{font-size:11px;color:#c6dbe9}
+.operator-grid input{width:100%;background:#081421;border:1px solid #3a5e74;color:#ecf4fd;padding:7px;font:inherit}
+.cabinet-audits{font-size:11px;color:#b1cfe1;line-height:1.7;white-space:pre-line;margin-bottom:8px}
+.advanced-tools,.advanced-notes{margin-top:9px;max-width:900px}
+.advanced-tools:not([open])>.controls,.advanced-notes:not([open])>.panel{display:none}
+body .stage .controls button,body.attract-mode .stage .controls button{display:inline-block}
+body .human-readout,body .key-binding-summary{display:none}
+body .hall-controls[hidden]{display:none}
+@media(max-width:520px){body{padding:4px 3px}.top.compact-top{padding:3px 6px}.top .eyebrow{font-size:8px}.top h1{font-size:16px}.stage{padding:3px}.cabinet-toolbar{padding:4px;gap:5px}.cabinet-toolbar button{padding:9px 9px;font-size:11px}#creditReadout{font-size:10px}.cabinet-menu>summary{padding:8px 5px}}
+
+#startGameTop:disabled { background:#14261f; color:#82978e; border-color:#273b32; }
+
+/* Stage 58 — on-screen cabinet switches; browser adapter, never game logic. */
+.arcade-shell {width:100%; min-width:0; background:#000;}
+.arcade-viewport {
+    position:relative; width:100%; max-width:876px; aspect-ratio:292 / 240;
+    margin:0 auto; overflow:hidden; background:#000;
+}
+.game-view {position:absolute; inset:0; display:grid; place-items:center; min-width:0; min-height:0;}
+.arcade-viewport #flight {
+    width:100%; height:100%; max-width:none; aspect-ratio:auto;
+    object-fit:contain; border:0; image-rendering:pixelated;
+}
+.fullscreen-button {white-space:nowrap; font-size:12px; padding:8px 10px!important; background:#122739;}
+/* Stage 59: floating hybrid left thumb + independent right-hand actions. */
+.touch-overlay {display:none;position:absolute;inset:0;z-index:5;pointer-events:none;
+    user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none;}
+body.touch-enabled .touch-overlay {display:block;}
+.touch-left,.touch-right {position:absolute;top:3%;bottom:3%;display:flex;flex-direction:column;
+    justify-content:space-between;pointer-events:none;gap:10px;min-height:0;}
+.touch-left {left:1.2%;width:clamp(105px,26%,215px);}
+.touch-right {right:1.2%;width:clamp(93px,18%,180px);}
+.touch-button,.touch-joystick {
+    pointer-events:auto;touch-action:none!important;-webkit-user-select:none;user-select:none;
+    -webkit-touch-callout:none;overscroll-behavior:contain;-webkit-tap-highlight-color:transparent;
+    color:#f7f6de;font-size:clamp(10px,1.7vw,16px);font-weight:800;text-align:center;
+    letter-spacing:.04em;border-radius:17px;background:rgba(3,13,15,.65);
+    box-shadow:inset 0 0 0 1px #41617570;border:1px solid #50626c8f;
+}
+.touch-button {width:100%;min-height:clamp(44px,16%,75px);padding:6px;display:grid;place-items:center;}
+.touch-button:active,.touch-button.is-held {filter:brightness(1.5);box-shadow:inset 0 0 0 2px #baf7ff;}
+.touch-fire {color:#ffd5d2;background:rgba(105,28,36,.77);border-color:#bd525fa0;}
+.touch-thrust {color:#c8f8ba;background:rgba(31,93,46,.70);border-color:#72c88a90;}
+.touch-hyper {color:#ebd48e;border-color:#a48e5590;}
+.touch-bomb {color:#ffbbc1;border-color:#aa616b90;}
+.touch-floating-pad {height:100%;min-height:0;position:relative;overflow:hidden;
+    background:rgba(4,21,29,.38);border:1px solid #49738880;
+    border-radius:26px;display:block;touch-action:none!important;}
+.touch-floating-pad.is-active {background:rgba(6,31,43,.52);border-color:#9ce8f0;}
+.touch-hint {position:absolute;top:9px;left:0;right:0;color:#a0dce6;
+    font-size:clamp(9px,1vw,12px);pointer-events:none;z-index:2;}
+.touch-hint-bottom {top:auto;bottom:10px;}
+.touch-axis-guide {position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);
+    font-size:clamp(11px,1.6vw,17px);color:#8ab9c1b0;pointer-events:none;white-space:nowrap;}
+.floating-ring {position:absolute;top:50%;left:50%;width:min(104px,76%);
+    aspect-ratio:1;border:2px solid #7fd2e3c9;border-radius:50%;
+    background:#28566d36;transform:translate(-50%,-50%);pointer-events:none;
+    box-shadow:0 0 18px #4496b333;opacity:.2;transition:opacity 80ms;}
+.touch-floating-pad.is-active .floating-ring {opacity:1;}
+.ring-cross {position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    color:#97c9d480;font-size:37px;font-weight:300;}
+.floating-knob {position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    height:37%;width:37%;background:#39899fe8;border:2px solid #b0f4ff;
+    border-radius:50%;box-shadow:0 0 10px #62c6db99;}
+
+/* Fullscreen is the cabinet shell, not just canvas: coin, menu, and touch buttons remain usable. */
+.arcade-shell:fullscreen,.arcade-shell.is-faux-fullscreen {
+    position:fixed!important; inset:0!important; width:100vw!important; height:100vh!important;
+    height:100dvh!important; max-width:none!important; padding:0!important; border:0!important;
+    margin:0!important; z-index:9999!important; display:flex; flex-direction:column;
+    background:#000; overflow:hidden;
+}
+.arcade-shell:fullscreen .cabinet-toolbar,.arcade-shell.is-faux-fullscreen .cabinet-toolbar {
+    width:100%; max-width:none; flex:0 0 auto; margin:0; padding:4px 10px;
+    min-height:44px; justify-content:center; background:#060c13;
+}
+.arcade-shell:fullscreen .arcade-viewport,.arcade-shell.is-faux-fullscreen .arcade-viewport {
+    flex:1 1 auto; width:100%; height:100%; max-width:none; min-height:0; aspect-ratio:auto;
+}
+.arcade-shell:fullscreen .game-view,.arcade-shell.is-faux-fullscreen .game-view {inset:0;}
+.arcade-shell:fullscreen .hall-controls,.arcade-shell.is-faux-fullscreen .hall-controls {
+    position:absolute;bottom:10px;left:12%;right:12%;z-index:15;background:#000c; padding:8px;
+}
+.arcade-shell:fullscreen .touch-left,.arcade-shell.is-faux-fullscreen .touch-left {
+    width:clamp(82px,12vw,145px);left:2%;top:5%;bottom:5%;}
+.arcade-shell:fullscreen .touch-right,.arcade-shell.is-faux-fullscreen .touch-right {
+    width:clamp(82px,12vw,145px);right:2%;top:5%;bottom:5%;}
+body.arcade-fullscreen {overflow:hidden!important;padding:0!important;}
+
+/* Portrait devices use a dedicated touch-control strip below the uncropped game.
+   The original 292x240 framebuffer is always shown with its native ratio. */
+@media (orientation:portrait) {
+    body.touch-enabled .arcade-viewport {display:flex;flex-direction:column;aspect-ratio:auto;overflow:visible;}
+    body.touch-enabled .arcade-viewport .game-view {position:relative;inset:auto;width:100%;aspect-ratio:292/240;flex:0 0 auto;}
+    body.touch-enabled .arcade-viewport #flight {width:100%;height:100%;}
+    body.touch-enabled .touch-overlay {position:relative;inset:auto;height:210px;flex:0 0 210px;background:#020709;}
+    body.touch-enabled .touch-left,body.touch-enabled .touch-right {top:6px;bottom:6px;}
+    body.touch-enabled .touch-left {width:30%;left:3%;}
+    body.touch-enabled .touch-right {width:42%;right:3%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:1fr 1fr;align-items:stretch;}
+    body.touch-enabled .touch-joystick {height:67%;min-height:110px;}
+    body.touch-enabled .touch-button {min-height:0;font-size:11px;}
+    body.touch-enabled .touch-right .touch-button {font-size:11px;}
+    .arcade-shell:fullscreen .arcade-viewport,.arcade-shell.is-faux-fullscreen .arcade-viewport {
+        justify-content:flex-start; overflow:hidden!important;}
+    .arcade-shell:fullscreen .game-view,.arcade-shell.is-faux-fullscreen .game-view {
+        height:auto; max-height:calc(100dvh - 280px);width:min(100%,calc((100dvh - 280px)*292/240));margin:auto auto 0;}
+    .arcade-shell:fullscreen .touch-overlay,.arcade-shell.is-faux-fullscreen .touch-overlay {flex:1 0 190px;min-height:190px;max-height:230px;}
+}
+@media (max-width:480px) { .fullscreen-button {font-size:10px!important;padding:7px!important;} }
+/* Absolute canvas avoids replaced-element intrinsic aspect min-size overriding
+   the fullscreen viewport's available HEIGHT in a CSS grid layout. */
+.arcade-viewport .game-view {display:block;}
+.arcade-viewport #flight {position:absolute;inset:0;width:100%;height:100%;max-height:100%;object-fit:contain;}
+@media (orientation:portrait) {
+    .arcade-shell:fullscreen .game-view,.arcade-shell.is-faux-fullscreen .game-view {margin:0 auto;}
+}
+/* Fullscreen's landscape gutter widths must not override portrait touch targets. */
+@media (orientation:portrait) {
+  body.touch-enabled .arcade-shell:fullscreen .touch-left,
+  body.touch-enabled .arcade-shell.is-faux-fullscreen .touch-left {width:30%;left:3%;}
+  body.touch-enabled .arcade-shell:fullscreen .touch-right,
+  body.touch-enabled .arcade-shell.is-faux-fullscreen .touch-right {width:42%;right:3%;}
+}
+
+/* Stage 59 portrait: left thumb gets an entire wide pad rather than a short
+   vertical slider. Right-hand actions occupy their own simultaneous targets. */
+@media (orientation:portrait) {
+ body.touch-enabled .touch-overlay {height:clamp(218px,34vh,275px);flex-basis:clamp(218px,34vh,275px);}
+ body.touch-enabled .touch-left {width:43%;left:2%;top:6px;bottom:6px;}
+ body.touch-enabled .touch-right {width:50%;right:2%;top:6px;bottom:6px;
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-rows:repeat(2,minmax(0,1fr));gap:7px;}
+ body.touch-enabled .touch-floating-pad {height:100%;min-height:0;}
+ body.touch-enabled .touch-button {min-height:0;}
+ body.touch-enabled .arcade-shell:fullscreen .touch-left,
+ body.touch-enabled .arcade-shell.is-faux-fullscreen .touch-left {width:43%;left:2%;}
+ body.touch-enabled .arcade-shell:fullscreen .touch-right,
+ body.touch-enabled .arcade-shell.is-faux-fullscreen .touch-right {width:50%;right:2%;}
+ body.touch-enabled .arcade-shell:fullscreen .touch-overlay,
+ body.touch-enabled .arcade-shell.is-faux-fullscreen .touch-overlay {
+    flex:0 0 clamp(205px,32vh,265px);min-height:205px;max-height:265px;}
+}
+
+/* On a landscape phone, the previous 292:240 *container* used the entire
+   viewport WIDTH to determine its height. The lower half of the touch pad
+   then fell below the phone screen. Fit the cabinet's controls in HEIGHT;
+   the actual source canvas continues to letterbox at 292:240 via contain. */
+@media (orientation:landscape) and (max-height:650px) {
+ body.touch-enabled:not(.arcade-fullscreen) .arcade-viewport {
+    aspect-ratio:auto;
+    height:max(195px,calc(100dvh - 125px));
+    max-width:none;
+ }
+ body.touch-enabled:not(.arcade-fullscreen) .touch-left,
+ body.touch-enabled:not(.arcade-fullscreen) .touch-right {top:2%;bottom:2%;}
+}
+
+
+/* Stage 60: absolute target-altitude strip. The two indicators make it
+   obvious where the ship IS (gold) and where it WILL STOP (cyan). They live
+   in the browser overlay and are never painted into original video RAM. */
+.altitude-target,.altitude-ship {
+    position:absolute;left:2px;right:2px;height:0;z-index:3;
+    pointer-events:none;overflow:visible;box-sizing:border-box;
+}
+.altitude-target {border-top:2px solid #8beeff;filter:drop-shadow(0 0 3px #00daf5);}
+.altitude-ship {border-top:2px dashed #ffd96b;filter:drop-shadow(0 0 2px #ffba18);}
+.altitude-target span,.altitude-ship span {
+    position:absolute;right:2px;top:-15px;font:bold 9px monospace;
+    letter-spacing:.05em;padding:1px 2px;border-radius:2px;
+    background:#001622d9;color:#9becff;
+}
+.altitude-ship span {right:auto;left:2px;color:#ffe39b;background:#241b00d9;}
+.touch-floating-pad:not(.is-active) .altitude-target,
+.touch-floating-pad:not(.is-active) .altitude-ship {display:none;}

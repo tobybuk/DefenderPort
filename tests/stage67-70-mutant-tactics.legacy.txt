@@ -1,0 +1,98 @@
+Stage 73 retired these Stage 67-70 attract-pilot tests. Each one asserted an
+internal state of the earlier overhead-only Mutant tactics (combatPhase EXTEND
+for a Mutant, deepDive, the SEPARATE/ALIGN/SHOOT trigger distances). Stage 73
+replaced those tactics with a symmetric duel and collision shield, so the
+states no longer exist. Behaviour is now covered by outcome tests on the real
+engine in tests/stage73-mutant-duel.test.mjs and by tools/stage73-mutant-arena.mjs.
+See STAGE73_AI_NOTES.md. Kept for reference only; this file is not executed.
+
+// ---- from tests/stage67-mutant-tactics.test.mjs ----
+test('mutant overhead at 40 columns initiates a real horizontal retreat, not vertical pursuit',()=>{
+ const s=scene(),p=create(),first=sample(p,s);
+ assert.equal(p.state().combatPhase,'EXTEND');
+ assert.equal(first.reverse,false,'first tick acquires the target before the committed escape');
+ const escape=sample(p,s);
+ assert.match(p.state().reason,/EXTEND FROM SCZP1/);
+ assert.equal(escape.reverse,true,'reverse away from target on the right');
+ s.game.direction=0xfd00;
+ const second=sample(p,s);
+ assert.equal(second.thrust,true,'thrust away using ordinary player inputs');
+ assert.equal(second.smartBomb,false);assert.equal(second.hyperspace,false);
+});
+
+// ---- from tests/stage67-mutant-tactics.test.mjs ----
+test('the pilot refuses a premature turn while momentum still points into a close overhead Mutant',()=>{
+ const s=scene({dx:20,enemyY:126,vx:-70,vy:1}),p=create();
+ sample(p,s);s.game.direction=0xfd00;s.game.vx=120;
+ for(let i=0;i<28;i++)sample(p,s);
+ assert.equal(p.state().combatPhase,'EXTEND','must continue opening space when still coasting towards attacker');
+ for(let i=0;i<45;i++)sample(p,s);
+ assert.notEqual(p.state().combatPhase,'EXTEND','retreat is bounded and must give way to an attack');
+});
+
+// ---- from tests/stage68-full-roster-overhead.test.mjs ----
+test('forecast overhead Mutant intrusion initiates committed retreat BEFORE close collision distance',()=>{
+ const s=scene({picture:0xe280,dx:100,dy:-80,shipY:150,shipVX:165,enemyVX:-140,enemyVY:2.8}),p=factory();
+ s.run(p);
+ assert.equal(p.state().combatPhase,'EXTEND','projected meeting trajectory is enough to disengage');
+ const second=s.run(p);
+ assert.equal(second.reverse,true,'face away from Mutant approaching from right');
+ assert.equal(second.down,true,'open vertical clearance below the attacker');
+ s.game.direction=0xfd00;
+ assert.equal(s.run(p).thrust,true,'accelerate away using normal thrust');
+ for(let i=0;i<30;i++)s.run(p);
+ assert.equal(p.state().combatPhase,'EXTEND','do not immediately reverse back into the falling Mutant');
+ for(let i=0;i<40;i++)s.run(p);
+ assert.notEqual(p.state().combatPhase,'EXTEND','retreat is bounded and returns to attack');
+ assert.equal(p.state().observedClasses.SCZP1>0,true);
+});
+
+// ---- from tests/stage69-commitment-mutant-standoff.test.mjs ----
+test('real descending overhead Mutant is classified for deeper stand-off before reversal',()=>{
+  const s=scene({shipY:156,shipVX:90,enemies:[
+    {dx:78,dy:-70,picture:0xe280,vx:-130,vy:2.25}]});
+  const p=create();s.run(p);
+  assert.equal(p.state().combatPhase,'EXTEND');
+  assert.equal(p.state().deepDive,true,'relative trajectory is a genuine downward interception');
+  assert.equal(s.run(p).reverse,true,'reversal faces away from the threat');
+  s.game.direction=0xfd00;
+  for(let i=0;i<29;i++)s.run(p);
+  assert.equal(p.state().combatPhase,'EXTEND','no premature turn after only 25 ticks');
+  assert.ok(s.run(p).thrust,'ordinary thrust drives the breakaway');
+  for(let i=0;i<48;i++)s.run(p);
+  assert.notEqual(p.state().combatPhase,'EXTEND','bounded retreat returns to a firing opportunity');
+  assert.equal(p.state().deepDive,true,'classification survives through the engagement');
+});
+
+// ---- from tests/stage69-commitment-mutant-standoff.test.mjs ----
+test('a non-diving Mutant does not trigger the extended breakaway',()=>{
+  const s=scene({shipY:156,shipVX:90,enemies:[
+    {dx:40,dy:-40,picture:0xe280,vx:-130,vy:-.2}]});
+  const p=create();s.run(p);
+  assert.equal(p.state().deepDive,false);
+  if(p.state().combatPhase==='EXTEND'){
+    for(let i=0;i<68;i++)s.run(p);
+    assert.notEqual(p.state().combatPhase,'EXTEND','ordinary duel should turn to fight sooner');
+  }
+});
+
+// ---- from tests/stage70-mutant-optimisation.test.mjs ----
+test('genuine descending Mutant triggers committed separation through normal switches',()=>{
+ const s=fixture({mutX:40,mutY:55,shipY:130}),p=create();const first=s.sample(p);
+ assert.equal(p.state().mutPhase,'SEPARATE');assert.match(p.state().reason,/MUTANT SEPARATE/);
+ assert.equal(first.smartBomb,false);assert.equal(first.hyperspace,false);
+ assert.equal(first.reverse,true,'gun changes to face away from Mutant');
+ s.state.direction=0xfd00;const second=s.sample(p);
+ assert.equal(second.thrust,true,'normal thrust establishes horizontal distance');
+});
+
+// ---- from tests/stage70-mutant-optimisation.test.mjs ----
+test('the overhead objective survives a distant Lander becoming an abductor during committed flight',()=>{
+ const s=fixture({mutX:34,mutY:44,shipY:135,additional:[{dx:-150,y:110,picture:0xe140,vx:0,vy:0}]}),p=create();
+ s.sample(p);assert.equal(p.state().mutId,s.ids[0]);
+ // Dangerous obstacle and mission priority are genuinely different; a newly
+ // carrying Lander does not cancel an already executing emergency escape.
+ s.m.set(s.ids[1]+offsets.OCVECT,0xe22a);
+ for(let i=0;i<15;i++)s.sample(p);
+ assert.equal(p.state().mutId,s.ids[0]);assert.match(p.state().reason,/MUTANT SEPARATE/);
+});

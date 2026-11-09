@@ -1,0 +1,7 @@
+Stage 31 test report
+Node automated suite: 400 passed / 0 failed
+Node guardrail: PASS
+Browser desktop/mobile: 6 checks passed from tools/verify-stage30-browser.py
+Browser Stage 31: first-wave/scanner/HUD and zero-delay mobile tap: PASS
+Two 10,000-update source-cabinet stress scenarios: PASS, no exceptions
+Sound: deferred; CPU instruction/raster differential verification: outstanding

@@ -1,0 +1,67 @@
+/**
+ * BLK71.SRC — source data TABLES (pinned e74006344b16d19245510b5e55780f90d7606bb8).
+ * TDATA at original lines 508–523, MTERR at lines 528–559.
+ * These are byte values, not transformed sprites or invented artwork.
+ * Source: https://github.com/mwenge/defender/blob/e74006344b16d19245510b5e55780f90d7606bb8/src/blk71.src
+ * The original upstream repository does not state a redistribution licence.
+ */
+const TDATA_HEX = `
+ 2A AA AA AA AA AA AB A1 D5 55 55 55 55 55 AA BF
+ FF FF FF C0 00 00 00 55 55 57 FF C0 01 55 55 55
+ 55 55 55 5F E0 15 55 55 57 FF F0 00 15 55 5F FF
+ FF FF FF 00 00 00 00 05 55 7F FF E0 00 05 55 55
+ 55 55 FC 05 55 55 50 01 FF FF FF C0 00 0A AA AA
+ AA FF 00 00 FF FF FF FF F0 00 00 1F E0 00 55 55
+ 55 40 AA AA AA AA AA AA B5 57 AA AA AA F5 7F D5
+ 55 55 57 FF 80 07 E0 7F F1 55 7F FF FF 00 00 00
+ 00 00 0F EF 76 91 11 11 5E DB E9 84 77 EC C4 87
+ 47 98 08 98 3F C3 CB DB 9F C7 5F 2F C7 7D EF BF
+ FA 4C 57 2B 61 EF EF FB F7 E8 00 20 40 00 14 04
+ 04 3C 06 00 1D 07 3C E1 A5 55 55 45 2A AA AA AA
+ A8 55 55 55 55 55 55 55 55 55 55 56 AA AA FE AA
+ AA AA AA AA AA AA AA EA AA AA A8 02 AA AA AA AA
+ BF BE 3E 63 FF E0 D8 1C 18 2A AB 1E 77 7A AF A8
+ 40 70 7D 40 0B FB FA FF C1 53 54 75 70 03 00 00
+`;
+const MTERR_HEX = `
+ 25 70 07 26 77 00 26 07 70 24 07 70
+ 23 07 70 23 70 07 24 07 70 25 70 07
+ 26 77 00 25 07 70 24 07 70 23 07 70
+ 21 07 70 22 70 07 24 77 00 24 70 07
+ 26 77 00 26 77 00 25 77 00 25 70 07
+ 26 77 00 24 07 70 23 70 07 25 77 00
+ 26 70 07 26 77 00 26 77 00 25 07 70
+ 23 07 70 22 07 70 21 77 00 21 70 07
+ 23 70 07 25 70 07 25 07 70 25 77 00
+ 25 77 00 24 77 00 22 07 70 20 07 70
+ 1E 07 70 1C 07 70 1D 70 07 1F 70 07
+ 21 70 07 22 70 07 24 70 07 26 70 07
+ 26 77 00 26 77 00 26 77 00 26 77 00
+ 26 77 00 25 77 00 25 70 07 26 77 00
+ 24 07 70 23 77 00 24 77 00 22 07 70
+ 23 70 07 22 07 70 21 70 07 23 70 07
+ 25 70 07 26 77 00 26 07 70 24 07 70
+ 23 07 70 23 70 07 24 07 70 25 70 07
+ 26 77 00 25 07 70 24 07 70 23 07 70
+ 21 07 70 22 70 07 24 77 00 24 70 07
+ 26 77 00 26 77 00 25 77 00 25 70 07
+ 26 77 00 24 07 70 23 70 07 25 77 00
+ 26 70 07 26 77 00 26 77 00 25 07 70
+ 23 07 70 22 07 70 21 77 00 21 70 07
+ 23 70 07 25 70 07 25 07 70 25 77 00
+ 25 77 00 24 77 00 22 07 70 20 07 70
+ 1E 07 70 1C 07 70 1D 70 07 1F 70 07
+ 21 70 07 22 70 07 24 70 07 26 70 07
+ 26 77 00 26 77 00 26 77 00 26 77 00
+ 26 77 00 25 77 00 25 70 07 26 77 00
+ 24 07 70 23 77 00 24 77 00 22 07 70
+ 23 70 07 22 07 70 21 70 07 23 70 07
+`;
+function fromHex(text, length, name) {
+    const items = text.trim().split(/\s+/).map(x => parseInt(x, 16));
+    if (items.length !== length || items.some(x => !Number.isInteger(x) || x < 0 || x > 255))
+        throw new Error(name + ' must contain ' + length + ' verified original bytes, got ' + items.length);
+    return Uint8Array.from(items);
+}
+export const TDATA = fromHex(TDATA_HEX, 256, 'TDATA');
+export const MTERR = fromHex(MTERR_HEX, 384, 'MTERR');

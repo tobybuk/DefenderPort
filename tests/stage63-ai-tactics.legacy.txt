@@ -1,0 +1,71 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {runInNewContext} from 'node:vm';
+const src=readFileSync(new URL('../browser/flight.js',import.meta.url),'utf8');
+const from=src.indexOf('function createAttractPilot()');
+const to=src.indexOf('const attractPilot=createAttractPilot();',from);
+assert.ok(from>0&&to>from);
+const factory=runInNewContext(src.slice(from,to)+'\ncreateAttractPilot;');
+const offsets={OPTR:10,OLINK:2,OPICT:4,OCVECT:6,OXV:8,OYV:10};
+const layout={at:name=>offsets[name]??0};
+function fixture({shipY=112,shipX=0x3000,shipVX=0,shipDir=0x300,bombs=3,ships=3, enemies=[{x:0x4700,y:114,vx:0,vy:0,label:'LNDP1'}]}={}){
+ const mem=new Map([[10,enemies.length?1000:0]]);
+ const enemyState=enemies.map((e,i)=>{
+  const object=1000+i*32;
+  mem.set(object+2,i+1===enemies.length?0:object+32);
+  mem.set(object+4,0x9000);
+  mem.set(object+6,e.carrier?0xe22a:0);
+  mem.set(object+8,e.vx&65535);
+  mem.set(object+10,Math.round(e.vy*256)&65535);
+  return {object,label:e.label??'SCZP1',worldX:e.x&65535,y:e.y};
+ });
+ const game={gameOver:false,playerDeathActive:false,hyperspaceActive:false,bonus:null,
+  worldX:shipX,y:shipY,play16:shipY<<8,vx:shipVX,vy:0,direction:shipDir,
+  smartBombs:bombs,smartBombActive:0,shipsInReserve:ships,reverseActive:0};
+ return {game,enemies:enemyState,astronauts:{living:[]},ram:{read16:x=>mem.get(x)??0},layout};
+}
+const move=(pilot,f)=>pilot.sample(f.game,f.enemies,f.astronauts,f.ram,f.layout);
+test('tiny one-to-two pixel target wobble does not make pilot bob up and down',()=>{
+ const pilot=factory(),f=fixture({shipY:114,enemies:[{x:0x4900,y:114}]});
+ const results=[];
+ for(let i=0;i<120;i++){f.enemies[0].y=114+(i%2?1:-1);results.push(move(pilot,f));}
+ assert.equal(results.filter(i=>i.up||i.down).length,0);
+});
+test('overhead enemy descending toward ship provokes an escape DOWN',()=>{
+ const pilot=factory(),f=fixture({shipY:115,enemies:[{x:0x3450,y:78,vy:3,vx:-100,label:'LNDP1'}]});
+ const r=move(pilot,f);
+ assert.equal(r.down,true);
+ assert.equal(r.up,false);
+ assert.match(pilot.state().reason,/OVERHEAD/);
+ assert.equal(r.thrust,false);
+});
+test('enemy rising from below provokes an escape UP',()=>{
+ const pilot=factory(),f=fixture({shipY:115,enemies:[{x:0x3450,y:144,vy:-3,vx:-100,label:'LNDP1'}]});
+ const r=move(pilot,f);assert.equal(r.up,true);assert.equal(r.down,false);
+});
+test('a target directly aligned ahead receives repeated conventional fire',()=>{
+ const pilot=factory(),f=fixture({shipY:114,enemies:[{x:0x4900,y:114}]});
+ const shots=Array.from({length:40},()=>move(pilot,f)).filter(i=>i.fire).length;
+ assert.ok(shots>=27,`expected sustained firing; got ${shots}`);
+});
+test('never spend bombs on a two or three enemy encounter, however long it lasts',()=>{
+ const pilot=factory(),f=fixture({enemies:[{x:0x3100,y:114},{x:0x3250,y:115},{x:0x3300,y:113}]});
+ for(let i=0;i<2500;i++)assert.equal(move(pilot,f).smartBomb,false);
+});
+test('an eight-enemy cluster is valuable enough for one bomb, not repeated bombs',()=>{
+ const pilot=factory(),f=fixture({enemies:Array.from({length:8},(_,i)=>({x:0x3500+i*250,y:70+i*7}))});
+ let count=0;
+ for(let i=0;i<900;i++)if(move(pilot,f).smartBomb)count++;
+ assert.equal(count,1);
+});
+test('hyperspace cannot be used for one or two approaching enemies',()=>{
+ const pilot=factory(),f=fixture({shipY:48,enemies:[{x:0x3050,y:48},{x:0x2fb0,y:49}]});
+ for(let i=0;i<2800;i++)assert.equal(move(pilot,f).hyperspace,false);
+});
+test('no action while dead and reset clears all tactical reservations',()=>{
+ const pilot=factory(),f=fixture();
+ move(pilot,f);pilot.reset();assert.equal(pilot.state().ticks,0);
+ f.game.gameOver=true;
+ assert.ok(Object.values(move(pilot,f)).every(v=>v===false));
+});
