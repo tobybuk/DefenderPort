@@ -1,3 +1,7 @@
+# DefenderPort
+
+A source-first JavaScript port of Williams *Defender* (1980, Red Label), translated routine by routine from the original 6809 assembly, with an attract-mode AI. Open `play.html` to play or choose **WATCH AI PLAY**. `npm test` runs the test suite.
+
 > **Notice:** *Defender* (1980) and its original 6809 source code are the property of their rights holders. This project is an unofficial, non-commercial JavaScript translation made from the publicly posted source at [mwenge/defender](https://github.com/mwenge/defender), which states no licence. No licence is granted here for the original game material.
 
 # Stage 76 — Source audit of enemy movement and timing
