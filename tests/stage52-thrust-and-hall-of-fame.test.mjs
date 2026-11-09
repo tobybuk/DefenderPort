@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createAmode1Attract } from '../original/amode1-attract.js';
 import { createAmode1HallOfFame, decodePackedScore, hallInsert } from '../original/amode1-hall-of-fame.js';
 import { DEFAULT_HALL_OF_FAME } from '../original/amode1-presentation-data.js';
-import { DACTrace, Defender6808Sound, FNOISE_ADDB_ADCA, FNOISE_SUBB_SBCA } from '../original/VSNDRM1-synth.js';
+import { SoundBoard, FNOISE_ADDB_ADCA, FNOISE_SUBB_SBCA } from '../original/VSNDRM1-synth.js';
 import { PHR6_LAYOUT } from '../runtime/phr6-layout.js';
 
 function hallHarness(onQualify = () => {}, onFinish = () => {}) {
@@ -24,12 +24,11 @@ test('approved FNOISE high-byte ADCA carry and SBCA borrow match 6808 flag seman
 });
 
 test('approved THRUST FNOISE does not collapse into repeated ramp after 1.2 seconds', () => {
-    const trace = new DACTrace({ maxSeconds: 3.2 });
-    const board = new Defender6808Sound(trace);
-    board.THRUST();
-    assert.ok(board.fnoiseStats.highCarries > 0, 'up-ramp overflow terminates as source BCS');
-    assert.ok(board.fnoiseStats.highBorrows > 0, 'down-ramp underflow terminates as source BCS');
-    const samples = trace.finish();
+    const board = new SoundBoard({ sampleRate: 44100 });
+    board.command(0x16);
+    const samples = board.render(new Float32Array(Math.round(3.2 * 44100)));
+    assert.ok(board.stats.highCarries > 0, 'up-ramp overflow terminates as source BCS');
+    assert.ok(board.stats.highBorrows > 0, 'down-ramp underflow terminates as source BCS');
     const sample = (start) => [...samples.slice(Math.floor(start*44100), Math.floor((start+0.15)*44100))];
     // Both later windows should contain plenty of distinct values, not a constant or a repeating ramp.
     for (const start of [1.5, 2.6]) {

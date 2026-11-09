@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Defender — Source-First Stage 76 · Source Movement Audit</title><style>:root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#080e16;color:#d8e3ef}
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Defender — Source-First Stage 77 · Sound Board and Menus</title><style>:root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#080e16;color:#d8e3ef}
 *{box-sizing:border-box}body{margin:0;padding:28px 16px}.wrap{max-width:1000px;margin:auto}
 h1{font-size:25px;margin:0 0 8px;letter-spacing:-.7px}p{line-height:1.65;color:#b5c4d4}
 .top{border-bottom:1px solid #304355;padding-bottom:18px;margin-bottom:22px}
@@ -84,6 +84,31 @@ body {padding:8px 10px 18px;background:#020508}
 .cabinet-menu>summary,.advanced-tools>summary,.advanced-notes>summary{cursor:pointer;color:#a4c6d9;font-size:12px;padding:9px 12px;border:1px solid #344a5a;border-radius:6px;list-style:none}
 .cabinet-menu[open]>.cabinet-options{position:absolute;right:0;top:calc(100% + 7px);width:min(420px,92vw);max-height:78vh;overflow:auto;background:#0d1a2a;border:1px solid #4a6277;border-radius:9px;box-shadow:0 12px 30px #000e;padding:15px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .cabinet-options>button{font-weight:500}
+.tb-group{display:inline-flex;align-items:center;gap:9px}
+.tb-right{display:inline-flex;align-items:center;gap:9px;margin-left:auto}
+.tb-right .cabinet-menu{margin-left:0}
+.power-button{font-size:14px!important;padding:12px 22px!important;box-shadow:0 0 0 2px #4dba8d55,0 0 18px #2fae7a55}
+.start-button:not(:disabled){animation:none}
+body.cab-idle #startGameTop:not(:disabled){box-shadow:0 0 0 2px #59e0a6aa;animation:startPulse 1.4s ease-in-out infinite}
+@keyframes startPulse{50%{box-shadow:0 0 0 2px #59e0a6,0 0 14px #59e0a6aa}}
+@media (prefers-reduced-motion:reduce){body.cab-idle #startGameTop:not(:disabled){animation:none}}
+.demo-button{background:#1f2f52;border-color:#5a76b5}
+.demo-button.is-stop{background:#4a1f2a;border-color:#b5596e}
+.pause-button{background:#2c2f45;border-color:#6b6f9a}
+.icon-button{background:#122739;padding:10px 11px!important}
+.icon-button[aria-pressed="true"]{border-color:#70bfef}
+.cabinet-status{max-width:876px;margin:-4px auto 10px;font-size:12px;color:#9fd2ef;min-height:1.4em;text-align:left;padding:0 2px}
+.cabinet-status strong{color:#eaf6ff}
+.menu-section{width:100%;border-top:1px solid #2b3f52;padding-top:10px}
+.menu-section:first-child{border-top:0;padding-top:0}
+.menu-section h3{margin:0 0 8px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7fb2d3}
+.menu-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.menu-note{display:block;margin-top:6px}
+.cabinet-menu>summary::-webkit-details-marker{display:none}
+.cabinet-menu[open]>summary{background:#1a3248;color:#edf6ff}
+[hidden]{display:none!important}
+@media(max-width:700px){.tb-right{margin-left:0}.cabinet-status{font-size:11px}.power-button{flex:1}}
+
 .operator-settings{width:100%;border-top:1px solid #456; padding:10px 0}
 .operator-settings>summary{cursor:pointer;color:#d7ecf7;font-size:12px}
 .operator-settings p{font-size:11px;line-height:1.5}
@@ -266,35 +291,55 @@ body.arcade-fullscreen {overflow:hidden!important;padding:0!important;}
 </style></head><body><div class="wrap">
 <div class="top compact-top"><div class="eyebrow">WILLIAMS DEFENDER · RED LABEL · NATIVE JAVASCRIPT</div><h1>Defender</h1></div>
 <section class="stage"><div id="arcadeShell" class="arcade-shell"><div class="cabinet-toolbar" role="toolbar" aria-label="Arcade cabinet">
-    <button id="powerOnCabinet" class="start-button" title="Power on with original startup sound">POWER ON</button>
-    <button id="coinInsert" class="coin-button" title="Insert one coin into the left chute">INSERT COIN</button>
-    <button id="startGameTop" class="start-button" title="Original one-player START switch; requires credit">START 1 PLAYER</button>
-    <button id="watchAI" type="button" title="Skip the enemy showcase and watch the AI play a normal game">WATCH AI PLAY</button>
-    <span id="creditReadout" role="status" aria-live="polite">CREDITS 0</span>
-    <button id="fullscreenToggle" class="fullscreen-button" type="button" aria-label="Enter fullscreen">⛶ FULLSCREEN</button>
-    <details class="cabinet-menu" id="cabinetMenu"><summary>☰ MENU</summary>
-        <div class="cabinet-options">
-            <button id="configureKeys">KEYBOARD CONTROLS</button>
-            <button id="toggleTouchControls" type="button" aria-pressed="false">SHOW TOUCH CONTROLS</button>
-            <button id="audioToggle">ENABLE SOUND</button>
-            <label for="audioVolume" class="sound-level">VOLUME <input id="audioVolume" type="range" min="0" max="100" value="45" aria-label="Sound volume" /></label>
-            <small id="audioLabel">SOUND OFF</small>
-            <button id="rebootCabinet">POWER CYCLE / SELF TEST</button>
-            <button id="serviceTests">SERVICE REFERENCES (NOT ROM TESTS)</button>
-            <button id="nextServiceTest" hidden>NEXT SERVICE TEST</button>
-            <button id="exitServiceTests" hidden>EXIT SERVICE TESTS</button>
-            <details class="operator-settings" id="operatorSettings"><summary>OPERATOR SETTINGS &amp; BOOKKEEPING (CMOS)</summary>
-                <p>Original Williams operator functions, not DIP switches. Factory: one coin per credit, Free Play off.</p>
-                <div id="operatorSettingsGrid" class="operator-grid"></div>
-                <div id="cabinetAudits" class="cabinet-audits"></div>
-                <button id="factoryOperator">RESTORE FACTORY ADJUSTMENTS</button>
-                <button id="clearAudits">CLEAR AUDITS</button>
-                <button id="clearCredits">CLEAR CREDITS</button>
-                <p class="operator-disclaimer">Coinage 10–16 is represented by a browser coin-ledger adapter; exact original ROM pricing tables and service diagnostic ROM remain untranslated.</p>
-            </details>
-        </div>
-    </details>
+    <button id="powerOnCabinet" class="start-button power-button" title="Switch the cabinet on (also enables sound)">⏻ POWER ON</button>
+    <span class="tb-group" id="playControls">
+        <button id="coinInsert" class="coin-button" title="Insert one coin into the left chute">INSERT COIN</button>
+        <button id="startGameTop" class="start-button" title="One-player START (Enter). Adds a coin first if you have no credits.">▶ START</button>
+        <span id="creditReadout" role="status" aria-live="polite">CREDITS 0</span>
+    </span>
+    <button id="watchAI" type="button" class="demo-button" title="Watch the AI play a normal game (sound off)">WATCH AI PLAY</button>
+    <button id="pauseTop" type="button" class="pause-button" title="Pause or resume (P)" hidden>❚❚ PAUSE</button>
+    <span class="tb-right">
+        <button id="soundQuick" type="button" class="icon-button" aria-pressed="false" title="Sound on/off (M)">🔇 SOUND</button>
+        <button id="fullscreenToggle" class="fullscreen-button icon-button" type="button" aria-label="Enter fullscreen" title="Fullscreen">⛶</button>
+        <details class="cabinet-menu" id="cabinetMenu"><summary title="Settings and cabinet functions">☰ MENU</summary>
+            <div class="cabinet-options">
+                <section class="menu-section" aria-labelledby="menuSound"><h3 id="menuSound">Sound</h3>
+                    <div class="menu-row">
+                        <button id="audioToggle">ENABLE SOUND</button>
+                        <small id="audioLabel">SOUND OFF</small>
+                    </div>
+                    <label for="audioVolume" class="sound-level">VOLUME <input id="audioVolume" type="range" min="0" max="100" value="45" aria-label="Sound volume" /></label>
+                    <small class="menu-note">The AI demo is always silent.</small>
+                </section>
+                <section class="menu-section" aria-labelledby="menuControls"><h3 id="menuControls">Controls</h3>
+                    <div class="menu-row">
+                        <button id="configureKeys">KEYBOARD CONTROLS</button>
+                        <button id="toggleTouchControls" type="button" aria-pressed="false">SHOW TOUCH CONTROLS</button>
+                    </div>
+                </section>
+                <section class="menu-section" aria-labelledby="menuCabinet"><h3 id="menuCabinet">Cabinet</h3>
+                    <div class="menu-row">
+                        <button id="rebootCabinet">POWER CYCLE / SELF TEST</button>
+                        <button id="serviceTests">SERVICE REFERENCES</button>
+                        <button id="nextServiceTest" hidden>NEXT SERVICE TEST</button>
+                        <button id="exitServiceTests" hidden>EXIT SERVICE TESTS</button>
+                    </div>
+                    <details class="operator-settings" id="operatorSettings"><summary>OPERATOR SETTINGS &amp; BOOKKEEPING (CMOS)</summary>
+                        <p>Original Williams operator functions, not DIP switches. Factory: one coin per credit, Free Play off.</p>
+                        <div id="operatorSettingsGrid" class="operator-grid"></div>
+                        <div id="cabinetAudits" class="cabinet-audits"></div>
+                        <button id="factoryOperator">RESTORE FACTORY ADJUSTMENTS</button>
+                        <button id="clearAudits">CLEAR AUDITS</button>
+                        <button id="clearCredits">CLEAR CREDITS</button>
+                        <p class="operator-disclaimer">Coinage 10–16 is represented by a browser coin-ledger adapter; exact original ROM pricing tables and service diagnostic ROM remain untranslated.</p>
+                    </details>
+                </section>
+            </div>
+        </details>
+    </span>
 </div>
+<div id="cabinetStatus" class="cabinet-status" role="status" aria-live="polite">Press POWER ON to switch the cabinet on.</div>
 <div id="keyBindingSummary" class="key-binding-summary" aria-live="polite"></div><div id="waveReadout" class="human-readout" aria-live="off">Source wave loading…</div><div id="humanReadout" class="human-readout" aria-live="off">Astronaut population loading…</div><div id="arcadeViewport" class="arcade-viewport" aria-label="Defender game and optional touch controls">
     <div class="game-view"><canvas id="flight" width="292" height="240" aria-label="Original Williams Defender attract demonstration and playable arcade game"></canvas></div>
     <div id="touchOverlay" class="touch-overlay" aria-label="Arcade touchscreen controls">

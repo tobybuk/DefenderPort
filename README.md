@@ -4,6 +4,17 @@ A source-first JavaScript port of Williams *Defender* (1980, Red Label), transla
 
 > **Notice:** *Defender* (1980) and its original 6809 source code are the property of their rights holders. This project is an unofficial, non-commercial JavaScript translation made from the publicly posted source at [mwenge/defender](https://github.com/mwenge/defender), which states no licence. No licence is granted here for the original game material.
 
+# Stage 77 — Sound audit, sound-board rebuild, silent demo, menus
+
+The game now requests the right sound at every original trigger. Catching a falling human played the Lander scream; it now plays `ACSND`, as `AKIL1` does.
+
+The sound board has been rebuilt as one persistent, streaming translation of VSNDRM1:
+- Board RAM carries over between commands, so the rising Lander-carry spinner, the pull-in sweep and the post-thrust `BG1` background work.
+- Effects play to their natural end instead of being cut off.
+- Every routine uses the original 6800 instruction cycle counts. Thrust ran about 40% fast and the scream an octave high. The high-score organ tunes played at the wrong pitch; they are now correct.
+
+The AI demo is silent. START works during the demo and drops a coin in if you have no credit. The toolbar, status line and menu were reorganised. See [STAGE77_SOUND_AND_MENUS.md](STAGE77_SOUND_AND_MENUS.md). `npm test`: 653 tests pass.
+
 # Stage 76 — Source audit of enemy movement and timing
 
 Every enemy movement routine and every process timing was compared, instruction by instruction, with the pinned original source. Landers, Mutants, Swarmers, Baiters, Pods, humans, enemy shots, `VELO` and `PLAYER` all match. All gameplay `NAP` timings and the 60.096 Hz frame rate match.

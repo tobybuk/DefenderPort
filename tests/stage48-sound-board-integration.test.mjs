@@ -6,24 +6,10 @@ import { GWVTAB, VVECT } from '../original/VSNDRM1-data.js';
 import { renderSound, IRQSoundCommand, TICK_RATE } from '../original/VSNDRM1-synth.js';
 import { createSourceSoundOutput } from '../browser/source-sound-output.js';
 function fakeContext() {
-    const created = [], stopped = [];
-    const ctx = { sampleRate: 44100, currentTime: 0, destination: {}, created, stopped,
+    const ctx = { sampleRate: 44100, destination: {}, nodes: [],
         resume: () => Promise.resolve(), suspend: () => Promise.resolve(),
-        createGain: () => ({ gain: { value: 1 }, connect: () => {
-            } }),
-        createBuffer: (channels, length, rate) => ({ channels, length, rate, copyToChannel(a) {
-                this.samples = a;
-            } }),
-        createBufferSource: () => {
-            const obj = { loop: false, connect() {
-                }, start() {
-                    created.push(this);
-                }, stop() {
-                    stopped.push(this);
-                }, disconnect() {
-                } };
-            return obj;
-        } };
+        createGain: () => ({ gain: { value: 1 }, connect() {} }),
+        createScriptProcessor(size) { const n = { size, connect() {}, onaudioprocess: null }; this.nodes.push(n); return n; } };
     return ctx;
 }
 test('source sound-board waveform and VARI vectors are the approved Stage 47 data, not replacement oscillators', () => {
@@ -39,34 +25,25 @@ test('source sound-board waveform and VARI vectors are the approved Stage 47 dat
     assert.ok(start.writes > 1000);
     assert.ok(ship.writes > 500);
 });
-test('SNDOUT port strobe must precede the complemented command and timer is preserved', async () => {
-    const ctx = fakeContext(), calls = [];
-    const audio = createSourceSoundOutput({ makeContext: () => ctx, synth: opts => {
-            calls.push(opts);
-            return { values: new Float32Array(64), sampleRate: opts.sampleRate };
-        } });
+test('PIA writes reach one persistent board; $3F strobes are not commands', async () => {
+    const ctx = fakeContext(), sent = [];
+    let clock = 0;
+    const audio = createSourceSoundOutput({ makeContext: () => ctx, now: () => clock,
+        makeBoard: () => ({ routine: 'idle', irq: pia => sent.push(pia), render(out, o, n) { out.fill(0, o, o + n); } }) });
     await audio.enable();
-    assert.equal(audio.writePIA(0x35, 64), null, 'bare data must not create a sound');
-    assert.equal(ctx.created.length, 0);
-    audio.writePIA(0x3f, 0);
+    assert.equal(ctx.nodes.length, 1, 'one streaming node');
+    assert.equal(audio.writePIA(0x3f, 0), null);
     audio.writePIA(0x35, 0x40);
     assert.equal(audio.state().lastCommand, 0x0a);
-    assert.equal(calls[0].seconds, Math.max(0.1, 0x40 / TICK_RATE));
-    assert.equal(ctx.created.length, 1);
-    audio.writePIA(0x3f, 0);
-    audio.writePIA(0x21, 0x20);
-    assert.equal(audio.state().lastCommand, 0x1e);
-    assert.equal(calls[1].seconds, 0x20 / TICK_RATE);
-    assert.equal(ctx.stopped.length, 1, 'hardware interrupt replaces previous output');
-    audio.writePIA(0x3f);
-    audio.writePIA(0x29, 0); // command $16 -> background THRUST
+    assert.equal(audio.state().lastTicks, 0x40);
+    audio.writePIA(0x3f); clock = 5;
+    audio.writePIA(0x29, 0); // command $16 THRUST
     assert.equal(audio.state().lastCommand, 0x16);
-    assert.equal(ctx.created.at(-1).loop, true, 'thrust continues until interrupted');
-    audio.writePIA(0x3f);
-    audio.writePIA(0x2c, 0); // command $13 BGEND
-    assert.equal(audio.state().lastCommand, 0x13);
-    assert.equal(ctx.stopped.length, 3);
-    assert.equal(ctx.created.length, 3, 'BGEND has no invented sound');
+    audio.pump();
+    assert.deepEqual(sent, [0x35, 0x29], 'each command interrupts the board in arrival order');
+    audio.playHallOfFameTune(0x3d);
+    audio.pump();
+    assert.deepEqual(sent.slice(2), [0x24, 0x3d], 'HALL2: ORGANT select, then the tune number');
     audio.reset();
     assert.equal(audio.state().lastCommand, null);
 });

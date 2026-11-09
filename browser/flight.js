@@ -1179,7 +1179,15 @@ function sourceRandomFromAttract() {
 function startGame() {
     // The original cabinet's START switch is not the coin switch. A paid
     // credit must be debited before any original START/PLSTRT path runs.
-    if (!['attract', 'hall-table', 'demo-ai', 'demo-ai-over'].includes(mode) || !cabinet.START(1)) {
+    if (!START_MODES.includes(mode)) {
+        refreshCabinetUI();
+        return false;
+    }
+    // Stage 77: with no credit, START drops the coin in for the player (the
+    // same COIN path as INSERT COIN, so coinage and audits still apply).
+    for (let coins = 0; !cabinet.CAN_START(1) && coins < 8; coins++)
+        cabinet.COIN('left');
+    if (!cabinet.START(1)) {
         refreshCabinetUI();
         return false;
     }
@@ -1569,6 +1577,16 @@ window.addEventListener('keydown', e => {
         // never for the game while configuration is open.
         return;
     }
+    if (e.code === 'Escape' && document.getElementById('cabinetMenu')?.open) {
+        document.getElementById('cabinetMenu').open = false;
+        e.preventDefault();
+        return;
+    }
+    const typing = /^(INPUT|SELECT|TEXTAREA)$/.test(e.target?.tagName || '');
+    if (!typing && !e.repeat && !logicalKeyForCode(e.code, controlBindings)) {
+        if (e.code === 'KeyP' && mode === 'playing') { e.preventDefault(); togglePause(); return; }
+        if (e.code === 'KeyM') { e.preventDefault(); toggleSound(); return; }
+    }
     const logicalKey = logicalKeyForCode(e.code, controlBindings);
     if (mode === 'hall-entry' && (logicalKey === 'KeyF' || e.code === 'Enter' || e.code === 'NumpadEnter')) {
         if (e.code === 'Enter' || e.code === 'NumpadEnter') {
@@ -1662,17 +1680,79 @@ document.addEventListener?.('visibilitychange', () => {
     else if (running)
         audio.resume();
 });
+const START_MODES = ['attract', 'hall-table', 'demo-ai', 'demo-ai-over'];
+const DEMO_MODES = ['demo-ai', 'demo-ai-over'];
+const uiCache = new Map();
+/** Write a DOM property only when it changes (this runs every frame). */
+function setUI(id, prop, value) {
+    const key = id + '.' + prop;
+    if (uiCache.get(key) === value) return;
+    uiCache.set(key, value);
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (prop === 'html') el.innerHTML = value;
+    else if (prop === 'class') el.className = value;
+    else if (prop.startsWith('aria-')) el.setAttribute?.(prop, value);
+    else el[prop] = value;
+}
+let demoSoundGated = false;
+/** Stage 77: the AI demo is always silent. Leaving it power-cycles the sound
+ * board so no demo background (BG1 after thrust) leaks into the next game. */
+function gateDemoSound() {
+    const gate = DEMO_MODES.includes(mode);
+    if (gate === demoSoundGated) return;
+    demoSoundGated = gate;
+    audio.reset();
+    audio.setGated(gate);
+}
+function cabinetStatusText(canStart) {
+    const credits = cabinet.credits, free = cabinet.settings[17];
+    switch (mode) {
+    case 'power-off': return 'Press <strong>POWER ON</strong> to switch the cabinet on. This also enables sound.';
+    case 'boot': return 'Cabinet self-test… the attract mode follows.';
+    case 'service': return 'Service references. Use the menu to step through or exit.';
+    case 'playing': return running ? 'Game in progress. <strong>P</strong> pauses, <strong>M</strong> mutes.' : '<strong>Paused.</strong> Press P or RESUME to continue.';
+    case 'game-over': case 'hall-wait': return 'Game over.';
+    case 'hall-entry': return 'New high score! Use UP / DOWN to choose each initial, FIRE to accept.';
+    case 'demo-ai': case 'demo-ai-over':
+        return 'AI demo running (sound off). Press <strong>START</strong> to play yourself, or <strong>STOP DEMO</strong>.';
+    default:
+        if (free) return 'Free play. Press <strong>START</strong> (or Enter) to play, or watch the AI.';
+        if (canStart) return `${credits} credit${credits === 1 ? '' : 's'}. Press <strong>START</strong> (or Enter) to play.`;
+        return 'Press <strong>START</strong> to insert a coin and play, or <strong>INSERT COIN</strong> first. Or watch the AI play.';
+    }
+}
 function refreshCabinetUI() {
-    document.getElementById('creditReadout').textContent = `CREDITS ${cabinet.credits}` +
-        (cabinet.settings[17] ? ' · FREE PLAY' : '');
-    const canStart = (mode === 'attract' || mode === 'hall-table') && cabinet.CAN_START(1);
-    document.getElementById('powerOnCabinet').hidden = mode !== 'power-off';
-    document.getElementById('coinInsert').disabled = mode === 'power-off' || mode === 'boot';
-    document.getElementById('startGameTop').disabled = !canStart;
-    document.getElementById('startGame').disabled = !canStart;
+    gateDemoSound();
+    const poweredOn = mode !== 'power-off';
+    const inStartMode = START_MODES.includes(mode);
+    const inDemo = DEMO_MODES.includes(mode);
+    const canStart = inStartMode && cabinet.CAN_START(1);
+    setUI('creditReadout', 'textContent', `CREDITS ${cabinet.credits}` + (cabinet.settings[17] ? ' · FREE PLAY' : ''));
+    setUI('powerOnCabinet', 'hidden', poweredOn);
+    setUI('playControls', 'hidden', !poweredOn);
+    setUI('coinInsert', 'disabled', mode === 'boot');
+    // START works from attract, Hall of Fame and the AI demo. With no credit it
+    // inserts the coin itself (startGame), so it is only disabled while booting.
+    setUI('startGameTop', 'hidden', mode === 'playing');
+    setUI('startGameTop', 'disabled', !inStartMode);
+    setUI('startGame', 'disabled', !inStartMode);
+    setUI('watchAI', 'hidden', !(inStartMode || mode === 'game-over'));
+    setUI('watchAI', 'textContent', inDemo ? '■ STOP DEMO' : 'WATCH AI PLAY');
+    setUI('watchAI', 'title', inDemo ? 'Stop the AI demo and return to the attract mode' : 'Watch the AI play a normal game (sound off)');
+    setUI('watchAI', 'class', inDemo ? 'demo-button is-stop' : 'demo-button');
+    setUI('pauseTop', 'hidden', mode !== 'playing');
+    setUI('pauseTop', 'textContent', running ? '❚❚ PAUSE' : '▶ RESUME');
+    setUI('cabinetStatus', 'html', cabinetStatusText(canStart));
+    if (document.body?.classList) document.body.classList.toggle('cab-idle', inStartMode);
+    const s = audio.state();
+    const soundOn = s.enabled && !s.muted;
+    setUI('soundQuick', 'textContent', soundOn ? '🔊 SOUND' : '🔇 SOUND');
+    setUI('soundQuick', 'aria-pressed', String(soundOn));
+    setUI('soundQuick', 'title', soundOn ? 'Mute sound (M)' : 'Turn sound on (M)');
     const rows = cabinet.audit;
-    document.getElementById('cabinetAudits').textContent = Object.entries(AUDIT_LABELS)
-        .map(([k,v])=>`FUNCTION ${k} · ${v}: ${rows[k]}`).join('\n');
+    setUI('cabinetAudits', 'textContent', Object.entries(AUDIT_LABELS)
+        .map(([k,v])=>`FUNCTION ${k} · ${v}: ${rows[k]}`).join('\n'));
 }
 function renderOperatorSettings(){
     const grid=document.getElementById('operatorSettingsGrid');
@@ -1755,7 +1835,33 @@ audioVolume.oninput = () => {
 refreshAudioUI();
 document.getElementById('startGame').onclick = startGame;
 document.getElementById('startGameTop').onclick = startGame;
-document.getElementById('watchAI').onclick = () => { startAttractPilot();draw(); };
+document.getElementById('watchAI').onclick = () => {
+    if (DEMO_MODES.includes(mode)) watchDemo();
+    else startAttractPilot();
+    draw();
+};
+function togglePause() {
+    if (mode !== 'playing') return;
+    document.getElementById('pause').onclick();
+    refreshCabinetUI();
+}
+document.getElementById('pauseTop').onclick = togglePause;
+function toggleSound() {
+    const s = audio.state();
+    if (!s.enabled || s.muted) {
+        audio.setMuted(false);
+        void audio.enable().then(() => { if (mode === 'power-off') void powerOnCabinet(); refreshAudioUI(); }).catch(() => {});
+    } else
+        audio.setMuted(true);
+    refreshAudioUI();
+    refreshCabinetUI();
+}
+document.getElementById('soundQuick').onclick = toggleSound;
+// The menu closes on Escape or a click elsewhere, like any drop-down.
+document.addEventListener?.('pointerdown', e => {
+    const menu = document.getElementById('cabinetMenu');
+    if (menu?.open && !menu.contains?.(e.target)) menu.open = false;
+});
 document.getElementById('serviceTests').onclick = () => {
     serviceTestIndex=0;mode='service';running=false;
     document.getElementById('nextServiceTest').hidden=false;

@@ -94,5 +94,5 @@ test('AI avoids a direct collision trajectory rather than flying into target',()
 test('AI shortcut exists in top cabinet toolbar and invokes normal pilot start',()=>{
  const html=readFileSync(new URL('../play.html',import.meta.url),'utf8');
  assert.match(html,/<button id="watchAI"/);
- assert.match(html,/getElementById\('watchAI'\)\.onclick\s*=\s*\(\)\s*=>\s*\{\s*startAttractPilot\(\)/);
+ assert.match(html,/getElementById\('watchAI'\)\.onclick\s*=\s*\(\)\s*=>\s*\{\s*if \(DEMO_MODES\.includes\(mode\)\) watchDemo\(\);\s*else startAttractPilot\(\);/);
 });

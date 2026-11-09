@@ -82,7 +82,7 @@ export function createFlightHarness({ diagnosticSwarmer = false, infiniteSmartBo
         ASTRO: 0xe230, ASTKIL: 0xe232, AKIL1: 0xe234,
         ASTP1: 0xe240, ASTP2: 0xe24a, ASTP3: 0xe254, ASTP4: 0xe25e,
         SWPIC1: 0xe130, SWXP1: 0xe2b0, PRBP1: 0xe2ba, SCZP1: 0xe2c4, ASXP1: 0xe2ce, BMBP1: 0xe2d8, BMBP2: 0xe2e2,
-        LPKSND: 0xe270, LSKSND: 0xe272, LSHSND: 0xe274, ASCSND: 0xe276,
+        LPKSND: 0xe270, LSKSND: 0xe272, LSHSND: 0xe274, ASCSND: 0xe276, ACSND: 0xe278,
         SCZP1: 0xe280, SCZKIL: 0xe282, SCZ0: 0xe284, SSHSND: 0xe286,
         FBOUT: 0xf200, BMBOUT: 0xf204, BMBP1: 0xe292, BKIL: 0xe294, BXPIC: 0xe342,
         AFALL: 0xe298, AFALL2: 0xe29a, TERBLO: 0xe29c,
@@ -245,7 +245,7 @@ export function createFlightHarness({ diagnosticSwarmer = false, infiniteSmartBo
     });
     // Synthetic source labels index the real (transcribed) sound tables. We
     // never pass a synthetic process/continuation address to SNDLD as ROM data.
-    const soundHandles = new Map(['USHSND', 'LSHSND', 'LPKSND', 'LSKSND', 'ASCSND', 'AHSND', 'ALSND', 'SSHSND', 'SWSSND', 'LHSND', 'UFHSND', 'SCHSND', 'SWHSND', 'PRHSND', 'TBSND', 'APSND', 'TIHSND']
+    const soundHandles = new Map(['USHSND', 'LSHSND', 'LPKSND', 'LSKSND', 'ASCSND', 'ACSND', 'AHSND', 'ALSND', 'SSHSND', 'SWSSND', 'LHSND', 'UFHSND', 'SCHSND', 'SWHSND', 'PRHSND', 'TBSND', 'APSND', 'TIHSND']
         .filter(name => Number.isInteger(WAVE_ADDR[name]) && Number.isInteger(soundTables.labels[name]))
         .map(name => [WAVE_ADDR[name], soundTables.labels[name]]));
     const SNDLD = handle => {

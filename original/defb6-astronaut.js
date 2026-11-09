@@ -124,7 +124,7 @@ export function createDefb6AstronautRoutines(RAM, Layout, processes, { addresses
             return true;
         }
         if (d(U, 'PADDR') !== sym('AFALL2')) {
-            dep('SNDLD')(sym('ASCSND'));
+            dep('SNDLD')(sym('ACSND'));
             const Y = processes.MKPROC(sym('P500'), at('STYPE'));
             wd(Y, 'PD', X);
         }
