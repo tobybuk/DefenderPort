@@ -102,7 +102,11 @@ function createAttractPilot() {
     //    wave's other enemies first, but don't let Baiters accumulate.
     const TACTICS={podMinRange:16,keepHumansAt:3,keepFloor:148,gatherTarget:5,gatherReserve:2,gatherCooldown:150,
         baiterWaveBonus:140,baiterSwarm:3,baiterCloseCols:24,
-        endgameEnemies:2,endgameBaiter:-260,lastHumanGuardCols:150,lastHumanGuard:260};
+        endgameEnemies:2,endgameBaiter:-260,lastHumanGuardCols:150,lastHumanGuard:260,
+        // Stage 80: quick back-and-forth turning is hard to watch. Ordinary
+        // turns wait reverseGap ticks after the last turn, a Mutant duel
+        // duelReverseGap, and a collision dodge (the shield) shieldReverseGap.
+        reverseGap:45,duelReverseGap:30,shieldReverseGap:24};
     let duelId,duelPhase,duelSince,duelShots,duelSide;
     let keepTicks,gatherBombs,lastGatherBomb,keepFloor=148,humanShotsHeld,hyperspaces;
     let shieldTriggers,shieldUntil,shieldPlan,emergencyBombs,lastEmergencyBomb,lastReverseTick;
@@ -499,7 +503,7 @@ function createAttractPilot() {
         if(!(speed.y>0.05&&speed.y<=2.5))speed.y=1;
         if(!(speed.hop>=0&&speed.hop<=4))speed.hop=2;
         const shipModel={y:shipY,vx:game.vx,vy:s16(game.vy||0)/256,facing,
-            revWait:Math.max(0,reverseCooldown-ticks),bottom:keepCarry?keepFloor:SHIP_BOTTOM};
+            revWait:Math.max(0,lastReverseTick+TACTICS.shieldReverseGap-ticks),bottom:keepCarry?keepFloor:SHIP_BOTTOM};
         const mutantObstacle=e=>({mutant:true,x:e.d,y:e.y,w:MUT_COLS,h:MUT_ROWS,margin:speed.hop+1});
         const geometry=e=>{
             const c=e.d/64;                              // Mutant left edge vs ship left edge
@@ -768,8 +772,11 @@ function createAttractPilot() {
             else desiredDir=facing;
         }
         let reverse=false;
-        if(ticks>=reverseCooldown&&desiredDir!==facing){
-            reverse=true;reverseCooldown=ticks+11;heading=desiredDir;lastReverseTick=ticks;
+        const cooldownBefore=reverseCooldown,lastReverseBefore=lastReverseTick;
+        // A Mutant duel turns away, then back to shoot, so it gets a shorter gap.
+        const turnReady=duel?ticks>=lastReverseTick+TACTICS.duelReverseGap:ticks>=reverseCooldown;
+        if(turnReady&&desiredDir!==facing){
+            reverse=true;reverseCooldown=ticks+TACTICS.reverseGap;heading=desiredDir;lastReverseTick=ticks;
         }else if(desiredDir===facing)heading=desiredDir;
         // Bias toward moving decisively in pursuit. With the target nearby,
         // refrain from thrust if it would force us straight through it.
@@ -881,7 +888,12 @@ function createAttractPilot() {
             // inputs, intervene minimally (closest to the intended input),
             // otherwise prefer the most clearance.
             const likeness=x=>(x.plan.h===intended.h)+(x.plan.v===intended.v);
+            // Stage 80: among collision-free inputs, one that keeps the ship's
+            // facing beats one that turns it round when the intended input did
+            // not ask for a turn (turning is hard to watch).
+            const turns=x=>x.plan.h&&x.plan.h!==facing&&x.plan.h!==intended.h?1:0;
             const better=(a,b)=>a.hit!==b.hit?(a.hit>b.hit?-1:1):
+                a.hit===Infinity&&turns(a)!==turns(b)?turns(a)-turns(b):
                 a.hit===Infinity&&likeness(a)!==likeness(b)?likeness(b)-likeness(a):
                 a.clear!==b.clear?(a.clear>b.clear?-1:1):likeness(b)-likeness(a);
             let override=null;
@@ -912,11 +924,10 @@ function createAttractPilot() {
             }
             if(override){
                 const p=override.plan;
-                const cooldownBefore=ticks+shipModel.revWait;
-                if(reverse){reverse=false;reverseCooldown=cooldownBefore;}
+                if(reverse){reverse=false;reverseCooldown=cooldownBefore;lastReverseTick=lastReverseBefore;}
                 throttle=false;
                 if(p.h&&p.h!==facing){
-                    if(shipModel.revWait===0){reverse=true;reverseCooldown=ticks+11;heading=p.h;lastReverseTick=ticks;}
+                    if(shipModel.revWait===0){reverse=true;reverseCooldown=ticks+TACTICS.reverseGap;heading=p.h;lastReverseTick=ticks;}
                 }else if(p.h){throttle=true;heading=facing;}
                 if(p.v!==cmdY){cmdY=p.v;yDir=p.v;lastYChange=ticks;}
                 if(reverse)fire=false;
@@ -940,19 +951,25 @@ function createAttractPilot() {
 
 const attractPilot=createAttractPilot();
 let aiGameOverTicks=0, aiGamesPlayed=0, aiRecoveries=0;
-// "DEMO MODE ACTIVE" flashes for 5 seconds when a demo game starts,
-// in the RORAOK boot-text style (MESS0 glyphs via CWRIT, colour $7A).
-const DEMO_BANNER_MS=5000, DEMO_BANNER_ON_MS=400, DEMO_BANNER_OFF_MS=200;
-const demoBanner=createSourceTextBanner('DEMO MODE ACTIVE');
+// Stage 80: "DEMO" flashes for the whole AI demo, at 20% opacity, above the
+// spare ships in the panel left of the scanner. Same RORAOK boot-text style
+// (MESS0 glyphs via CWRIT, colour $7A); drawn over the picture, never into
+// the game's video memory.
+const DEMO_BANNER_ON_MS=400, DEMO_BANNER_OFF_MS=200, DEMO_BANNER_ALPHA=0.2;
+// Panel: byte columns 6..46 (hardware x 12..93); rows 10..16 sit above the ships.
+const demoBanner=createSourceTextBanner('DEMO', 10, { left: 6, span: 41 });
 let demoBannerStart=-Infinity;
 const bannerClock=()=>globalThis.performance?.now?.()??Date.now();
 function drawDemoBanner(now=bannerClock()){
     const elapsed=now-demoBannerStart;
-    if(!(mode==='demo-ai'||mode==='demo-ai-over')||elapsed<0||elapsed>=DEMO_BANNER_MS)return false;
+    if(!(mode==='demo-ai'||mode==='demo-ai-over')||elapsed<0)return false;
     if(elapsed%(DEMO_BANNER_ON_MS+DEMO_BANNER_OFF_MS)>=DEMO_BANNER_ON_MS)return false;
     const [r,g,b]=defenderDacRGB(demoBanner.colour);
+    const alpha=ctx.globalAlpha;
+    ctx.globalAlpha=DEMO_BANNER_ALPHA;
     ctx.fillStyle=`rgb(${r},${g},${b})`;
     for(const [x,y] of demoBanner.lit)ctx.fillRect(x-DEFENDER_VISIBLE.left,y-DEFENDER_VISIBLE.top,1,1);
+    ctx.globalAlpha=alpha;
     return true;
 }
 function startAttractPilot(sourceRandom=sourceRandomFromAttract()) {
@@ -1025,8 +1042,11 @@ const processLab = createSourceProcessWorkbench();
 const enemyLab = createSourceEnemyWorkbench();
 const landerLab = createSourceLanderWorkbench();
 const canvas = document.getElementById('flight'), ctx = canvas.getContext('2d', { alpha: false });
-const display = document.getElementById('memory');
-const processDisplay = document.getElementById('processState');
+// Stage 80: the source diagnostics panel is no longer on the page. Its
+// writers keep running against these stand-ins when the elements are absent.
+const textSink = id => document.getElementById(id) || { textContent: '' };
+const display = textSink('memory');
+const processDisplay = textSink('processState');
 function drawProcesses() {
     const s = processLab.STATE();
     processDisplay.textContent = `DISP ticks   ${s.ticks}     GEXEC GTIME   ${s.gt}    STRCNT ${s.starCount}\n` +
@@ -1036,9 +1056,10 @@ function drawProcesses() {
         `ACTIVE linked processes (PADDR / PTIME):\n` + s.active.map(p => `  $${p.node.toString(16)}  ${p.entry.padEnd(8)}  ${p.$time}`).join('\n');
 }
 function drawEnemyLocator() {
-    const canvas = document.getElementById('enemyLocator'), ctx = canvas.getContext('2d');
+    const canvas = document.getElementById('enemyLocator');
     if (!canvas)
         return;
+    const ctx = canvas.getContext('2d');
     const e = enemyLab.STATE(), l = landerLab.STATE();
     ctx.fillStyle = '#080e16';
     ctx.fillRect(0, 0, 292, 240);
@@ -1073,7 +1094,7 @@ function drawEnemies() {
     const s = enemyLab.STATE();
     const row = (name, x) => `${name.padEnd(10)} object $${x.object.toString(16)}  world $${x.worldX.toString(16).padStart(4, '0')}  Y ${x.height}\n` +
         `    OXV ${String(x.vx).padStart(5)} OYV ${String(x.vy).padStart(5)}  PADDR $${x.next.toString(16)} PTIME ${x.time}`;
-    document.getElementById('enemyState').textContent =
+    textSink('enemyState').textContent =
         `Original DISP ticks ${s.ticks}  PLABX $${s.playerX.toString(16)}  PLAYC ${s.playerY}\n` +
             `Source GETSHL active shells ${s.activeShells}   Sound priority ${s.soundPriority}\n` +
             row('UFOLP', s.ufo) + '\n' + row('MSWLP', s.swarmer) + '\n\n' +
@@ -1084,7 +1105,7 @@ function drawLanders() {
     const s = landerLab.STATE();
     const row = (name, x) => `${name.padEnd(10)} worldX $${x.x.toString(16).padStart(4, '0')} Y ${x.y} ` +
         `OXV ${x.xv} OYV ${x.yv}  PADDR $${x.next.toString(16)} PTIME ${x.sleep}`;
-    document.getElementById('landerState').textContent =
+    textSink('landerState').textContent =
         `Source process/VELO diagnostic ticks ${s.ticks}, terrain altitude ${s.altitudeAtLander}\n` +
             `Lander count ${s.landCount}  astronaut count ${s.astronautCount}  original shells ${s.shots}\n` +
             row('LANDS0', s.lander) + '\n' + row('ASTRO', s.astronaut) + '\n' +
@@ -1092,7 +1113,7 @@ function drawLanders() {
             'Test fixture: no APVCT, real sprite presentation, collision processing or cabinet timing.';
 }
 const fps = document.getElementById('frames');
-const labStatus = document.getElementById('status');
+const labStatus = textSink('status');
 const keys = new Set(), pendingTaps = new Set();
 // Touch pointers are separate from keyboard state: releasing a finger must
 // never release a physical key held simultaneously, or vice versa.
@@ -1231,10 +1252,8 @@ function startGame() {
         refreshCabinetUI();
         return false;
     }
-    // Stage 77: with no credit, START drops the coin in for the player (the
-    // same COIN path as INSERT COIN, so coinage and audits still apply).
-    for (let coins = 0; !cabinet.CAN_START(1) && coins < 8; coins++)
-        cabinet.COIN('left');
+    // Stage 80: as on the cabinet, START does nothing without a credit
+    // (unless the operator has set Free Play).
     if (!cabinet.START(1)) {
         refreshCabinetUI();
         return false;
@@ -1250,6 +1269,9 @@ function startGame() {
     lab.RESET(null, sourceRandomFromAttract());
     lab.TRIGGER_SOUND('ST1SND');
     mode = 'playing';
+    // Leaving the AI demo un-gates the sound now, before SNDSEQ sends ST1SND;
+    // a later gate change would power-cycle the board and cut it off.
+    gateDemoSound({ reset: false });
     gameOverWait = 0;
     hallDisplayTicks = 0;
     enterHeld = false;
@@ -1630,6 +1652,15 @@ window.addEventListener('keydown', e => {
         e.preventDefault();
         return;
     }
+    // Stage 80: Escape ends the current game (or the AI demo) and returns to
+    // the attract mode. Initials entry is left alone so a high score is kept.
+    if (e.code === 'Escape' && ESCAPE_MODES.includes(mode)) {
+        e.preventDefault();
+        watchDemo();
+        refreshCabinetUI();
+        draw();
+        return;
+    }
     const typing = /^(INPUT|SELECT|TEXTAREA)$/.test(e.target?.tagName || '');
     if (!typing && !e.repeat && !logicalKeyForCode(e.code, controlBindings)) {
         if (e.code === 'KeyP' && mode === 'playing') { e.preventDefault(); togglePause(); return; }
@@ -1729,6 +1760,7 @@ document.addEventListener?.('visibilitychange', () => {
         audio.resume();
 });
 const START_MODES = ['attract', 'hall-table', 'demo-ai', 'demo-ai-over'];
+const ESCAPE_MODES = ['playing', 'game-over', 'hall-wait', 'demo-ai', 'demo-ai-over'];
 const DEMO_MODES = ['demo-ai', 'demo-ai-over'];
 const uiCache = new Map();
 /** Write a DOM property only when it changes (this runs every frame). */
@@ -1746,11 +1778,11 @@ function setUI(id, prop, value) {
 let demoSoundGated = false;
 /** Stage 77: the AI demo is always silent. Leaving it power-cycles the sound
  * board so no demo background (BG1 after thrust) leaks into the next game. */
-function gateDemoSound() {
+function gateDemoSound({ reset = true } = {}) {
     const gate = DEMO_MODES.includes(mode);
     if (gate === demoSoundGated) return;
     demoSoundGated = gate;
-    audio.reset();
+    if (reset) audio.reset();
     audio.setGated(gate);
 }
 function cabinetStatusText(canStart) {
@@ -1763,11 +1795,12 @@ function cabinetStatusText(canStart) {
     case 'game-over': case 'hall-wait': return 'Game over.';
     case 'hall-entry': return 'New high score! Use UP / DOWN to choose each initial, FIRE to accept.';
     case 'demo-ai': case 'demo-ai-over':
-        return 'AI demo running (sound off). Press <strong>START</strong> to play yourself, or <strong>STOP DEMO</strong>.';
+        return canStart ? 'AI demo running (sound off). Press <strong>START</strong> to play yourself, or <strong>STOP DEMO</strong>.'
+            : 'AI demo running (sound off). Insert a coin to play yourself, or press <strong>STOP DEMO</strong>.';
     default:
         if (free) return 'Free play. Press <strong>START</strong> (or Enter) to play, or watch the AI.';
         if (canStart) return `${credits} credit${credits === 1 ? '' : 's'}. Press <strong>START</strong> (or Enter) to play.`;
-        return 'Press <strong>START</strong> to insert a coin and play, or <strong>INSERT COIN</strong> first. Or watch the AI play.';
+        return 'Press <strong>INSERT COIN</strong>, then <strong>START</strong> to play. Or watch the AI play.';
     }
 }
 function refreshCabinetUI() {
@@ -1780,11 +1813,11 @@ function refreshCabinetUI() {
     setUI('powerOnCabinet', 'hidden', poweredOn);
     setUI('playControls', 'hidden', !poweredOn);
     setUI('coinInsert', 'disabled', mode === 'boot');
-    // START works from attract, Hall of Fame and the AI demo. With no credit it
-    // inserts the coin itself (startGame), so it is only disabled while booting.
+    // START works from attract, Hall of Fame and the AI demo, once there is a
+    // credit (or Free Play).
     setUI('startGameTop', 'hidden', mode === 'playing');
-    setUI('startGameTop', 'disabled', !inStartMode);
-    setUI('startGame', 'disabled', !inStartMode);
+    setUI('startGameTop', 'disabled', !canStart);
+    setUI('startGame', 'disabled', !canStart);
     setUI('watchAI', 'hidden', !(inStartMode || mode === 'game-over'));
     setUI('watchAI', 'textContent', inDemo ? '■ STOP DEMO' : 'WATCH AI PLAY');
     setUI('watchAI', 'title', inDemo ? 'Stop the AI demo and return to the attract mode' : 'Watch the AI play a normal game (sound off)');
@@ -1793,11 +1826,6 @@ function refreshCabinetUI() {
     setUI('pauseTop', 'textContent', running ? '❚❚ PAUSE' : '▶ RESUME');
     setUI('cabinetStatus', 'html', cabinetStatusText(canStart));
     if (document.body?.classList) document.body.classList.toggle('cab-idle', inStartMode);
-    const s = audio.state();
-    const soundOn = s.enabled && !s.muted;
-    setUI('soundQuick', 'textContent', soundOn ? '🔊 SOUND' : '🔇 SOUND');
-    setUI('soundQuick', 'aria-pressed', String(soundOn));
-    setUI('soundQuick', 'title', soundOn ? 'Mute sound (M)' : 'Turn sound on (M)');
     const rows = cabinet.audit;
     setUI('cabinetAudits', 'textContent', Object.entries(AUDIT_LABELS)
         .map(([k,v])=>`FUNCTION ${k} · ${v}: ${rows[k]}`).join('\n'));
@@ -1826,21 +1854,50 @@ document.getElementById('clearAudits').onclick=()=>{cabinet.RESET_AUDITS();refre
 document.getElementById('clearCredits').onclick=()=>{cabinet.RESET_CREDITS();attract.SET_CREDITS(0);refreshCabinetUI();};
 renderOperatorSettings();
 refreshCabinetUI();
-const audioButton = document.getElementById('audioToggle');
 const audioVolume = document.getElementById('audioVolume');
-const audioLabel = document.getElementById('audioLabel');
+// Stage 80: one sound control, always on the toolbar. The volume (default
+// 100%) and mute setting are kept in browser storage where available.
+const AUDIO_STORAGE_KEY = 'defender.audio.v1';
+function loadAudioSettings() {
+    try {
+        const v = JSON.parse(cabinetStorage?.getItem(AUDIO_STORAGE_KEY));
+        if (v && Number.isFinite(v.volume)) return { volume: Math.min(1, Math.max(0, v.volume)), muted: !!v.muted };
+    } catch { /* Defaults below. */ }
+    return { volume: 1, muted: false };
+}
+function saveAudioSettings() {
+    const s = audio.state();
+    try { cabinetStorage?.setItem(AUDIO_STORAGE_KEY, JSON.stringify({ volume: s.volume, muted: s.muted })); } catch { /* Not saved. */ }
+}
+{
+    const saved = loadAudioSettings();
+    audio.setVolume(saved.volume);
+    audio.setMuted(saved.muted);
+    audioVolume.value = String(Math.round(saved.volume * 100));
+}
 let startupCuePlayed = false;
 /** Browser audio cannot autoplay. The initial POWER ON click is the cabinet
  * power switch and also unlocks the Stage 47 original QUASAR sound. */
+let poweringOn = false;
 async function powerOnCabinet() {
+    if (poweringOn) return;
+    poweringOn = true;
     audio.reset();
-    try { await audio.enable(); } catch { /* Silent boot if browser denies sound. */ }
+    try {
+        await audio.enable();
+        // Stage 80: wait until the speaker is actually streaming, so QUASAR
+        // is not lost while the browser's audio output starts up.
+        await audio.started();
+    } catch { /* Silent boot if browser denies sound. */ }
+    poweringOn = false;
+    mode = 'boot';
+    gateDemoSound({ reset: false });
     // ROMF8.RESET drives the sound PIA immediately, ahead of RESET1's
     // palette and RAM2 video writes. Put QUASAR at the power-on boundary,
     // not after the browser constructs its boot screen.
+    audio.reset();
     audio.powerOn();
     boot.RESET();
-    mode = 'boot';
     sourceBoundary = null;
     frames = 0;
     keys.clear();
@@ -1857,27 +1914,20 @@ document.getElementById('powerOnCabinet').onclick = () => powerOnCabinet();
 
 function refreshAudioUI() {
     const s = audio.state();
-    audioButton.textContent = s.muted ? 'UNMUTE SOUND' : (s.enabled ? 'MUTE SOUND' : 'ENABLE SOUND');
-    audioLabel.textContent = s.enabled ? (s.muted ? 'SOUND MUTED' : 'SOUND ON') : 'SOUND OFF';
+    const silent = s.muted || s.volume === 0;
+    setUI('soundQuick', 'textContent', silent ? '🔇' : s.volume < 0.5 ? '🔉' : '🔊');
+    setUI('soundQuick', 'aria-pressed', String(s.muted));
+    setUI('soundQuick', 'aria-label', s.muted ? 'Unmute sound' : 'Mute sound');
+    setUI('soundQuick', 'title', (s.muted ? 'Unmute' : 'Mute') + ' (M) · volume ' + Math.round(s.volume * 100) + '%');
+    const v = String(Math.round(s.volume * 100));
+    if (audioVolume.value !== v) audioVolume.value = v;
 }
-audioButton.onclick = () => {
-    const s = audio.state();
-    if (!s.enabled) {
-        void audio.enable().then(() => {
-            // The real cabinet plays QUASAR at power-up. Browser autoplay rules
-            // postpone this initial cue until this explicit ENABLE SOUND gesture.
-            if (mode === 'power-off') { void powerOnCabinet(); }
-            refreshAudioUI();
-        }).catch(err => {
-            audioLabel.textContent = 'AUDIO ERROR: ' + err.message;
-        });
-    }
-    else
-        audio.setMuted(!s.muted);
-    refreshAudioUI();
-};
 audioVolume.oninput = () => {
     audio.setVolume(Number(audioVolume.value) / 100);
+    // Moving the slider is a request to hear the sound.
+    if (audio.state().muted && audio.state().volume > 0) audio.setMuted(false);
+    if (!audio.state().enabled && mode !== 'power-off') void audio.enable().catch(() => {});
+    saveAudioSettings();
     refreshAudioUI();
 };
 refreshAudioUI();
@@ -1895,12 +1945,15 @@ function togglePause() {
 }
 document.getElementById('pauseTop').onclick = togglePause;
 function toggleSound() {
-    const s = audio.state();
-    if (!s.enabled || s.muted) {
+    // Stage 80: the speaker button only mutes and unmutes. POWER ON is what
+    // switches the cabinet (and the browser's sound) on.
+    if (audio.state().muted) {
         audio.setMuted(false);
-        void audio.enable().then(() => { if (mode === 'power-off') void powerOnCabinet(); refreshAudioUI(); }).catch(() => {});
+        if (audio.state().volume === 0) audio.setVolume(1);
+        if (mode !== 'power-off') void audio.enable().then(refreshAudioUI).catch(() => {});
     } else
         audio.setMuted(true);
+    saveAudioSettings();
     refreshAudioUI();
     refreshCabinetUI();
 }
@@ -1943,6 +1996,10 @@ document.getElementById('coinInsert').onclick = () => {
 };
 document.getElementById('rebootCabinet').onclick = () => {
     // Power cycling does not create a paid credit or erase CMOS.
+    // Stage 80: leave the demo's sound gate first. Changing it later would
+    // power-cycle the sound board again and cut QUASAR off.
+    mode = 'boot';
+    gateDemoSound({ reset: false });
     audio.reset();
     // Reboot changes the cabinet state immediately, independent of the
     // asynchronous Web Audio permission/resume operation.
@@ -2325,7 +2382,8 @@ for (const [button, fn] of Object.entries({
     processReverse: () => processLab.REV(),
     processReset: () => processLab.RESET()
 })) {
-    document.getElementById(button).onclick = () => {
+    const el = document.getElementById(button);
+    if (el) el.onclick = () => {
         try {
             fn();
             drawProcesses();
@@ -2336,26 +2394,28 @@ for (const [button, fn] of Object.entries({
     };
 }
 for (const [id, fn] of Object.entries({ enemyStep: () => enemyLab.STEP(), enemy120: () => enemyLab.RUN(120), enemyReset: () => enemyLab.RESET() })) {
-    document.getElementById(id).onclick = () => {
+    const el = document.getElementById(id);
+    if (el) el.onclick = () => {
         try {
             fn();
             drawEnemies();
             drawEnemyLocator();
         }
         catch (e) {
-            document.getElementById('enemyState').textContent = `SOURCE BOUNDARY: ${e.message}`;
+            textSink('enemyState').textContent = `SOURCE BOUNDARY: ${e.message}`;
         }
     };
 }
 for (const [id, fn] of Object.entries({ landerStep: () => landerLab.STEP(), lander60: () => landerLab.RUN(60), lander120: () => landerLab.RUN(120), landerReset: () => landerLab.RESET() })) {
-    document.getElementById(id).onclick = () => {
+    const el = document.getElementById(id);
+    if (el) el.onclick = () => {
         try {
             fn();
             drawLanders();
             drawEnemyLocator();
         }
         catch (e) {
-            document.getElementById('landerState').textContent = `SOURCE BOUNDARY: ${e.message}`;
+            textSink('landerState').textContent = `SOURCE BOUNDARY: ${e.message}`;
         }
     };
 }

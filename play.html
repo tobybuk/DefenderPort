@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Defender — Source-First Stage 79 · Stars and Scanner</title><style>:root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#080e16;color:#d8e3ef}
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Defender — Source-First Stage 80 · Cabinet controls</title><style>:root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#080e16;color:#d8e3ef}
 *{box-sizing:border-box}body{margin:0;padding:28px 16px}.wrap{max-width:1000px;margin:auto}
 h1{font-size:25px;margin:0 0 8px;letter-spacing:-.7px}p{line-height:1.65;color:#b5c4d4}
 .top{border-bottom:1px solid #304355;padding-bottom:18px;margin-bottom:22px}
@@ -39,9 +39,11 @@ body.attract-mode .top p{display:none}
 
 /* Stage 48 audio controls, outside the diagnostic-only gameplay widgets. */
 #audioToggle{background:#173a50;border-color:#2c809b;font-weight:700}
-.sound-level{display:flex;align-items:center;gap:6px;font-size:12px;color:#b6dff2}
-.sound-level input{width:82px;accent-color:#70bfef}
-#audioLabel{font-size:10px;color:#79bdd6}
+/* Stage 80: one always-visible sound control: mute button + volume slider. */
+.volume-control{display:inline-flex;align-items:center;gap:6px;border:1px solid #344a5a;border-radius:6px;padding:0 8px 0 0;background:#0b1622}
+.volume-control .volume-mute{border:0;background:transparent;font-size:15px;padding:8px 6px 8px 9px!important;min-width:34px}
+.volume-control input{width:86px;accent-color:#70bfef;cursor:pointer}
+.dev-controls button{font-size:11px;padding:7px 10px}
 
 /* Stage 52: cabinet joystick/fire controls while entering high-score initials. */
 .hall-controls[hidden]{display:none!important}
@@ -294,24 +296,19 @@ body.arcade-fullscreen {overflow:hidden!important;padding:0!important;}
     <button id="powerOnCabinet" class="start-button power-button" title="Switch the cabinet on (also enables sound)">⏻ POWER ON</button>
     <span class="tb-group" id="playControls">
         <button id="coinInsert" class="coin-button" title="Insert one coin into the left chute">INSERT COIN</button>
-        <button id="startGameTop" class="start-button" title="One-player START (Enter). Adds a coin first if you have no credits.">▶ START</button>
+        <button id="startGameTop" class="start-button" title="One-player START (Enter). Insert a coin first.">▶ START</button>
         <span id="creditReadout" role="status" aria-live="polite">CREDITS 0</span>
     </span>
     <button id="watchAI" type="button" class="demo-button" title="Watch the AI play a normal game (sound off)">WATCH AI PLAY</button>
     <button id="pauseTop" type="button" class="pause-button" title="Pause or resume (P)" hidden>❚❚ PAUSE</button>
     <span class="tb-right">
-        <button id="soundQuick" type="button" class="icon-button" aria-pressed="false" title="Sound on/off (M)">🔇 SOUND</button>
+        <span class="volume-control" role="group" aria-label="Sound">
+            <button id="soundQuick" type="button" class="icon-button volume-mute" aria-pressed="false" title="Mute (M)">🔊</button>
+            <input id="audioVolume" type="range" min="0" max="100" value="100" aria-label="Volume" title="Volume" />
+        </span>
         <button id="fullscreenToggle" class="fullscreen-button icon-button" type="button" aria-label="Enter fullscreen" title="Fullscreen">⛶</button>
         <details class="cabinet-menu" id="cabinetMenu"><summary title="Settings and cabinet functions">☰ MENU</summary>
             <div class="cabinet-options">
-                <section class="menu-section" aria-labelledby="menuSound"><h3 id="menuSound">Sound</h3>
-                    <div class="menu-row">
-                        <button id="audioToggle">ENABLE SOUND</button>
-                        <small id="audioLabel">SOUND OFF</small>
-                    </div>
-                    <label for="audioVolume" class="sound-level">VOLUME <input id="audioVolume" type="range" min="0" max="100" value="45" aria-label="Sound volume" /></label>
-                    <small class="menu-note">The AI demo is always silent.</small>
-                </section>
                 <section class="menu-section" aria-labelledby="menuControls"><h3 id="menuControls">Controls</h3>
                     <div class="menu-row">
                         <button id="configureKeys">KEYBOARD CONTROLS</button>
@@ -334,6 +331,9 @@ body.arcade-fullscreen {overflow:hidden!important;padding:0!important;}
                         <button id="clearCredits">CLEAR CREDITS</button>
                         <p class="operator-disclaimer">Coinage 10–16 is represented by a browser coin-ledger adapter; exact original ROM pricing tables and service diagnostic ROM remain untranslated.</p>
                     </details>
+                </section>
+                <section class="menu-section" aria-labelledby="menuDeveloper"><h3 id="menuDeveloper">Developer tools and tests</h3>
+                    <div class="menu-row dev-controls"><button id="startGame" title="Start a new game (Enter)">START GAME</button><button id="watchDemo" title="Return to the original source attract-mode sequence">WATCH DEMO</button><button data-key="Space">Hold THRUST</button><button data-key="ArrowUp">Hold UP</button><button data-key="ArrowDown">Hold DOWN</button><button data-key="KeyR" id="reverseButton">REVERSE (HOLD)</button><button data-key="KeyS" id="smartBombButton">SMART BOMB</button><button data-key="KeyF" id="laserSound" title="Fires original Defender LASR/LASL laser; original SNDSEQ sound board audio">HOLD FIRE</button><button data-key="KeyH" id="hyperspaceButton" title="Original Defender HYPER/HYP02/HYP2 teleport, with source failure chance">HYPERSPACE</button><button id="scannerTest" title="Runs original AMODE1 SCNR and miniature-terrain output using the real BLK71 MTERR table.">Test original SCNR + terrain</button><button id="terrainTest" title="Runs BLK71 BGOUT and source terrain flavour-table output">Test original BGOUT terrain</button><button id="objectTest" title="Runs source OPROC against a diagnostic object with original PLAPIC bitmap; descriptor pointer is explicitly diagnostic.">Test OPROC drawing</button><button id="eraseTest" title="Runs original DEFB6 OFSHIT to erase the current diagnostic object via its OBJDEL descriptor">Test OFSHIT erase</button><button id="fireballTest" title="Runs original FBINIT then SHELL/FBOUT against a diagnostic shell record. No invented waveform or sprites.">Test FBOUT fireball</button><button id="hallTest" title="Development-only test: open the original HALLOF entry with a qualifying score">Test Hall of Fame entry</button><button id="scoreTest" title="Executes original SCORE arithmetic with a test reward (10 points); does not represent actual Defender game events">Test SCORE +10</button><button id="pause">Pause</button><button id="step">Single step</button><button id="reset">Reset</button><small id="frames"></small></div>
                 </section>
             </div>
         </details>
@@ -367,41 +367,8 @@ body.arcade-fullscreen {overflow:hidden!important;padding:0!important;}
     <button id="hallFire">FIRE · NEXT INITIAL</button>
 </div>
 </div><!-- arcadeShell: fullscreen target -->
-<details class="advanced-tools"><summary>Developer tools and test controls</summary>
-<div class="controls"><button id="startGame" title="Start a new game (Enter)">START GAME</button><button id="watchDemo" title="Return to the original source attract-mode sequence">WATCH DEMO</button><button data-key="Space">Hold THRUST</button><button data-key="ArrowUp">Hold UP</button><button data-key="ArrowDown">Hold DOWN</button><button data-key="KeyR" id="reverseButton">REVERSE (HOLD)</button><button data-key="KeyS" id="smartBombButton">SMART BOMB</button><button data-key="KeyF" id="laserSound" title="Fires original Defender LASR/LASL laser; original SNDSEQ sound board audio">HOLD FIRE</button><button data-key="KeyH" id="hyperspaceButton" title="Original Defender HYPER/HYP02/HYP2 teleport, with source failure chance">HYPERSPACE</button><button id="scannerTest" title="Runs original AMODE1 SCNR and miniature-terrain output using the real BLK71 MTERR table.">Test original SCNR + terrain</button><button id="terrainTest" title="Runs BLK71 BGOUT and source terrain flavour-table output">Test original BGOUT terrain</button><button id="objectTest" title="Runs source OPROC against a diagnostic object with original PLAPIC bitmap; descriptor pointer is explicitly diagnostic.">Test OPROC drawing</button><button id="eraseTest" title="Runs original DEFB6 OFSHIT to erase the current diagnostic object via its OBJDEL descriptor">Test OFSHIT erase</button><button id="fireballTest" title="Runs original FBINIT then SHELL/FBOUT against a diagnostic shell record. No invented waveform or sprites.">Test FBOUT fireball</button><button id="hallTest" title="Development-only test: open the original HALLOF entry with a qualifying score">Test Hall of Fame entry</button><button id="scoreTest" title="Executes original SCORE arithmetic with a test reward (10 points); does not represent actual Defender game events">Test SCORE +10</button><button id="pause">Pause</button><button id="step">Single step</button><button id="reset">Reset</button><small id="frames"></small></div></details></section>
-<details class="advanced-notes"><summary>Project notes &amp; source diagnostics</summary>
-<section class="panel" style="margin-top:18px"><h2>Development notes · Stage 56</h2><p><strong>Stage 56 – ROMF8/ROMC0 source-first power-on:</strong> The original RAM3/RAM7 test pattern is written into the source-format video framebuffer using RESET1 colours. The diagnostic success screen uses ROMC0.RORAOK text and positions, then ROMF8.GAMEOV. POWER ON unlocks Web Audio and issues the QUASAR sound command. The ROM checksum, physical RAM fault mapping, real hardware service diagnostics, interrupt-cycle timing, and PIA/LED operations remain untranslated; see <code>docs/STAGE56_ROM_BOOT_SOURCE_AUDIT.md</code>. <strong>Stage 54 – Enter/Return can be bound to Fire:</strong> Keyboard Controls accepts Enter or Numpad Enter for FIRE only. During gameplay it becomes the same logical KeyF cabinet input as any other configured Fire key. On the attract screen Enter still starts a game, and in the Hall of Fame it confirms initials. The original game/sound routines and key defaults are unchanged.</p><p><strong>Stage 53 – high-score entry and corrected THRUST:</strong> Approved filtered-noise fix now runs through the game's original VSNDRM1 FNOISE sound-board path, including ADCA/SBCA high-byte overflow and borrow flags. After the original GAME OVER, the source waits 40 ticks, then HALLOF checks the player's packed-BCD score against the eighth score, presents original HOF initials/underline effects and permits UP/DOWN/FIRE selection. Qualifying scores are inserted into today's and all-time lists and the correct original organ cue is played; all-time records are saved using browser-local storage as a CMOS adapter. On each fresh page load, today's records use the original ROM factory table (ROMC8.RHSTDS). Use the <em>Test Hall of Fame entry</em> diagnostic button to check the screen without finishing a game. Full MESS0 cursor control interpretation and hardware CMOS remain unverified. See <code>docs/STAGE52_HIGH_SCORE_AND_THRUST_AUDIT.md</code>.</p><p><strong>Stage 51 IRQ/TIMER timing:</strong> The physical video clock now increments the original eight-bit <code>TIMER</code> independently of the executive. When a source graphics pass overruns one or more video periods, <code>EXEC0</code> consumes the accumulated timer ticks in <em>one</em> process-dispatch pass, rather than replaying a fictional queue of passes. Browser paint rate no longer throttles the nominal video IRQ to one tick per rendered frame. The original <code>$30</code>, <code>$2E</code> and <code>$28</code> sleeps remain unchanged. The graphics cycle ledger is still partial, and the first complete title redraw remains at video frame 338 in the deterministic source harness; this is not yet a cabinet-verified animation speed. See <code>docs/STAGE51_DEEP_TIMING_AUDIT.md</code>.</p><p><strong>Stage 43 source corrections:</strong> In the original attract demonstration, <code>LEDRET</code> starts <code>CBOMB</code>; the translated colour process now runs and cycles MUTANT palette slot C during both source <code>APVCT</code> appearances. The original <code>BLK71.BGOUT</code> writer now restores terrain after SAMEX explosions erase video bytes. The WILLIAMS title uses its own <code>LOGO0/LGOTAB</code> source-traced nibble positions for presentation restoration during DEFENDER appearance; no new artwork was created. Browser task interleaving is not yet cycle-exact. See <code>docs/STAGE43_LOGO_MUTANT_TERRAIN_AUDIT.md</code> and the regression tests.</p><p><strong>Original video pipeline, resistor-weighted colours, source-cycle Bomber/mine colours and visibly twinkling stars.</strong> Enemy waves, movement, collisions, astronaut captures and rescues, lasers, Reverse, player deaths, explosions, and wave transitions use named assembly-derived routines. <strong>Original inter-wave bonus messages now appear inside video RAM and award each surviving astronaut 100 points times the completed wave number (capped at ×5), one every four update ticks, before the 128-tick next-wave pause.</strong> The first wave starts with five of fifteen Landers and no Baiters or Swarmers. Original-score <code>NUMBR0–NUMBR9</code> glyphs, spare-ship and Smart Bomb icons are drawn by <code>CWRIT</code> into the game framebuffer. The Williams 16-entry colour RAM is updated through the original IRQ path, with the original Williams resistor-weighted 3:3:2 DAC conversion; the <code>COLR</code> process now cycles the laser colour. The original HYPER/HYP02/HYP2 hyperspace process is available (H key or button), and holding FIRE triggers repeat requests through LFIRE with an explicit browser-only repeat interval. The browser nominal frame cadence uses the board's 1 MHz / 16,640-count video period (approximately 60.096 Hz).</p>
-<p><strong>Stage 42 scanner fixes:</strong> The existing source <code>DEFA7.BORDER</code> now creates the blue radar enclosure; <code>SCINIT</code> and <code>LEDRET</code> restore the original $DB then $D9 STATUS sequence so <code>SCNR.MT1</code> draws the real BLK71 miniature terrain. Original scanner marker $1030 is no longer overwritten by demo-ship movement, and source <code>CREDS</code> renders cabinet credits only if present. See the source audit for remaining unverified scheduling boundaries.</p><p><strong>Stage 42 attract mode:</strong> The machine now boots into an animated, source-derived Williams/Defender presentation and a scripted rescue/enemy demonstration from the original <code>AMODE1.SRC</code>. The Williams line art uses <code>LGOTAB/LOGO0</code> bytes and the source <code>COLR/TIECOL</code> palette processes. The <code>ELECV/PRES1</code> original presentation lettering uses the exact $3258/$3E6C MESS0 cursor instructions and is refreshed after title expansion, protecting intact ELECTRONICS INC. and PRESENTS text. Source <code>AMODE3/AMOD11</code> shot sequences now call <code>XSVCT/EXST/EXPU/EWRITE</code>, creating the original Lander and six enemy explosions. Source <code>APST/EXPU</code> also restores each enemy materialisation before its sprite appears; <code>TEXTP</code> follows the original captions and point values in <code>TEXTAB</code> order. The animated DEFENDER title now uses 15 original <code>DEFENS/APST/EXPU/DEF50</code> appearance objects before restoring the full <code>DEFDAT/DEFNNN</code> bitmap, and the demo uses original object bitmaps and timed <code>LEDRET/AMODE1–8/AMOD12</code> stages. Press <strong>ENTER</strong> or tap <strong>START GAME</strong> to play; <strong>WATCH DEMO</strong> returns to attract mode. The original ROMC8.DEFALT high scores initialise both columns. Source-derived high-score initials entry now updates the tables after qualifying games; all-time records are retained using browser-local storage. Cabinet coins and physical CMOS are not yet implemented. Sound-board DAC integration is now available in Stage 48.</p>
-<p><strong>Stage 35 bug fixes:</strong> A Smart Bomb that eliminates the final enemies now completes its original palette-flash phase <em>before</em> the wave-completed and astronaut-bonus display is drawn. The source wave executive still uses its normal 15-tick wakeups, and the inter-wave bonus text/score cadence is unchanged. A dying Bomber is now erased from the source framebuffer before its object record is unlinked, fixing a stale-sprite artifact after Smart Bomb use. The original sprite bitmaps, collision vectors, object lists and score routines are preserved. Unlimited Smart Bombs remain enabled for testing, and sound remains deferred.</p>
-<p><strong>Stage 34 display work retained:</strong> Original <code>THPROC</code>, <code>TIECOL</code> and <code>CBOMB</code> continue to run as source processes. Bomber palette phases now have RGB *sprite-pixel* regression coverage, and the browser uses the original board resistor weights rather than ideal 3:3:2 linear scaling. The translated star <code>SBLNK</code> colour branch is sampled every game update, where the source seed permits it, instead of at one-quarter speed: visible star brightness transitions are now checked in the final framebuffer. A further critical fix corrects <code>presentFrame → framePixels</code>: Stages 29–33 inadvertently discarded the hardware colour palette, displaying a fixed diagnostic colour table despite source colour cycling. The original assembly does not establish the normal-game <code>SBLNK</code> call cadence, so the host sampling rate remains provisional, not cabinet-verified. <strong>Deliberate development option:</strong> unlimited Smart Bomb ammunition is enabled for now; the original three-charge counter and icons remain in the source. <strong>Sound is now connected</strong> through DEFA7.SNDOUT. This is not yet a fully verified arcade-equivalent implementation: the initial hardware/raster inputs, complete <code>EXEC/SINIT</code> timing and analogue CRT gamma are still approximated or not implemented. The independent source workbenches below remain diagnostic fixtures, not the active game wave.</p></section>
-<section class="panel" style="margin-top:18px" id="enemyLocatorPanel">
-<h2>Stage 35 — enemy location diagnostic</h2>
-<p>The markers below show the actual world-coordinate RAM fields of the Stage 12/13 enemy fixtures (UFO, swarmer and lander) and astronaut. The fixtures are separate from the flight framebuffer. <strong>These markers are not Defender sprites, and this is not the missing APVCT sprite renderer.</strong> This view makes enemy state inspectable without fabricating pictures or modifying the original object routines.</p>
-<canvas id="enemyLocator" width="292" height="240" aria-label="Diagnostic locations of original enemy object records"></canvas>
-<p><small>U = UFO, S = Swarmer, L = Lander, A = Astronaut. Horizontal positions are displayed relative to the source player's PLABX as a diagnostic viewport; marker letters are debugging annotations, not game graphics.</small></p>
 </section>
-<section class="panel process-workbench" style="margin-top:18px">
-<h2>Original cooperative-process workbench — Stage 35</h2>
-<p><strong>Independent diagnostic.</strong> Runs the translated <code>GEXEC</code>, <code>COLR</code> and <code>THPROC</code> processes via original <code>DISP</code>/<code>SLEEP</code> linked-list scheduling. <code>REV</code> can be spawned as an original process. This test uses synthetic continuation <em>addresses</em> solely for host function dispatch, and sets the real <code>STATUS</code> dead-player branch to avoid unported enemies. It does <em>not</em> claim the complete arcade <code>EXEC</code> or game startup.</p>
-<div class="controls"><button id="processStep">One scheduler tick</button><button id="process120">Run 120 ticks</button><button id="process600">Run 600 ticks</button><button id="processReverse">Spawn REV process</button><button id="processReset">Reset processes</button></div>
-<pre id="processState" aria-live="polite"></pre>
-</section>
-<section class="panel process-workbench" style="margin-top:18px">
-<h2>Original enemy-process workbench — Stage 35</h2>
-<p><strong>Separate source-process diagnostic, not playable enemies.</strong> Translated <code>UFOLP</code>, <code>UFONV</code>, <code>MSWM</code> and <code>MSWLP</code> execute via the original <code>DISP</code>/<code>SLEEP</code> process lists. Starting object records, seed bytes and diagnostic continuation identifiers are explicit test fixtures. It uses the translated <code>SHOOT</code>, <code>GETSHL</code> and sound-command sequencer; it does <em>not</em> run the missing <code>APVCT</code> appearance routine, projectile collision handling or IRQ/VELO world-position updates.</p>
-<div class="controls"><button id="enemyStep">One enemy process tick</button><button id="enemy120">Run 120 ticks</button><button id="enemyReset">Reset enemy records</button></div>
-<pre id="enemyState" aria-live="polite"></pre>
-</section>
-<section class="panel" id="landerWorkbench">
-<h2>Stage 35 — original lander &amp; astronaut process workbench</h2>
-<p><strong>Diagnostic, not a game level.</strong> Initial object and process RAM records are explicitly seeded. The source-named <code>LANDS0</code>, <code>LANDG</code>, <code>LANDF</code>, <code>LNDFXA</code>, <code>ASTRO</code> routines execute through original <code>DISP</code>/<code>SLEEP</code>, while original <code>VELO</code> advances positions. Terrain altitude is read from the original BLK71 terrain bitstream; source <code>GETALT</code> computes the 6-bit index. The workbench uses one dispatch and one velocity update per button tick: <em>its cadence is a test fixture, not verified cabinet timing.</em> Missing original appearance, collision and damage routines are not replaced.</p>
-<div class="controls"><button id="landerStep">One lander tick</button><button id="lander60">Run 60 ticks</button><button id="lander120">Run 120 ticks</button><button id="landerReset">Reset lander records</button></div>
-<pre id="landerState" aria-live="polite"></pre>
-</section>
-<div class="grid"><section class="panel"><h2>Actual memory registers</h2><pre id="memory"></pre><div class="status" id="status"></div></section>
-<section class="panel"><h2>Scope and controls</h2><p>Keyboard defaults: <code>A</code> up, <code>Z</code> down, <code>RIGHT SHIFT</code> thrust, <code>SPACE</code> reverse, <code>TAB</code> Smart Bomb, <code>H</code> Hyperspace, <code>ENTER</code> fire. Use KEYBOARD CONTROLS to reassign these, including <strong>Enter</strong> as Fire. The ship and thrust are written into video memory by native translations of the original <code>POUT</code>, <code>ON86</code> and <code>THOUT</code> routines. The fixed-point movement uses <code>PLAYER</code>. Press <code>T</code> to test source terrain redraw, or <code>B</code> to test source <code>SCNR</code> object/player blip placement with original miniature terrain from <code>BLK71.SRC</code>. Press <code>V</code> to test original FBOUT, or <code>E</code> to call original <code>OFSHIT</code> on the diagnostic object. Press <code>G</code> (or Test SCORE +10) to apply original packed-BCD score arithmetic in the diagnostic; the original source score-digit glyphs are now rendered to framebuffer memory. Hold your configured <code>FIRE</code> key (Enter by default; F optional) or HOLD FIRE to repeatedly fire the source LASR/LASL laser, checking source picture-byte collisions and awarding original score values. The original VSNDRM1 sound board DAC output is integrated.</p><p><strong>Still absent or not verified:</strong> cycle-exact original sound-board interrupt pre-emption (not yet verified), hardware-driven startup, and exact 6809 instruction/raster timing. Source <code>TDISP/SCRTRN</code> and original numeral/ship/bomb graphics now use <code>ROMF8 CWRIT/COFF/BLKCLR</code>; colour-RAM data is interpreted using the board's 3:3:2 DAC with no analogue CRT transfer curve. <code>PRDISP</code> now runs from the translated two-phase <code>IRQ</code>; only the raster input samples are diagnostic. No substitute gameplay has been added.</p></section></div>
-</div>
-</details>
+
 <div id="keySettings" class="key-settings-backdrop" role="dialog" aria-modal="true" aria-label="Keyboard controls" hidden>
   <section class="key-settings-panel">
     <h2>Keyboard controls</h2>
@@ -11053,7 +11020,8 @@ function createSourceSoundOutput({ makeContext = () => {
     return new Audio({ latencyHint: 'interactive' });
 }, now = () => (globalThis.performance?.now?.() ?? Date.now()), makeBoard = rate => new SoundBoard({ sampleRate: rate }) } = {}) {
     let context = null, gain = null, node = null, board = null, enabled = false, muted = false, gated = false;
-    let volume = 0.45, lastCommand = null, lastPIA = null, lastTicks = 0;
+    let volume = 1, lastCommand = null, lastPIA = null, lastTicks = 0;
+    let streaming = false, startWaiters = [];
     let lastCallback = 0, period = 0;
     const pending = []; // { pia, at } awaiting the next audio callback
     const log = [];
@@ -11061,6 +11029,7 @@ function createSourceSoundOutput({ makeContext = () => {
         if (gain) gain.gain.value = (muted || gated) ? 0 : volume;
     }
     function process(out) {
+        if (!streaming) { streaming = true; for (const w of startWaiters.splice(0)) w(); }
         const t = now();
         const span = lastCallback ? Math.max(1, t - lastCallback) : period;
         const start = lastCallback || t - span;
@@ -11152,6 +11121,19 @@ function createSourceSoundOutput({ makeContext = () => {
         lastPIA = null;
         lastTicks = 0;
     }
+    /**
+     * Resolves once the speaker has asked for its first buffer, so a command
+     * sent now is heard from its start (Stage 80: the power-on QUASAR).
+     * Gives up after `timeoutMs` rather than hold the cabinet off.
+     */
+    function started(timeoutMs = 400) {
+        if (streaming || !context) return Promise.resolve(streaming);
+        return new Promise(resolve => {
+            const done = () => resolve(streaming);
+            startWaiters.push(done);
+            setTimeout(done, timeoutMs);
+        });
+    }
     function setVolume(v) {
         volume = Math.min(1, Math.max(0, Number(v) || 0));
         applyGain();
@@ -11181,7 +11163,7 @@ function createSourceSoundOutput({ makeContext = () => {
         if (board) process(out);
         return out;
     }
-    return Object.freeze({ writePIA, playHallOfFameTune, enable, disable, reset, suspend, resume, setVolume, setMuted, setGated, powerOn, state, pump });
+    return Object.freeze({ writePIA, playHallOfFameTune, enable, disable, reset, suspend, resume, started, setVolume, setMuted, setGated, powerOn, state, pump });
 }
 
 
@@ -11892,7 +11874,7 @@ function drawCabinetService(ctx, index, width = 292, height = 240) {
  * game picture by the browser, so it never touches the game's video memory.
  * Returns the hardware (x,y) of every lit pixel plus the colour byte.
  */
-function createSourceTextBanner(text = 'DEMO MODE ACTIVE', y = 0x80) {
+function createSourceTextBanner(text = 'DEMO MODE ACTIVE', y = 0x80, { left = 6, span = 146 } = {}) {
     const ram = new RAM(), video = new VideoMemory();
     const rom = createRomf8GraphicsRoutines(video, ram);
     const { descriptors } = installBonusSourceFont(ram);
@@ -11901,8 +11883,9 @@ function createSourceTextBanner(text = 'DEMO MODE ACTIVE', y = 0x80) {
         if (character !== ' ' && descriptors[character] === undefined)
             throw Error('Missing original MESS0 glyph ' + character);
     const widthBytes = [...text].reduce((sum, c) => sum + advance(c), 0) - 1;
-    // Centre within the visible byte columns 6..151 (hardware x 12..303).
-    let x = 6 + Math.max(0, Math.floor((146 - widthBytes) / 2));
+    // Centre within byte columns left..left+span-1 (default: the visible
+    // columns 6..151, hardware x 12..303).
+    let x = left + Math.max(0, Math.floor((span - widthBytes) / 2));
     for (const character of text) {
         if (character !== ' ')
             rom.CWRIT(((x << 8) | y) & 0xffff, descriptors[character]);
@@ -12025,7 +12008,11 @@ function createAttractPilot() {
     //    wave's other enemies first, but don't let Baiters accumulate.
     const TACTICS={podMinRange:16,keepHumansAt:3,keepFloor:148,gatherTarget:5,gatherReserve:2,gatherCooldown:150,
         baiterWaveBonus:140,baiterSwarm:3,baiterCloseCols:24,
-        endgameEnemies:2,endgameBaiter:-260,lastHumanGuardCols:150,lastHumanGuard:260};
+        endgameEnemies:2,endgameBaiter:-260,lastHumanGuardCols:150,lastHumanGuard:260,
+        // Stage 80: quick back-and-forth turning is hard to watch. Ordinary
+        // turns wait reverseGap ticks after the last turn, a Mutant duel
+        // duelReverseGap, and a collision dodge (the shield) shieldReverseGap.
+        reverseGap:45,duelReverseGap:30,shieldReverseGap:24};
     let duelId,duelPhase,duelSince,duelShots,duelSide;
     let keepTicks,gatherBombs,lastGatherBomb,keepFloor=148,humanShotsHeld,hyperspaces;
     let shieldTriggers,shieldUntil,shieldPlan,emergencyBombs,lastEmergencyBomb,lastReverseTick;
@@ -12422,7 +12409,7 @@ function createAttractPilot() {
         if(!(speed.y>0.05&&speed.y<=2.5))speed.y=1;
         if(!(speed.hop>=0&&speed.hop<=4))speed.hop=2;
         const shipModel={y:shipY,vx:game.vx,vy:s16(game.vy||0)/256,facing,
-            revWait:Math.max(0,reverseCooldown-ticks),bottom:keepCarry?keepFloor:SHIP_BOTTOM};
+            revWait:Math.max(0,lastReverseTick+TACTICS.shieldReverseGap-ticks),bottom:keepCarry?keepFloor:SHIP_BOTTOM};
         const mutantObstacle=e=>({mutant:true,x:e.d,y:e.y,w:MUT_COLS,h:MUT_ROWS,margin:speed.hop+1});
         const geometry=e=>{
             const c=e.d/64;                              // Mutant left edge vs ship left edge
@@ -12691,8 +12678,11 @@ function createAttractPilot() {
             else desiredDir=facing;
         }
         let reverse=false;
-        if(ticks>=reverseCooldown&&desiredDir!==facing){
-            reverse=true;reverseCooldown=ticks+11;heading=desiredDir;lastReverseTick=ticks;
+        const cooldownBefore=reverseCooldown,lastReverseBefore=lastReverseTick;
+        // A Mutant duel turns away, then back to shoot, so it gets a shorter gap.
+        const turnReady=duel?ticks>=lastReverseTick+TACTICS.duelReverseGap:ticks>=reverseCooldown;
+        if(turnReady&&desiredDir!==facing){
+            reverse=true;reverseCooldown=ticks+TACTICS.reverseGap;heading=desiredDir;lastReverseTick=ticks;
         }else if(desiredDir===facing)heading=desiredDir;
         // Bias toward moving decisively in pursuit. With the target nearby,
         // refrain from thrust if it would force us straight through it.
@@ -12804,7 +12794,12 @@ function createAttractPilot() {
             // inputs, intervene minimally (closest to the intended input),
             // otherwise prefer the most clearance.
             const likeness=x=>(x.plan.h===intended.h)+(x.plan.v===intended.v);
+            // Stage 80: among collision-free inputs, one that keeps the ship's
+            // facing beats one that turns it round when the intended input did
+            // not ask for a turn (turning is hard to watch).
+            const turns=x=>x.plan.h&&x.plan.h!==facing&&x.plan.h!==intended.h?1:0;
             const better=(a,b)=>a.hit!==b.hit?(a.hit>b.hit?-1:1):
+                a.hit===Infinity&&turns(a)!==turns(b)?turns(a)-turns(b):
                 a.hit===Infinity&&likeness(a)!==likeness(b)?likeness(b)-likeness(a):
                 a.clear!==b.clear?(a.clear>b.clear?-1:1):likeness(b)-likeness(a);
             let override=null;
@@ -12835,11 +12830,10 @@ function createAttractPilot() {
             }
             if(override){
                 const p=override.plan;
-                const cooldownBefore=ticks+shipModel.revWait;
-                if(reverse){reverse=false;reverseCooldown=cooldownBefore;}
+                if(reverse){reverse=false;reverseCooldown=cooldownBefore;lastReverseTick=lastReverseBefore;}
                 throttle=false;
                 if(p.h&&p.h!==facing){
-                    if(shipModel.revWait===0){reverse=true;reverseCooldown=ticks+11;heading=p.h;lastReverseTick=ticks;}
+                    if(shipModel.revWait===0){reverse=true;reverseCooldown=ticks+TACTICS.reverseGap;heading=p.h;lastReverseTick=ticks;}
                 }else if(p.h){throttle=true;heading=facing;}
                 if(p.v!==cmdY){cmdY=p.v;yDir=p.v;lastYChange=ticks;}
                 if(reverse)fire=false;
@@ -12863,19 +12857,25 @@ function createAttractPilot() {
 
 const attractPilot=createAttractPilot();
 let aiGameOverTicks=0, aiGamesPlayed=0, aiRecoveries=0;
-// "DEMO MODE ACTIVE" flashes for 5 seconds when a demo game starts,
-// in the RORAOK boot-text style (MESS0 glyphs via CWRIT, colour $7A).
-const DEMO_BANNER_MS=5000, DEMO_BANNER_ON_MS=400, DEMO_BANNER_OFF_MS=200;
-const demoBanner=createSourceTextBanner('DEMO MODE ACTIVE');
+// Stage 80: "DEMO" flashes for the whole AI demo, at 20% opacity, above the
+// spare ships in the panel left of the scanner. Same RORAOK boot-text style
+// (MESS0 glyphs via CWRIT, colour $7A); drawn over the picture, never into
+// the game's video memory.
+const DEMO_BANNER_ON_MS=400, DEMO_BANNER_OFF_MS=200, DEMO_BANNER_ALPHA=0.2;
+// Panel: byte columns 6..46 (hardware x 12..93); rows 10..16 sit above the ships.
+const demoBanner=createSourceTextBanner('DEMO', 10, { left: 6, span: 41 });
 let demoBannerStart=-Infinity;
 const bannerClock=()=>globalThis.performance?.now?.()??Date.now();
 function drawDemoBanner(now=bannerClock()){
     const elapsed=now-demoBannerStart;
-    if(!(mode==='demo-ai'||mode==='demo-ai-over')||elapsed<0||elapsed>=DEMO_BANNER_MS)return false;
+    if(!(mode==='demo-ai'||mode==='demo-ai-over')||elapsed<0)return false;
     if(elapsed%(DEMO_BANNER_ON_MS+DEMO_BANNER_OFF_MS)>=DEMO_BANNER_ON_MS)return false;
     const [r,g,b]=defenderDacRGB(demoBanner.colour);
+    const alpha=ctx.globalAlpha;
+    ctx.globalAlpha=DEMO_BANNER_ALPHA;
     ctx.fillStyle=`rgb(${r},${g},${b})`;
     for(const [x,y] of demoBanner.lit)ctx.fillRect(x-DEFENDER_VISIBLE.left,y-DEFENDER_VISIBLE.top,1,1);
+    ctx.globalAlpha=alpha;
     return true;
 }
 function startAttractPilot(sourceRandom=sourceRandomFromAttract()) {
@@ -12948,8 +12948,11 @@ const processLab = createSourceProcessWorkbench();
 const enemyLab = createSourceEnemyWorkbench();
 const landerLab = createSourceLanderWorkbench();
 const canvas = document.getElementById('flight'), ctx = canvas.getContext('2d', { alpha: false });
-const display = document.getElementById('memory');
-const processDisplay = document.getElementById('processState');
+// Stage 80: the source diagnostics panel is no longer on the page. Its
+// writers keep running against these stand-ins when the elements are absent.
+const textSink = id => document.getElementById(id) || { textContent: '' };
+const display = textSink('memory');
+const processDisplay = textSink('processState');
 function drawProcesses() {
     const s = processLab.STATE();
     processDisplay.textContent = `DISP ticks   ${s.ticks}     GEXEC GTIME   ${s.gt}    STRCNT ${s.starCount}\n` +
@@ -12959,9 +12962,10 @@ function drawProcesses() {
         `ACTIVE linked processes (PADDR / PTIME):\n` + s.active.map(p => `  $${p.node.toString(16)}  ${p.entry.padEnd(8)}  ${p.$time}`).join('\n');
 }
 function drawEnemyLocator() {
-    const canvas = document.getElementById('enemyLocator'), ctx = canvas.getContext('2d');
+    const canvas = document.getElementById('enemyLocator');
     if (!canvas)
         return;
+    const ctx = canvas.getContext('2d');
     const e = enemyLab.STATE(), l = landerLab.STATE();
     ctx.fillStyle = '#080e16';
     ctx.fillRect(0, 0, 292, 240);
@@ -12996,7 +13000,7 @@ function drawEnemies() {
     const s = enemyLab.STATE();
     const row = (name, x) => `${name.padEnd(10)} object $${x.object.toString(16)}  world $${x.worldX.toString(16).padStart(4, '0')}  Y ${x.height}\n` +
         `    OXV ${String(x.vx).padStart(5)} OYV ${String(x.vy).padStart(5)}  PADDR $${x.next.toString(16)} PTIME ${x.time}`;
-    document.getElementById('enemyState').textContent =
+    textSink('enemyState').textContent =
         `Original DISP ticks ${s.ticks}  PLABX $${s.playerX.toString(16)}  PLAYC ${s.playerY}\n` +
             `Source GETSHL active shells ${s.activeShells}   Sound priority ${s.soundPriority}\n` +
             row('UFOLP', s.ufo) + '\n' + row('MSWLP', s.swarmer) + '\n\n' +
@@ -13007,7 +13011,7 @@ function drawLanders() {
     const s = landerLab.STATE();
     const row = (name, x) => `${name.padEnd(10)} worldX $${x.x.toString(16).padStart(4, '0')} Y ${x.y} ` +
         `OXV ${x.xv} OYV ${x.yv}  PADDR $${x.next.toString(16)} PTIME ${x.sleep}`;
-    document.getElementById('landerState').textContent =
+    textSink('landerState').textContent =
         `Source process/VELO diagnostic ticks ${s.ticks}, terrain altitude ${s.altitudeAtLander}\n` +
             `Lander count ${s.landCount}  astronaut count ${s.astronautCount}  original shells ${s.shots}\n` +
             row('LANDS0', s.lander) + '\n' + row('ASTRO', s.astronaut) + '\n' +
@@ -13015,7 +13019,7 @@ function drawLanders() {
             'Test fixture: no APVCT, real sprite presentation, collision processing or cabinet timing.';
 }
 const fps = document.getElementById('frames');
-const labStatus = document.getElementById('status');
+const labStatus = textSink('status');
 const keys = new Set(), pendingTaps = new Set();
 // Touch pointers are separate from keyboard state: releasing a finger must
 // never release a physical key held simultaneously, or vice versa.
@@ -13154,10 +13158,8 @@ function startGame() {
         refreshCabinetUI();
         return false;
     }
-    // Stage 77: with no credit, START drops the coin in for the player (the
-    // same COIN path as INSERT COIN, so coinage and audits still apply).
-    for (let coins = 0; !cabinet.CAN_START(1) && coins < 8; coins++)
-        cabinet.COIN('left');
+    // Stage 80: as on the cabinet, START does nothing without a credit
+    // (unless the operator has set Free Play).
     if (!cabinet.START(1)) {
         refreshCabinetUI();
         return false;
@@ -13173,6 +13175,9 @@ function startGame() {
     lab.RESET(null, sourceRandomFromAttract());
     lab.TRIGGER_SOUND('ST1SND');
     mode = 'playing';
+    // Leaving the AI demo un-gates the sound now, before SNDSEQ sends ST1SND;
+    // a later gate change would power-cycle the board and cut it off.
+    gateDemoSound({ reset: false });
     gameOverWait = 0;
     hallDisplayTicks = 0;
     enterHeld = false;
@@ -13553,6 +13558,15 @@ window.addEventListener('keydown', e => {
         e.preventDefault();
         return;
     }
+    // Stage 80: Escape ends the current game (or the AI demo) and returns to
+    // the attract mode. Initials entry is left alone so a high score is kept.
+    if (e.code === 'Escape' && ESCAPE_MODES.includes(mode)) {
+        e.preventDefault();
+        watchDemo();
+        refreshCabinetUI();
+        draw();
+        return;
+    }
     const typing = /^(INPUT|SELECT|TEXTAREA)$/.test(e.target?.tagName || '');
     if (!typing && !e.repeat && !logicalKeyForCode(e.code, controlBindings)) {
         if (e.code === 'KeyP' && mode === 'playing') { e.preventDefault(); togglePause(); return; }
@@ -13652,6 +13666,7 @@ document.addEventListener?.('visibilitychange', () => {
         audio.resume();
 });
 const START_MODES = ['attract', 'hall-table', 'demo-ai', 'demo-ai-over'];
+const ESCAPE_MODES = ['playing', 'game-over', 'hall-wait', 'demo-ai', 'demo-ai-over'];
 const DEMO_MODES = ['demo-ai', 'demo-ai-over'];
 const uiCache = new Map();
 /** Write a DOM property only when it changes (this runs every frame). */
@@ -13669,11 +13684,11 @@ function setUI(id, prop, value) {
 let demoSoundGated = false;
 /** Stage 77: the AI demo is always silent. Leaving it power-cycles the sound
  * board so no demo background (BG1 after thrust) leaks into the next game. */
-function gateDemoSound() {
+function gateDemoSound({ reset = true } = {}) {
     const gate = DEMO_MODES.includes(mode);
     if (gate === demoSoundGated) return;
     demoSoundGated = gate;
-    audio.reset();
+    if (reset) audio.reset();
     audio.setGated(gate);
 }
 function cabinetStatusText(canStart) {
@@ -13686,11 +13701,12 @@ function cabinetStatusText(canStart) {
     case 'game-over': case 'hall-wait': return 'Game over.';
     case 'hall-entry': return 'New high score! Use UP / DOWN to choose each initial, FIRE to accept.';
     case 'demo-ai': case 'demo-ai-over':
-        return 'AI demo running (sound off). Press <strong>START</strong> to play yourself, or <strong>STOP DEMO</strong>.';
+        return canStart ? 'AI demo running (sound off). Press <strong>START</strong> to play yourself, or <strong>STOP DEMO</strong>.'
+            : 'AI demo running (sound off). Insert a coin to play yourself, or press <strong>STOP DEMO</strong>.';
     default:
         if (free) return 'Free play. Press <strong>START</strong> (or Enter) to play, or watch the AI.';
         if (canStart) return `${credits} credit${credits === 1 ? '' : 's'}. Press <strong>START</strong> (or Enter) to play.`;
-        return 'Press <strong>START</strong> to insert a coin and play, or <strong>INSERT COIN</strong> first. Or watch the AI play.';
+        return 'Press <strong>INSERT COIN</strong>, then <strong>START</strong> to play. Or watch the AI play.';
     }
 }
 function refreshCabinetUI() {
@@ -13703,11 +13719,11 @@ function refreshCabinetUI() {
     setUI('powerOnCabinet', 'hidden', poweredOn);
     setUI('playControls', 'hidden', !poweredOn);
     setUI('coinInsert', 'disabled', mode === 'boot');
-    // START works from attract, Hall of Fame and the AI demo. With no credit it
-    // inserts the coin itself (startGame), so it is only disabled while booting.
+    // START works from attract, Hall of Fame and the AI demo, once there is a
+    // credit (or Free Play).
     setUI('startGameTop', 'hidden', mode === 'playing');
-    setUI('startGameTop', 'disabled', !inStartMode);
-    setUI('startGame', 'disabled', !inStartMode);
+    setUI('startGameTop', 'disabled', !canStart);
+    setUI('startGame', 'disabled', !canStart);
     setUI('watchAI', 'hidden', !(inStartMode || mode === 'game-over'));
     setUI('watchAI', 'textContent', inDemo ? '■ STOP DEMO' : 'WATCH AI PLAY');
     setUI('watchAI', 'title', inDemo ? 'Stop the AI demo and return to the attract mode' : 'Watch the AI play a normal game (sound off)');
@@ -13716,11 +13732,6 @@ function refreshCabinetUI() {
     setUI('pauseTop', 'textContent', running ? '❚❚ PAUSE' : '▶ RESUME');
     setUI('cabinetStatus', 'html', cabinetStatusText(canStart));
     if (document.body?.classList) document.body.classList.toggle('cab-idle', inStartMode);
-    const s = audio.state();
-    const soundOn = s.enabled && !s.muted;
-    setUI('soundQuick', 'textContent', soundOn ? '🔊 SOUND' : '🔇 SOUND');
-    setUI('soundQuick', 'aria-pressed', String(soundOn));
-    setUI('soundQuick', 'title', soundOn ? 'Mute sound (M)' : 'Turn sound on (M)');
     const rows = cabinet.audit;
     setUI('cabinetAudits', 'textContent', Object.entries(AUDIT_LABELS)
         .map(([k,v])=>`FUNCTION ${k} · ${v}: ${rows[k]}`).join('\n'));
@@ -13749,21 +13760,50 @@ document.getElementById('clearAudits').onclick=()=>{cabinet.RESET_AUDITS();refre
 document.getElementById('clearCredits').onclick=()=>{cabinet.RESET_CREDITS();attract.SET_CREDITS(0);refreshCabinetUI();};
 renderOperatorSettings();
 refreshCabinetUI();
-const audioButton = document.getElementById('audioToggle');
 const audioVolume = document.getElementById('audioVolume');
-const audioLabel = document.getElementById('audioLabel');
+// Stage 80: one sound control, always on the toolbar. The volume (default
+// 100%) and mute setting are kept in browser storage where available.
+const AUDIO_STORAGE_KEY = 'defender.audio.v1';
+function loadAudioSettings() {
+    try {
+        const v = JSON.parse(cabinetStorage?.getItem(AUDIO_STORAGE_KEY));
+        if (v && Number.isFinite(v.volume)) return { volume: Math.min(1, Math.max(0, v.volume)), muted: !!v.muted };
+    } catch { /* Defaults below. */ }
+    return { volume: 1, muted: false };
+}
+function saveAudioSettings() {
+    const s = audio.state();
+    try { cabinetStorage?.setItem(AUDIO_STORAGE_KEY, JSON.stringify({ volume: s.volume, muted: s.muted })); } catch { /* Not saved. */ }
+}
+{
+    const saved = loadAudioSettings();
+    audio.setVolume(saved.volume);
+    audio.setMuted(saved.muted);
+    audioVolume.value = String(Math.round(saved.volume * 100));
+}
 let startupCuePlayed = false;
 /** Browser audio cannot autoplay. The initial POWER ON click is the cabinet
  * power switch and also unlocks the Stage 47 original QUASAR sound. */
+let poweringOn = false;
 async function powerOnCabinet() {
+    if (poweringOn) return;
+    poweringOn = true;
     audio.reset();
-    try { await audio.enable(); } catch { /* Silent boot if browser denies sound. */ }
+    try {
+        await audio.enable();
+        // Stage 80: wait until the speaker is actually streaming, so QUASAR
+        // is not lost while the browser's audio output starts up.
+        await audio.started();
+    } catch { /* Silent boot if browser denies sound. */ }
+    poweringOn = false;
+    mode = 'boot';
+    gateDemoSound({ reset: false });
     // ROMF8.RESET drives the sound PIA immediately, ahead of RESET1's
     // palette and RAM2 video writes. Put QUASAR at the power-on boundary,
     // not after the browser constructs its boot screen.
+    audio.reset();
     audio.powerOn();
     boot.RESET();
-    mode = 'boot';
     sourceBoundary = null;
     frames = 0;
     keys.clear();
@@ -13780,27 +13820,20 @@ document.getElementById('powerOnCabinet').onclick = () => powerOnCabinet();
 
 function refreshAudioUI() {
     const s = audio.state();
-    audioButton.textContent = s.muted ? 'UNMUTE SOUND' : (s.enabled ? 'MUTE SOUND' : 'ENABLE SOUND');
-    audioLabel.textContent = s.enabled ? (s.muted ? 'SOUND MUTED' : 'SOUND ON') : 'SOUND OFF';
+    const silent = s.muted || s.volume === 0;
+    setUI('soundQuick', 'textContent', silent ? '🔇' : s.volume < 0.5 ? '🔉' : '🔊');
+    setUI('soundQuick', 'aria-pressed', String(s.muted));
+    setUI('soundQuick', 'aria-label', s.muted ? 'Unmute sound' : 'Mute sound');
+    setUI('soundQuick', 'title', (s.muted ? 'Unmute' : 'Mute') + ' (M) · volume ' + Math.round(s.volume * 100) + '%');
+    const v = String(Math.round(s.volume * 100));
+    if (audioVolume.value !== v) audioVolume.value = v;
 }
-audioButton.onclick = () => {
-    const s = audio.state();
-    if (!s.enabled) {
-        void audio.enable().then(() => {
-            // The real cabinet plays QUASAR at power-up. Browser autoplay rules
-            // postpone this initial cue until this explicit ENABLE SOUND gesture.
-            if (mode === 'power-off') { void powerOnCabinet(); }
-            refreshAudioUI();
-        }).catch(err => {
-            audioLabel.textContent = 'AUDIO ERROR: ' + err.message;
-        });
-    }
-    else
-        audio.setMuted(!s.muted);
-    refreshAudioUI();
-};
 audioVolume.oninput = () => {
     audio.setVolume(Number(audioVolume.value) / 100);
+    // Moving the slider is a request to hear the sound.
+    if (audio.state().muted && audio.state().volume > 0) audio.setMuted(false);
+    if (!audio.state().enabled && mode !== 'power-off') void audio.enable().catch(() => {});
+    saveAudioSettings();
     refreshAudioUI();
 };
 refreshAudioUI();
@@ -13818,12 +13851,15 @@ function togglePause() {
 }
 document.getElementById('pauseTop').onclick = togglePause;
 function toggleSound() {
-    const s = audio.state();
-    if (!s.enabled || s.muted) {
+    // Stage 80: the speaker button only mutes and unmutes. POWER ON is what
+    // switches the cabinet (and the browser's sound) on.
+    if (audio.state().muted) {
         audio.setMuted(false);
-        void audio.enable().then(() => { if (mode === 'power-off') void powerOnCabinet(); refreshAudioUI(); }).catch(() => {});
+        if (audio.state().volume === 0) audio.setVolume(1);
+        if (mode !== 'power-off') void audio.enable().then(refreshAudioUI).catch(() => {});
     } else
         audio.setMuted(true);
+    saveAudioSettings();
     refreshAudioUI();
     refreshCabinetUI();
 }
@@ -13866,6 +13902,10 @@ document.getElementById('coinInsert').onclick = () => {
 };
 document.getElementById('rebootCabinet').onclick = () => {
     // Power cycling does not create a paid credit or erase CMOS.
+    // Stage 80: leave the demo's sound gate first. Changing it later would
+    // power-cycle the sound board again and cut QUASAR off.
+    mode = 'boot';
+    gateDemoSound({ reset: false });
     audio.reset();
     // Reboot changes the cabinet state immediately, independent of the
     // asynchronous Web Audio permission/resume operation.
@@ -14248,7 +14288,8 @@ for (const [button, fn] of Object.entries({
     processReverse: () => processLab.REV(),
     processReset: () => processLab.RESET()
 })) {
-    document.getElementById(button).onclick = () => {
+    const el = document.getElementById(button);
+    if (el) el.onclick = () => {
         try {
             fn();
             drawProcesses();
@@ -14259,26 +14300,28 @@ for (const [button, fn] of Object.entries({
     };
 }
 for (const [id, fn] of Object.entries({ enemyStep: () => enemyLab.STEP(), enemy120: () => enemyLab.RUN(120), enemyReset: () => enemyLab.RESET() })) {
-    document.getElementById(id).onclick = () => {
+    const el = document.getElementById(id);
+    if (el) el.onclick = () => {
         try {
             fn();
             drawEnemies();
             drawEnemyLocator();
         }
         catch (e) {
-            document.getElementById('enemyState').textContent = `SOURCE BOUNDARY: ${e.message}`;
+            textSink('enemyState').textContent = `SOURCE BOUNDARY: ${e.message}`;
         }
     };
 }
 for (const [id, fn] of Object.entries({ landerStep: () => landerLab.STEP(), lander60: () => landerLab.RUN(60), lander120: () => landerLab.RUN(120), landerReset: () => landerLab.RESET() })) {
-    document.getElementById(id).onclick = () => {
+    const el = document.getElementById(id);
+    if (el) el.onclick = () => {
         try {
             fn();
             drawLanders();
             drawEnemyLocator();
         }
         catch (e) {
-            document.getElementById('landerState').textContent = `SOURCE BOUNDARY: ${e.message}`;
+            textSink('landerState').textContent = `SOURCE BOUNDARY: ${e.message}`;
         }
     };
 }

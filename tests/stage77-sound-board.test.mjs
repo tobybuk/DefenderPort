@@ -122,7 +122,9 @@ test('catching a falling human plays ACSND (DEFB6 AKIL1), not the Lander scream'
 test('START stays available during the AI demo, and the demo is silent', () => {
     const src = readFileSync(new URL('../browser/flight.js', import.meta.url), 'utf8');
     assert.match(src, /const START_MODES = \['attract', 'hall-table', 'demo-ai', 'demo-ai-over'\]/);
-    assert.match(src, /setUI\('startGameTop', 'disabled', !inStartMode\)/);
+    // Stage 80: START is enabled in those modes once there is a credit.
+    assert.match(src, /const canStart = inStartMode && cabinet\.CAN_START\(1\)/);
+    assert.match(src, /setUI\('startGameTop', 'disabled', !canStart\)/);
     assert.match(src, /audio\.setGated\(gate\)/);
     assert.match(src, /const gate = DEMO_MODES\.includes\(mode\)/);
 });

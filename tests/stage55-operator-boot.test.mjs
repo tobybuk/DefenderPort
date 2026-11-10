@@ -84,7 +84,7 @@ test('boot display has finite independent phases, not implicit free play',()=>{
     assert.equal(boot.STATE().ramAccessible,true);
     boot.RESET(); assert.equal(boot.STATE().finished,false);
 });
-test('standalone boots before attract; START with no credit drops one coin in, then debits exactly once',async()=>{
+test('standalone boots before attract; START needs a credit, then debits exactly once',async()=>{
     const b=createBrowser();
     assert.equal(b.evalJS('mode'),'power-off');
     assert.equal(b.node('startGameTop').disabled,true);
@@ -95,13 +95,17 @@ test('standalone boots before attract; START with no credit drops one coin in, t
     b.evalJS('for(let i=0;i<1500 && mode==="boot";i++)step();draw();');
     assert.equal(b.evalJS('mode'),'attract');
     assert.equal(b.node('creditReadout').textContent,'CREDITS 0');
-    const coinsBefore=b.evalJS('cabinet.audit[1]');
-    // Stage 77: START is the player's one button. With no credit it uses the
-    // ordinary COIN path (so coinage and audits apply), then START debits it.
+    // Stage 80: as on the cabinet, START does nothing without a credit.
+    assert.equal(b.node('startGameTop').disabled,true);
+    b.node('startGameTop').onclick();
+    assert.equal(b.evalJS('mode'),'attract');
+    assert.equal(b.evalJS('cabinet.audit[4]'),0,'no game started');
+    b.node('coinInsert').onclick();
+    assert.equal(b.node('creditReadout').textContent,'CREDITS 1');
+    assert.equal(b.node('startGameTop').disabled,false);
     b.node('startGameTop').onclick();
     assert.equal(b.evalJS('mode'),'playing');
     assert.equal(b.node('creditReadout').textContent,'CREDITS 0');
-    assert.equal(b.evalJS('cabinet.audit[1]'),coinsBefore+1,'exactly one coin counted');
     assert.equal(b.evalJS('lab.STATE().smartBombs'),3);
     assert.equal(b.evalJS('lab.STATE().infiniteSmartBombs'),false);
     assert.equal(b.evalJS('cabinet.audit[4]'),1);

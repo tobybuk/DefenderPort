@@ -24,7 +24,8 @@ export function createSourceSoundOutput({ makeContext = () => {
     return new Audio({ latencyHint: 'interactive' });
 }, now = () => (globalThis.performance?.now?.() ?? Date.now()), makeBoard = rate => new SoundBoard({ sampleRate: rate }) } = {}) {
     let context = null, gain = null, node = null, board = null, enabled = false, muted = false, gated = false;
-    let volume = 0.45, lastCommand = null, lastPIA = null, lastTicks = 0;
+    let volume = 1, lastCommand = null, lastPIA = null, lastTicks = 0;
+    let streaming = false, startWaiters = [];
     let lastCallback = 0, period = 0;
     const pending = []; // { pia, at } awaiting the next audio callback
     const log = [];
@@ -32,6 +33,7 @@ export function createSourceSoundOutput({ makeContext = () => {
         if (gain) gain.gain.value = (muted || gated) ? 0 : volume;
     }
     function process(out) {
+        if (!streaming) { streaming = true; for (const w of startWaiters.splice(0)) w(); }
         const t = now();
         const span = lastCallback ? Math.max(1, t - lastCallback) : period;
         const start = lastCallback || t - span;
@@ -123,6 +125,19 @@ export function createSourceSoundOutput({ makeContext = () => {
         lastPIA = null;
         lastTicks = 0;
     }
+    /**
+     * Resolves once the speaker has asked for its first buffer, so a command
+     * sent now is heard from its start (Stage 80: the power-on QUASAR).
+     * Gives up after `timeoutMs` rather than hold the cabinet off.
+     */
+    function started(timeoutMs = 400) {
+        if (streaming || !context) return Promise.resolve(streaming);
+        return new Promise(resolve => {
+            const done = () => resolve(streaming);
+            startWaiters.push(done);
+            setTimeout(done, timeoutMs);
+        });
+    }
     function setVolume(v) {
         volume = Math.min(1, Math.max(0, Number(v) || 0));
         applyGain();
@@ -152,5 +167,5 @@ export function createSourceSoundOutput({ makeContext = () => {
         if (board) process(out);
         return out;
     }
-    return Object.freeze({ writePIA, playHallOfFameTune, enable, disable, reset, suspend, resume, setVolume, setMuted, setGated, powerOn, state, pump });
+    return Object.freeze({ writePIA, playHallOfFameTune, enable, disable, reset, suspend, resume, started, setVolume, setMuted, setGated, powerOn, state, pump });
 }

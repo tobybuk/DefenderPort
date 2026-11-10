@@ -14,8 +14,10 @@ test('Stage 11 standalone build contains parseable complete native JS, no ROM lo
     assert.match(match[1], /function WDELT\(/);
     assert.match(match[1], /function COLR\(/);
     assert.match(match[1], /function SCPROC\(/);
+    // Stage 80: the source diagnostics panel (process workbench buttons) is
+    // no longer on the page; its wiring tolerates the missing elements.
     for (const id of ['processStep', 'process120', 'process600', 'processReverse', 'processReset'])
-        assert.match(html, new RegExp(`id="${id}"`));
+        assert.doesNotMatch(html, new RegExp(`id="${id}"`));
     assert.doesNotMatch(html, /type="file"/);
 });
 test('Stage 11 process controls are registered once outside requestAnimationFrame loop', () => {

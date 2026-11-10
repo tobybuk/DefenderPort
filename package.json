@@ -1,9 +1,9 @@
 {
   "name": "defenderport",
   "private": true,
-  "version": "0.79.0",
+  "version": "0.80.0",
   "type": "module",
-  "description": "Stage 79: STOUT falls through into SBLNK as in the source (stars hyper-jump), genuine WCURS in game RAM, and the attract scanner trail fixed by allocating demo records from OLIST.",
+  "description": "Stage 80: START needs a credit, one saved volume/mute control at 100%, start and power-on sounds verified against the original VSNDRM1 code on a 6800 emulator, Escape returns to attract, faint DEMO label, developer tools in the menu, and a calmer AI demo.",
   "scripts": {
     "build": "node tools/build-standalone.mjs",
     "timing:trace": "node tools/trace-stage51.mjs",

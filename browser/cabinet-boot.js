@@ -271,7 +271,7 @@ export function drawCabinetService(ctx, index, width = 292, height = 240) {
  * game picture by the browser, so it never touches the game's video memory.
  * Returns the hardware (x,y) of every lit pixel plus the colour byte.
  */
-export function createSourceTextBanner(text = 'DEMO MODE ACTIVE', y = 0x80) {
+export function createSourceTextBanner(text = 'DEMO MODE ACTIVE', y = 0x80, { left = 6, span = 146 } = {}) {
     const ram = new RAM(), video = new VideoMemory();
     const rom = createRomf8GraphicsRoutines(video, ram);
     const { descriptors } = installBonusSourceFont(ram);
@@ -280,8 +280,9 @@ export function createSourceTextBanner(text = 'DEMO MODE ACTIVE', y = 0x80) {
         if (character !== ' ' && descriptors[character] === undefined)
             throw Error('Missing original MESS0 glyph ' + character);
     const widthBytes = [...text].reduce((sum, c) => sum + advance(c), 0) - 1;
-    // Centre within the visible byte columns 6..151 (hardware x 12..303).
-    let x = 6 + Math.max(0, Math.floor((146 - widthBytes) / 2));
+    // Centre within byte columns left..left+span-1 (default: the visible
+    // columns 6..151, hardware x 12..303).
+    let x = left + Math.max(0, Math.floor((span - widthBytes) / 2));
     for (const character of text) {
         if (character !== ' ')
             rom.CWRIT(((x << 8) | y) & 0xffff, descriptors[character]);

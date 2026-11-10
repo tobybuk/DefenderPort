@@ -4,6 +4,19 @@ A source-first JavaScript port of Williams *Defender* (1980, Red Label), transla
 
 > **Notice:** *Defender* (1980) and its original 6809 source code are the property of their rights holders. This project is an unofficial, non-commercial JavaScript translation made from the publicly posted source at [mwenge/defender](https://github.com/mwenge/defender), which states no licence. No licence is granted here for the original game material.
 
+# Stage 80 — Cabinet controls, sound checks, a calmer AI demo
+
+- **START needs a credit**, as on the cabinet (or Free Play). It no longer inserts a coin itself.
+- **One sound control on the toolbar:** a mute button and a volume slider. Volume starts at 100%, and volume and mute are saved in the browser.
+- **The start sound was checked against the original code.** The original `vsndrm1.src` was assembled and run on an independent 6800 emulator (`tools/m6800-reference.mjs`), and every DAC write was compared. The port's start sound matches exactly, all 18,432 writes. The pulsing is in the original: 256 echoes, with a decay that wraps round. Every other command matches too.
+- **Power-on sound.** Leaving the AI demo reset the sound board one frame late, which cut off QUASAR after a power cycle from the demo, and the start sound when START was pressed during the demo. That is fixed. POWER ON also now waits for the browser's audio output to be running before it plays QUASAR.
+- **Escape** ends the current game or the AI demo and returns to the attract mode.
+- **DEMO** now flashes at 20% opacity above the spare ships for the whole AI demo.
+- **Page.** The project notes and diagnostics panel is gone. The developer tools are in the menu.
+- **A calmer AI demo.** It turns round 42 times a minute instead of 77, and turns within half a second of the last fell from 54% to 1%. It dies slightly less often and scores about the same.
+
+See [STAGE80_CABINET_UI.md](STAGE80_CABINET_UI.md). `npm test`: 671 tests pass.
+
 # Stage 79 — Stars restored to the source, attract scanner trail fixed
 
 - **Stars.** In the source, `STOUT` has no `RTS`: it falls straight into `SBLNK`. So every frame, after the stars are drawn, one random star changes colour and, on an even `SEED`, jumps to a new X position (and a new height once the planet has gone). The port had treated `SBLNK` as having no caller and ran only its colour change, from a host adapter, so stars never jumped. `STOUT` now falls through as in the source, and the adapter is gone.
