@@ -29,6 +29,11 @@ jobs:
       - name: Build standalone play.html
         run: npm run build
 
+      # The pinned upstream assembly (git-ignored) lets the tests compare the
+      # sound board with the original VSNDRM1 code run on a 6800 emulator.
+      - name: Fetch upstream source
+        run: npm run source:fetch
+
       - name: Run tests
         run: npm test
 

@@ -10,7 +10,7 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { Script, createContext } from 'node:vm';
 import { createSourceTextBanner } from '../browser/cabinet-boot.js';
 import { createFlightHarness } from '../demo/flight-harness.js';
@@ -20,6 +20,9 @@ import { assemble, runCommand } from '../tools/m6800-reference.mjs';
 const html = readFileSync(new URL('../play.html', import.meta.url), 'utf8');
 const code = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
 const flightSrc = readFileSync(new URL('../browser/flight.js', import.meta.url), 'utf8');
+// The upstream assembly is fetched by `npm run source:fetch` (git-ignored).
+const ROM_SOURCE = new URL('../source/defender/src/vsndrm1.src', import.meta.url);
+const needsSource = existsSync(ROM_SOURCE) ? {} : { skip: 'upstream source not fetched (npm run source:fetch)' };
 
 function createBrowser(saved = new Map()) {
     const nodes = new Map(), events = new Map();
@@ -137,7 +140,7 @@ test('AI demo: ordinary turns wait 45 ticks; only duels (30) and collision dodge
     assert.ok(turns > 10, 'still hunts in both directions');
 });
 
-test('sound board translation = original VSNDRM1 code on an independent 6800, for every command', () => {
+test('sound board translation = original VSNDRM1 code on an independent 6800, for every command', needsSource, () => {
     const image = assemble();
     const cycles = 400000; // ~0.45 s of board time per command
     for (let command = 1; command < 32; command++) {
@@ -160,7 +163,7 @@ test('sound board translation = original VSNDRM1 code on an independent 6800, fo
     }
 });
 
-test('the start sound (ST1SND, command $0A) is the original 256-echo SV3 GWAVE, exactly', () => {
+test('the start sound (ST1SND, command $0A) is the original 256-echo SV3 GWAVE, exactly', needsSource, () => {
     const { writes } = runCommand((~0x0a) & 0x3f, 3_000_000);
     assert.equal(writes.length, 256 * 72, '256 echoes of the 72-sample GS72 wave');
     assert.equal(writes.at(-1)[0], 2_800_809, 'ends after 2.80 million E cycles (3.13 s)');
