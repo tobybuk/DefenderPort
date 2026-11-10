@@ -4,6 +4,14 @@ A source-first JavaScript port of Williams *Defender* (1980, Red Label), transla
 
 > **Notice:** *Defender* (1980) and its original 6809 source code are the property of their rights holders. This project is an unofficial, non-commercial JavaScript translation made from the publicly posted source at [mwenge/defender](https://github.com/mwenge/defender), which states no licence. No licence is granted here for the original game material.
 
+# Stage 79 — Stars restored to the source, attract scanner trail fixed
+
+- **Stars.** In the source, `STOUT` has no `RTS`: it falls straight into `SBLNK`. So every frame, after the stars are drawn, one random star changes colour and, on an even `SEED`, jumps to a new X position (and a new height once the planet has gone). The port had treated `SBLNK` as having no caller and ran only its colour change, from a host adapter, so stars never jumped. `STOUT` now falls through as in the source, and the adapter is gone.
+- **Anti-tamper.** `SBLNK` contains a deliberate RAM-corrupting "bomb" that fires only if `WCURS` doesn't hold the value the genuine Williams logo leaves there ($6245, which the port's own logo data reproduces). Game RAM now holds that value, so the bomb stays dormant, as on a genuine board. The bomb path itself now matches the source exactly, including its reuse of the corrupted address.
+- **Scanner trail in attract mode.** The attract demo's object records were placed at a fixed address that ran into the scanner's erase table. When the Swarmer rose to be shot, its position overwrote the saved blip addresses, so old blips were never erased. The records now come from the real object pool (`OLIST`), where the source's `GETOB` takes them.
+
+See [STAGE79_STARS_SCANNER.md](STAGE79_STARS_SCANNER.md). `npm test`: 663 tests pass.
+
 # Stage 78 — AI endgame: the long way round, Baiters, the last human
 
 - **The long way round.** The AI only read the active object list. The original's `OSCAN` parks every object outside a 500-pixel band around the screen on the inactive list, so the AI couldn't see the wave's last enemies and patrolled in an arbitrary direction. It now reads both lists, as a player reads the scanner. Long-way travel in the endgame fell from 14% of the time to 2%.

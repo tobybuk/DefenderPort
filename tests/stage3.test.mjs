@@ -29,6 +29,7 @@ const mk = (e, x, y = 0x8000, vx = 0, vy = 0) => {
 test('STOUT implements source BGL/BGLX half-byte delta (not generic parallax)', () => {
     const e = make(), base = L.at('SMAP');
     e.w('STRCNT', 1);
+    e.w('SEED', 0x05); // odd: the fall-through SBLNK only re-colours star 1
     e.ram.write8(base, 10);
     e.ram.write8(base + 1, 120);
     e.ram.write8(base + 2, 0x77);
@@ -44,6 +45,7 @@ test('STOUT implements source BGL/BGLX half-byte delta (not generic parallax)', 
 test('STOUT selects the original high colour nibble when BGL bit $40 is set', () => {
     const e = make(), base = L.at('SMAP');
     e.w('STRCNT', 1);
+    e.w('SEED', 0x05);
     e.ram.write8(base, 15);
     e.ram.write8(base + 1, 100);
     e.ram.write8(base + 2, 0x73);
@@ -107,15 +109,43 @@ test('SBLNK erases previous video byte, assigns source seed X and terrain-mode Y
     assert.equal(e.ram.read8(X + 1), 42 + 21);
     assert.equal(e.ram.read8(X + 2), 0x20);
 });
-test('SBLNK preserves the unusual upstream $A0 RAM write rather than removing it', () => {
-    const e = make();
+test('SBLNK preserves the unusual upstream $A0 RAM write, then reuses X=$A0:LSEED', () => {
+    const e = make(), star0 = L.at('SMAP');
     e.w('SEED', 0xa0);
     e.w('LSEED', 0x22);
     e.w('HSEED', 0x7c);
     e.wd('WCURS', 0);
     e.w('STATUS', 0);
+    e.ram.write8(star0 + 0x20, 0x33);
+    const rec = [];
+    const write8 = e.ram.write8.bind(e.ram);
+    e.ram.write8 = (a, v) => { if (a === 0xa022) rec.push(v); return write8(a, v); };
     e.stars.SBLNK();
-    assert.equal(e.ram.read8(0xa022), 0x7c);
+    // STB ,X writes HSEED; SBL00/SBLNK0 then STA SX,X with the same X.
+    assert.deepEqual(rec, [0x7c, 0xa0 - 0x84]);
+    assert.equal(e.ram.read8(star0 + 0x20), 0x33, 'the SMAP star is not the one moved');
+});
+test('SBLNK $A0 path is dormant with the genuine WCURS ($6245) from COPYRT', () => {
+    const e = make(), X = L.at('SMAP') + 0x20;
+    e.w('SEED', 0xa0);
+    e.w('LSEED', 0x22);
+    e.w('HSEED', 0x7c);
+    e.wd('WCURS', 0x6245);
+    e.w('STATUS', 0);
+    e.ram.write8(0xa022, 0x11);
+    e.stars.SBLNK();
+    assert.equal(e.ram.read8(0xa022), 0x11);
+    assert.equal(e.ram.read8(X), 0x1c, 'SMAP star hypered to SEED-$84');
+});
+test('STOUT falls through into SBLNK (no RTS): an even SEED hypers one star each call', () => {
+    const e = make(), base = L.at('SMAP');
+    e.w('STRCNT', 16);
+    for (let i = 0; i < 16; i++) { e.ram.write8(base + i * 4, 0x40); e.ram.write8(base + i * 4 + 1, 0x60); }
+    e.w('SEED', 0x2c); // star 11, even, < $98
+    e.stars.STOUT();
+    assert.equal(e.ram.read8(base + 0x2c), 0x2c, 'star 11 X = SEED');
+    assert.equal(e.ram.read8(base + 0x2c + 2), 0x11, 'and its colour stepped by $11');
+    assert.equal(e.ram.read8(base), 0x40, 'other stars untouched');
 });
 test('THINIT: 33 source iterations populate original THTAB and adjacent byte', () => {
     const mem = new RAM();

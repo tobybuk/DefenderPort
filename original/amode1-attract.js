@@ -6,9 +6,7 @@
  * This is the original attract DEMONSTRATION's scripted object movements,
  * fixed-point source constants, original pixel assets and NAPP timings. It
  * has a separate original-style video bank and source RAM; it never runs the
- * playable GEXEC during the attract loop. The source high-score CMOS and
- * DEFNNN large 60x24 logo are still untranslated boundaries; HALDIS only
- * renders source MESS0 title text, not fabricated high-score entries.
+ * playable GEXEC during the attract loop.
  *
  * Background terrain and font are the existing original BLK71 and MESS0
  * routines, NOT CSS/Canvas recreations. Audio remains intentionally silent.
@@ -91,10 +89,14 @@ export function createAmode1Attract({ initialCredits = 2 } = {}) {
     // It is separate from the scripted sprite presenter (which cannot
     // execute 6809 KILLOB/GETOB) and lives outside the original PHR6 tables.
     const DEMO_XSVCT_OBJECT = 0xb200;
-    // Source GETOB records in the attract scene, kept separately from DEFRAM
-    // ($B300), SAMEX RAM ($9C00), and the XSVCT scratch record ($B200).
-    // Native JS records are data relocations, not 6809 object emulation.
-    const DEMO_OBJECT_BASE = 0xb000, DEMO_OBJECT_STRIDE = 0x10;
+    // Source GETOB records in the attract scene. GETOB takes them from the
+    // OLIST object pool that SCINIT/OINIT has just reset, so they live there,
+    // one OSIZE record each. (Stage 79: they were at $B000 with a $10 stride,
+    // which ran over SETAB at $B05D, so the 7th record's OX16/OY16 overwrote
+    // the scanner's erase pointers and the rising Swarmer left a blip trail.)
+    // Records 0..23 are the GETOB records; 24.. are the OPTR scanner list.
+    const DEMO_OBJECT_BASE = L.at('OLIST'), DEMO_OBJECT_STRIDE = L.at('OSIZE');
+    const DEMO_RECORDS = 24, SCANNER_NODE_BASE = DEMO_OBJECT_BASE + DEMO_RECORDS * DEMO_OBJECT_STRIDE;
     let demoObjectCount = 0;
     const explosions = createSamexap7ExplosionStartRoutines(ram, L, video, { resolvePicture: id => appearancePictures.get(id) });
     const updates = createSamexap7ExplosionUpdateRoutines(ram, L, video, { resolvePicture: id => appearancePictures.get(id), EERASE: explosions.EERASE });
@@ -167,7 +169,7 @@ export function createAmode1Attract({ initialCredits = 2 } = {}) {
     // AMODE1.STILOB/GETOB record content -> SAMEXAP7.APST/EXPU4.
     function startAppearance(s) {
         if (s.record === undefined) {
-            if (demoObjectCount >= 24)
+            if (demoObjectCount >= DEMO_RECORDS)
                 throw new Error('AMODE1 source demonstration object records exhausted');
             s.record = DEMO_OBJECT_BASE + DEMO_OBJECT_STRIDE * demoObjectCount++;
         }
@@ -726,13 +728,13 @@ export function createAmode1Attract({ initialCredits = 2 } = {}) {
         if ((state.tick & 7) === 0 && state.page === 'instructions') {
             const nodes = sprites.filter(s => s.visible && s.blip);
             for (let i = 0; i < nodes.length; i++) {
-                const s = nodes[i], ptr = 0xa700 + i * 0x20;
-                ram.write16(ptr, i + 1 < nodes.length ? 0xa700 + (i + 1) * 0x20 : 0);
+                const s = nodes[i], ptr = SCANNER_NODE_BASE + i * DEMO_OBJECT_STRIDE;
+                ram.write16(ptr, i + 1 < nodes.length ? ptr + DEMO_OBJECT_STRIDE : 0);
                 ram.write16(ptr + at('OX16'), s.x16);
                 ram.write16(ptr + at('OY16'), s.y16);
                 ram.write16(ptr + at('OBJCOL'), s.blip);
             }
-            w16('OPTR', nodes.length ? 0xa700 : 0);
+            w16('OPTR', nodes.length ? SCANNER_NODE_BASE : 0);
             // SCINIT's $1030 PLAXC/PLAYC source scanner position stays fixed.
             // STILOB's scripted PLAPIC object does not write these globals.
             scanner.SCNR();

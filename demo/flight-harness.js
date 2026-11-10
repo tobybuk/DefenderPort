@@ -863,6 +863,10 @@ export function createFlightHarness({ diagnosticSwarmer = false, infiniteSmartBo
             write16('HSEED', 0xa55a);
             random.STINIT();
         }
+        // AMODE1.COPYRT stores the Williams-logo pen end (CUREND) in WCURS on
+        // a genuine board; the LGOTAB pen ends at $6245. SBLNK's anti-tamper
+        // RAM "bomb" only fires when WCURS holds anything else.
+        write16('WCURS', 0x6245);
         thrust.THINIT();
         // Direct test inputs, not an assertion about original PLSTRT values.
         write16('PLADIR', 0x0300);
@@ -1015,18 +1019,7 @@ export function createFlightHarness({ diagnosticSwarmer = false, infiniteSmartBo
         const irqState = IRQ_PAIR();
         // Execute original player collision path (COLCHK scans OPTR, then SPTR).
         waveTicks++;
-        // The pinned DEFA7.SRC contains SBLNK but NO normal-play call site.
-        // Stage 33's four-update throttle AND even-SEED rejection meant barely
-        // one star updated per second, so stars appeared static on a phone.
-        // Stage 34: sample the source SEED on EACH game update and invoke the
-        // unmodified translated SBLNK only on its exact odd-SEED colour branch.
-        // This is an explicit browser-star-cadence ADAPTER, not a fabricated
-        // star renderer or a claim about exact 6809 call timing. The original
-        // STOUT/IRQ still writes the actual star pixels in source video RAM.
-        // Even-SEED SBLNK may mutate A0xx RAM (source's intentional blast path),
-        // and must not be invoked speculatively by this host adapter.
-        if (read8('SEED') & 1)
-            stars.SBLNK();
+        // SBLNK runs from STOUT's fall-through on every IRQ star output.
         if (sourceCabinetInput) {
             // Original EXEC/EXEC1: reset TIMER, bound overloaded object rendering,
             // run COLCHK → XUVCT → RAND → SWP → DISP. Unlike the former host ordering,

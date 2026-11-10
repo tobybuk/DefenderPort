@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Defender — Source-First Stage 78 · AI Endgame</title><style>:root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#080e16;color:#d8e3ef}
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Defender — Source-First Stage 79 · Stars and Scanner</title><style>:root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#080e16;color:#d8e3ef}
 *{box-sizing:border-box}body{margin:0;padding:28px 16px}.wrap{max-width:1000px;margin:auto}
 h1{font-size:25px;margin:0 0 8px;letter-spacing:-.7px}p{line-height:1.65;color:#b5c4d4}
 .top{border-bottom:1px solid #304355;padding-bottom:18px;margin-bottom:22px}
@@ -2932,6 +2932,13 @@ function createBlk71PlayerExplosionRoutines(video, { onColour = () => {
  * src/defa7.src lines 2094-2198: STOUT, STOUT0, STOUT1, STOUT2, STOUT3,
  * SBLNK, SBLNK0, SBL00, SBLNK1.
  *
+ * STOUT has no RTS: after the STOUT1 loop it falls straight into SBLNK, so
+ * every star output (once per frame, from the IRQ) also re-colours one
+ * random star and, on an even SEED, "hypers" it to a new X (and a new Y once
+ * the planet has gone). Stage 79 restores that fall-through; before it, the
+ * port only called SBLNK from a host adapter on odd SEEDs, so stars changed
+ * colour but never jumped.
+ *
  * No star physics, random movement, colours or speed are invented here.
  * Every change to SMAP is derived from the original byte-level operations.
  * The video store interface represents the original indirect writes to the
@@ -2985,6 +2992,7 @@ function createDefa7StarRoutines(RAM, Layout, video) {
             video.write8(starAddress(X), A); // STA [SX,X]
             X += stride;
         } while (--count !== 0);
+        SBLNK(); // fall through: no RTS between STOUT1's DECB/BNE and SBLNK
     }
     /** SBLNK / SBLNK0 / SBL00 / SBLNK1, source L2158-L2198. */
     function SBLNK() {
@@ -2994,26 +3002,28 @@ function createDefa7StarRoutines(RAM, Layout, video) {
         RAM.write8(X + a('SCOL'), u8(RAM.read8(X + a('SCOL')) + 0x11) & 0x77);
         if (seed & 1)
             return; // SBLNK1
-        let A = seed;
+        let A = seed, star = X;
         if (A >= 0x98) {
-            // Source's deliberate/inadvertent RAM-writing path: preserve exactly.
-            // At seed==$A0, with the corresponding status and WCURS guard, an
-            // original RAM byte is overwritten. No attempt to make it 'safer'.
+            // Anti-tamper "attract bomb": only when WCURS does not hold the
+            // $6245 that COPYRT stores after a genuine Williams logo, outside
+            // attract (STATUS bit 7 clear) and with SEED exactly $A0. The
+            // source then reuses X (= $A0:LSEED) for the rest of SBLNK, so the
+            // "star" it moves is that RAM byte, not a SMAP entry.
             const U = r16('WCURS');
             if (U !== 0x6245 && !(r8('STATUS') & 0x80) && A === 0xa0) {
-                const address = (A << 8) | r8('LSEED');
-                RAM.write8(address, r8('HSEED'));
+                star = (A << 8) | r8('LSEED');
+                RAM.write8(star, r8('HSEED'));
             }
             A = u8(A - 0x84);
         }
         // SBLNK0: CLR [SX,X] before changing the star position.
-        video.write8(starAddress(X), 0);
-        RAM.write8(X + a('SX'), A);
+        video.write8(starAddress(star), 0);
+        RAM.write8(star + a('SX'), A);
         if (!(r8('STATUS') & 2))
             return;
         // Original MUL (#3) and ADDB #YMIN: use the 8-bit product low half.
         const y = u8(u8((r8('LSEED') & 0x3f) * 3) + a('YMIN'));
-        RAM.write8(X + a('SY'), y);
+        RAM.write8(star + a('SY'), y);
     }
     return Object.freeze({ STOUT, SBLNK });
 }
@@ -7924,9 +7934,7 @@ function createAmode1HallOfFame({
  * This is the original attract DEMONSTRATION's scripted object movements,
  * fixed-point source constants, original pixel assets and NAPP timings. It
  * has a separate original-style video bank and source RAM; it never runs the
- * playable GEXEC during the attract loop. The source high-score CMOS and
- * DEFNNN large 60x24 logo are still untranslated boundaries; HALDIS only
- * renders source MESS0 title text, not fabricated high-score entries.
+ * playable GEXEC during the attract loop.
  *
  * Background terrain and font are the existing original BLK71 and MESS0
  * routines, NOT CSS/Canvas recreations. Audio remains intentionally silent.
@@ -8009,10 +8017,14 @@ function createAmode1Attract({ initialCredits = 2 } = {}) {
     // It is separate from the scripted sprite presenter (which cannot
     // execute 6809 KILLOB/GETOB) and lives outside the original PHR6 tables.
     const DEMO_XSVCT_OBJECT = 0xb200;
-    // Source GETOB records in the attract scene, kept separately from DEFRAM
-    // ($B300), SAMEX RAM ($9C00), and the XSVCT scratch record ($B200).
-    // Native JS records are data relocations, not 6809 object emulation.
-    const DEMO_OBJECT_BASE = 0xb000, DEMO_OBJECT_STRIDE = 0x10;
+    // Source GETOB records in the attract scene. GETOB takes them from the
+    // OLIST object pool that SCINIT/OINIT has just reset, so they live there,
+    // one OSIZE record each. (Stage 79: they were at $B000 with a $10 stride,
+    // which ran over SETAB at $B05D, so the 7th record's OX16/OY16 overwrote
+    // the scanner's erase pointers and the rising Swarmer left a blip trail.)
+    // Records 0..23 are the GETOB records; 24.. are the OPTR scanner list.
+    const DEMO_OBJECT_BASE = L.at('OLIST'), DEMO_OBJECT_STRIDE = L.at('OSIZE');
+    const DEMO_RECORDS = 24, SCANNER_NODE_BASE = DEMO_OBJECT_BASE + DEMO_RECORDS * DEMO_OBJECT_STRIDE;
     let demoObjectCount = 0;
     const explosions = createSamexap7ExplosionStartRoutines(ram, L, video, { resolvePicture: id => appearancePictures.get(id) });
     const updates = createSamexap7ExplosionUpdateRoutines(ram, L, video, { resolvePicture: id => appearancePictures.get(id), EERASE: explosions.EERASE });
@@ -8085,7 +8097,7 @@ function createAmode1Attract({ initialCredits = 2 } = {}) {
     // AMODE1.STILOB/GETOB record content -> SAMEXAP7.APST/EXPU4.
     function startAppearance(s) {
         if (s.record === undefined) {
-            if (demoObjectCount >= 24)
+            if (demoObjectCount >= DEMO_RECORDS)
                 throw new Error('AMODE1 source demonstration object records exhausted');
             s.record = DEMO_OBJECT_BASE + DEMO_OBJECT_STRIDE * demoObjectCount++;
         }
@@ -8644,13 +8656,13 @@ function createAmode1Attract({ initialCredits = 2 } = {}) {
         if ((state.tick & 7) === 0 && state.page === 'instructions') {
             const nodes = sprites.filter(s => s.visible && s.blip);
             for (let i = 0; i < nodes.length; i++) {
-                const s = nodes[i], ptr = 0xa700 + i * 0x20;
-                ram.write16(ptr, i + 1 < nodes.length ? 0xa700 + (i + 1) * 0x20 : 0);
+                const s = nodes[i], ptr = SCANNER_NODE_BASE + i * DEMO_OBJECT_STRIDE;
+                ram.write16(ptr, i + 1 < nodes.length ? ptr + DEMO_OBJECT_STRIDE : 0);
                 ram.write16(ptr + at('OX16'), s.x16);
                 ram.write16(ptr + at('OY16'), s.y16);
                 ram.write16(ptr + at('OBJCOL'), s.blip);
             }
-            w16('OPTR', nodes.length ? 0xa700 : 0);
+            w16('OPTR', nodes.length ? SCANNER_NODE_BASE : 0);
             // SCINIT's $1030 PLAXC/PLAYC source scanner position stays fixed.
             // STILOB's scripted PLAPIC object does not write these globals.
             scanner.SCNR();
@@ -10179,6 +10191,10 @@ function createFlightHarness({ diagnosticSwarmer = false, infiniteSmartBombs = f
             write16('HSEED', 0xa55a);
             random.STINIT();
         }
+        // AMODE1.COPYRT stores the Williams-logo pen end (CUREND) in WCURS on
+        // a genuine board; the LGOTAB pen ends at $6245. SBLNK's anti-tamper
+        // RAM "bomb" only fires when WCURS holds anything else.
+        write16('WCURS', 0x6245);
         thrust.THINIT();
         // Direct test inputs, not an assertion about original PLSTRT values.
         write16('PLADIR', 0x0300);
@@ -10331,18 +10347,7 @@ function createFlightHarness({ diagnosticSwarmer = false, infiniteSmartBombs = f
         const irqState = IRQ_PAIR();
         // Execute original player collision path (COLCHK scans OPTR, then SPTR).
         waveTicks++;
-        // The pinned DEFA7.SRC contains SBLNK but NO normal-play call site.
-        // Stage 33's four-update throttle AND even-SEED rejection meant barely
-        // one star updated per second, so stars appeared static on a phone.
-        // Stage 34: sample the source SEED on EACH game update and invoke the
-        // unmodified translated SBLNK only on its exact odd-SEED colour branch.
-        // This is an explicit browser-star-cadence ADAPTER, not a fabricated
-        // star renderer or a claim about exact 6809 call timing. The original
-        // STOUT/IRQ still writes the actual star pixels in source video RAM.
-        // Even-SEED SBLNK may mutate A0xx RAM (source's intentional blast path),
-        // and must not be invoked speculatively by this host adapter.
-        if (read8('SEED') & 1)
-            stars.SBLNK();
+        // SBLNK runs from STOUT's fall-through on every IRQ star output.
         if (sourceCabinetInput) {
             // Original EXEC/EXEC1: reset TIMER, bound overloaded object rendering,
             // run COLCHK → XUVCT → RAND → SWP → DISP. Unlike the former host ordering,
@@ -14231,7 +14236,7 @@ updateFullscreenButton();
 
 labStatus.textContent = 'Stage 35: Smart Bomb/bonus transition and Bomber ghost-pixel fixes. Original five-Lander opening wave, zero Baiters and Swarmers at startup; RGB DAC and star blink remain pixel-tested. ' +
     'Lander shots now use original SHOOT/GETSHL/SHSCAN, captures use ASTK1 and mutant conversion, and the scanner runs SCPROC/ISCAN/OSCAN. ' +
-    'Original LFIRE/LASR/LASL/COLIDE fire lasers, REV reverses facing through PRDISP, and SBOMB has unlimited ammunition temporarily. Original PLEND colour-cycle, 128-piece BLK71 PLEX/PX1A ship shatter and three-life/game-over transition are connected. Stage 29 renders original HUD glyphs and hardware-latched colour RAM; Stage 31 routes cabinet inputs through original SSCAN/SWTAB/SWP, and runs SCNR on original SCPROC cadence; hold-fire pulses remain a documented browser convenience. Source THPROC, TIECOL and CBOMB animate thrust, Bomber colours and mine patterns. Source SBLNK star colours visibly change at the source video pixels; source normal-play invocation timing remains unverified. Browser RGB follows the original resistor weights, not linear 3:3:2 brightness. Sound DAC output is connected to the source SNDOUT PIA writes; cycle-exact 6808 interrupt state and analogue filtering remain unverified.';
+    'Original LFIRE/LASR/LASL/COLIDE fire lasers, REV reverses facing through PRDISP, and SBOMB has unlimited ammunition temporarily. Original PLEND colour-cycle, 128-piece BLK71 PLEX/PX1A ship shatter and three-life/game-over transition are connected. Stage 29 renders original HUD glyphs and hardware-latched colour RAM; Stage 31 routes cabinet inputs through original SSCAN/SWTAB/SWP, and runs SCNR on original SCPROC cadence; hold-fire pulses remain a documented browser convenience. Source THPROC, TIECOL and CBOMB animate thrust, Bomber colours and mine patterns. Source STOUT falls through into SBLNK every frame, so stars change colour and hyper-jump as on the original. Browser RGB follows the original resistor weights, not linear 3:3:2 brightness. Sound DAC output is connected to the source SNDOUT PIA writes; cycle-exact 6808 interrupt state and analogue filtering remain unverified.';
 for (const [button, fn] of Object.entries({
     processStep: () => processLab.STEP(),
     process120: () => processLab.RUN(120),

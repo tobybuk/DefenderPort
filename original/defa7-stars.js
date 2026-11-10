@@ -4,6 +4,13 @@
  * src/defa7.src lines 2094-2198: STOUT, STOUT0, STOUT1, STOUT2, STOUT3,
  * SBLNK, SBLNK0, SBL00, SBLNK1.
  *
+ * STOUT has no RTS: after the STOUT1 loop it falls straight into SBLNK, so
+ * every star output (once per frame, from the IRQ) also re-colours one
+ * random star and, on an even SEED, "hypers" it to a new X (and a new Y once
+ * the planet has gone). Stage 79 restores that fall-through; before it, the
+ * port only called SBLNK from a host adapter on odd SEEDs, so stars changed
+ * colour but never jumped.
+ *
  * No star physics, random movement, colours or speed are invented here.
  * Every change to SMAP is derived from the original byte-level operations.
  * The video store interface represents the original indirect writes to the
@@ -57,6 +64,7 @@ export function createDefa7StarRoutines(RAM, Layout, video) {
             video.write8(starAddress(X), A); // STA [SX,X]
             X += stride;
         } while (--count !== 0);
+        SBLNK(); // fall through: no RTS between STOUT1's DECB/BNE and SBLNK
     }
     /** SBLNK / SBLNK0 / SBL00 / SBLNK1, source L2158-L2198. */
     function SBLNK() {
@@ -66,26 +74,28 @@ export function createDefa7StarRoutines(RAM, Layout, video) {
         RAM.write8(X + a('SCOL'), u8(RAM.read8(X + a('SCOL')) + 0x11) & 0x77);
         if (seed & 1)
             return; // SBLNK1
-        let A = seed;
+        let A = seed, star = X;
         if (A >= 0x98) {
-            // Source's deliberate/inadvertent RAM-writing path: preserve exactly.
-            // At seed==$A0, with the corresponding status and WCURS guard, an
-            // original RAM byte is overwritten. No attempt to make it 'safer'.
+            // Anti-tamper "attract bomb": only when WCURS does not hold the
+            // $6245 that COPYRT stores after a genuine Williams logo, outside
+            // attract (STATUS bit 7 clear) and with SEED exactly $A0. The
+            // source then reuses X (= $A0:LSEED) for the rest of SBLNK, so the
+            // "star" it moves is that RAM byte, not a SMAP entry.
             const U = r16('WCURS');
             if (U !== 0x6245 && !(r8('STATUS') & 0x80) && A === 0xa0) {
-                const address = (A << 8) | r8('LSEED');
-                RAM.write8(address, r8('HSEED'));
+                star = (A << 8) | r8('LSEED');
+                RAM.write8(star, r8('HSEED'));
             }
             A = u8(A - 0x84);
         }
         // SBLNK0: CLR [SX,X] before changing the star position.
-        video.write8(starAddress(X), 0);
-        RAM.write8(X + a('SX'), A);
+        video.write8(starAddress(star), 0);
+        RAM.write8(star + a('SX'), A);
         if (!(r8('STATUS') & 2))
             return;
         // Original MUL (#3) and ADDB #YMIN: use the 8-bit product low half.
         const y = u8(u8((r8('LSEED') & 0x3f) * 3) + a('YMIN'));
-        RAM.write8(X + a('SY'), y);
+        RAM.write8(star + a('SY'), y);
     }
     return Object.freeze({ STOUT, SBLNK });
 }
